@@ -1,4 +1,3 @@
-import React from "react";
 import Signup from "../components/Singup";
 import { Link } from "react-router";
 

@@ -1,7 +1,9 @@
-import { z } from "zod";
+import { object, z } from "zod";
 import AuthBlock from "./AuthBlock";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { axiosInstance } from "../../../lib/axios";
+import { AxiosError } from "axios";
 
 const signUpSchema = z
   .object({
@@ -26,13 +28,31 @@ const Signup: React.FC<Props> = ({ redirect = "" }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     setError,
   } = useForm({
     resolver: zodResolver(signUpSchema),
   });
 
-  const handleSignup: SubmitHandler<SignupUser> = (validatedDate) => {};
+  const handleSignup: SubmitHandler<SignupUser> = async (data) => {
+    try {
+      const res = await axiosInstance.post("/api/v1/user/auth/signup", data);
+
+      console.log(res);
+    } catch (error) {
+      if (error instanceof AxiosError && error.response?.data) {
+        const response = error.response.data;
+        if (response.errors) {
+          const typedErrors = response.errors as { message: string; field?: string }[];
+          typedErrors
+            .filter((err) => err.field && Object.keys(data).includes(err.field))
+            .map((err) =>
+              setError(err.field as keyof typeof data, { message: err.message, type: "server" }),
+            );
+        }
+      } else console.log(error);
+    }
+  };
 
   return (
     <div className="w-[35rem]">
@@ -142,9 +162,9 @@ const Signup: React.FC<Props> = ({ redirect = "" }) => {
 
           <button
             type="submit"
-            disabled={false}
+            disabled={isSubmitting}
             className={`rounded-base w-full border-2 border-black px-3 py-2 font-medium ${
-              !false
+              !isSubmitting
                 ? "bg-pop-green/90 hover:bg-pop-green active:bg-green-dark"
                 : "bg-zinc-500 hover:bg-zinc-500 hover:text-black"
             }`}

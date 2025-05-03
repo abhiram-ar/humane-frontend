@@ -9,7 +9,7 @@ const LoginPage = () => {
       </h2>
       <Login />
       <p className="text-offwhite pt-2 text-center">
-        Don't have an account? <Link to="/signup" className="underline">Signup</Link>
+        Don't have an account? <Link to="/auth/signup" className="underline">Signup</Link>
       </p>
     </div>
   );

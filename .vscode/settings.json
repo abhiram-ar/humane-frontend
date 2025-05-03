@@ -1,3 +1,4 @@
 {
-    "window.title": "${dirty}${rootName}${separator}${separator}${activeEditorShort}${profileName}${separator}${appName}"
+    "window.title": "${dirty}${rootName}${separator}${separator}${activeEditorShort}${profileName}${separator}${appName}",
+    "workbench.tree.indent": 20
 }

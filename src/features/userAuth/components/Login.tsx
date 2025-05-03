@@ -32,6 +32,7 @@ const Login: React.FC<Props> = ({ redirect = "" }) => {
     resolver: zodResolver(loginSchema),
   });
 
+
   return (
     <div className="w-[30rem]">
       <AuthBlock>

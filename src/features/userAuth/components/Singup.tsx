@@ -1,6 +1,6 @@
 import { z } from "zod";
 import AuthBlock from "./AuthBlock";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const signUpSchema = z
@@ -32,13 +32,12 @@ const Signup: React.FC<Props> = ({ redirect = "" }) => {
     resolver: zodResolver(signUpSchema),
   });
 
+  const handleSignup: SubmitHandler<SignupUser> = (validatedDate) => {};
+
   return (
     <div className="w-[35rem]">
       <AuthBlock>
-        <form
-          onSubmit={handleSubmit((data) => handleSignup(data as SignupUser))}
-          className="flex flex-col gap-4"
-        >
+        <form onSubmit={handleSubmit(handleSignup)} className="flex flex-col gap-4">
           {/* name */}
           <div className="flex justify-between gap-5">
             <div className="w-full">

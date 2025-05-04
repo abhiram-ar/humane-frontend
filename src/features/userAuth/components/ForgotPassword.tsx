@@ -4,32 +4,32 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ServerErrors } from "@/types/serverErrors";
 import { AxiosError } from "axios";
-import { Link } from "react-router";
 
-const loginSchema = z.object({
+const forgotPasswordSchema = z.object({
   email: z.string().trim().email("Invalid email"),
-  password: z.string().trim().nonempty("cannot be empty").min(8, "atlest 8 characters"),
 });
-export type LoginUserFields = z.infer<typeof loginSchema>;
 
-interface Props {
-  handleLogin: (data: LoginUserFields) => Promise<void>;
-  forgotPasswordPath?: string;
-}
+export type forgotPasswordFields = z.infer<typeof forgotPasswordSchema>;
 
-const Login: React.FC<Props> = ({ handleLogin, forgotPasswordPath = "/auth/forgot-password" }) => {
+type Props = {
+  handleForgotPassword: (data: forgotPasswordFields) => Promise<void>;
+};
+
+const ForgotPassword: React.FC<Props> = ({ handleForgotPassword }) => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
     setError,
   } = useForm({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const submitHandler: SubmitHandler<LoginUserFields> = async (data) => {
+  const submitHandler: SubmitHandler<forgotPasswordFields> = async (data) => {
     try {
-      await handleLogin(data);
+      await handleForgotPassword(data);
+      reset();
     } catch (error) {
       if (error instanceof AxiosError && error.response?.data?.errors) {
         const serializedErrors = error.response.data.errors as ServerErrors;
@@ -52,7 +52,7 @@ const Login: React.FC<Props> = ({ handleLogin, forgotPasswordPath = "/auth/forgo
               htmlFor="email"
               className="text-offwhite flex items-baseline gap-2 font-semibold"
             >
-              email
+              Enter your email to recover
               {errors.email && <p className="font-normal text-red-500">({errors.email.message})</p>}
             </label>
 
@@ -65,32 +65,6 @@ const Login: React.FC<Props> = ({ handleLogin, forgotPasswordPath = "/auth/forgo
             />
           </div>
 
-          {/* password */}
-          <div>
-            <label
-              htmlFor="password"
-              className="text-offwhite flex items-baseline gap-2 font-semibold"
-            >
-              password
-              {errors.password && (
-                <p className="font-normal text-red-500">({errors.password.message})</p>
-              )}
-            </label>
-            <input
-              type="password"
-              {...register("password")}
-              placeholder="password"
-              id="password"
-              className="bg-green-subtle w-full rounded-sm border-2 border-black px-2 py-1.5"
-            />
-            <Link
-              to={forgotPasswordPath}
-              className="text-offwhite/50 hover:text-offwhite underline"
-            >
-              forgot Password?
-            </Link>
-          </div>
-
           <button
             type="submit"
             disabled={false}
@@ -100,18 +74,12 @@ const Login: React.FC<Props> = ({ handleLogin, forgotPasswordPath = "/auth/forgo
                 : "bg-zinc-500 hover:bg-zinc-500 hover:text-black"
             }`}
           >
-            Login
+            Recover password
           </button>
         </form>
-
-        <div className="my-5 flex items-center justify-between">
-          <hr className="w-2/5 border border-black text-black" />
-          OR
-          <hr className="w-2/5 border border-black text-black" />
-        </div>
       </AuthBlock>
     </div>
   );
 };
 
-export default Login;
+export default ForgotPassword;

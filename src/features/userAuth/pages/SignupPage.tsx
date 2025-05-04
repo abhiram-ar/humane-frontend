@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/lib/axios";
+import { api } from "@/lib/axios";
 import OTP from "../components/OTP";
 import Signup, { SignupUser } from "../components/Singup";
 import { Link, useNavigate } from "react-router";
@@ -14,8 +14,7 @@ const SignupPage = () => {
   console.log(user, activationToken);
 
   const handleSignup = async (data: SignupUser) => {
-    toast("hello");
-    const res = await axiosInstance.post("/api/v1/user/auth/signup", data);
+    const res = await api.post("/api/v1/user/auth/signup", data);
     setUser(data);
     setActivationToken(res.data.data?.token);
 
@@ -25,7 +24,7 @@ const SignupPage = () => {
 
   const handleOTPVerification = async (enteredOTP: string) => {
     try {
-      await axiosInstance.post("/api/v1/user/auth/verify", {
+      await api.post("/api/v1/user/auth/verify", {
         activationCode: enteredOTP,
         activationToken,
       });
@@ -44,7 +43,7 @@ const SignupPage = () => {
 
   const handleOTPResent = async () => {
     try {
-      const res = await axiosInstance.post("/api/v1/user/auth/signup", user);
+      const res = await api.post("/api/v1/user/auth/signup", user);
       setActivationToken(res.data.data.token);
     } catch (error) {
       console.log("something went wrong while re-requesting verfication OTP", error);

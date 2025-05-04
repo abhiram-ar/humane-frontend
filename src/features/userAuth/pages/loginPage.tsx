@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router";
 import Login, { LoginUserFields } from "../components/Login";
-import { axiosInstance } from "@/lib/axios";
+import {  api } from "@/lib/axios";
 import { AxiosError } from "axios";
 import { useAppDispatch } from "../hooks/store.hooks";
 import { setCredentials } from "../redux/userAuthSlice";
@@ -10,7 +10,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const handleLogin = async (data: LoginUserFields) => {
     try {
-      const res = await axiosInstance.post("/api/v1/user/auth/login/email", data);
+      const res = await api.post("/api/v1/user/auth/login/email", data);
 
       const token = res.data.data.accessToken;
       console.log(token);

@@ -1,8 +1,7 @@
-import { object, z } from "zod";
+import { z } from "zod";
 import AuthBlock from "./AuthBlock";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { axiosInstance } from "../../../lib/axios";
 import { AxiosError } from "axios";
 
 const signUpSchema = z
@@ -21,10 +20,10 @@ const signUpSchema = z
 export type SignupUser = z.infer<typeof signUpSchema>;
 
 interface Props {
-  redirect?: string;
+  handleSignup: (data: SignupUser) => Promise<void>;
 }
 
-const Signup: React.FC<Props> = ({ redirect = "" }) => {
+const Signup: React.FC<Props> = ({ handleSignup }) => {
   const {
     register,
     handleSubmit,
@@ -34,11 +33,9 @@ const Signup: React.FC<Props> = ({ redirect = "" }) => {
     resolver: zodResolver(signUpSchema),
   });
 
-  const handleSignup: SubmitHandler<SignupUser> = async (data) => {
+  const submitHandler: SubmitHandler<SignupUser> = async (data) => {
     try {
-      const res = await axiosInstance.post("/api/v1/user/auth/signup", data);
-
-      console.log(res);
+      await handleSignup(data);
     } catch (error) {
       if (error instanceof AxiosError && error.response?.data) {
         const response = error.response.data;
@@ -57,7 +54,7 @@ const Signup: React.FC<Props> = ({ redirect = "" }) => {
   return (
     <div className="w-[35rem]">
       <AuthBlock>
-        <form onSubmit={handleSubmit(handleSignup)} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit(submitHandler)} className="flex flex-col gap-4">
           {/* name */}
           <div className="flex justify-between gap-5">
             <div className="w-full">

@@ -1,5 +1,6 @@
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: "http://humanedev.abhiram-ar.com",
+  baseURL: "http://localhost",
+  withCredentials: true,
 });

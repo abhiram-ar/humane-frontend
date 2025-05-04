@@ -1,42 +1,49 @@
 import { z } from "zod";
 import AuthBlock from "./AuthBlock";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ServerErrors } from "@/types/serverErrors";
+import { AxiosError } from "axios";
 
-const loginSchema = z
-  .object({
-    firstName: z.string().trim().nonempty("cannot be empty").max(30, "max 30 characters"),
-    lastName: z.string().trim().max(30, "max 30 characters"),
-    email: z.string().trim().email("Invalid email"),
-    password: z.string().trim().nonempty("cannot be empty").min(8, "atlest 8 characters"),
-    passwordConfirm: z.string().trim().nonempty("cannot be empty").min(8, "atlest 8 characters"),
-  })
-  .refine((data) => data.password === data.passwordConfirm, {
-    message: "password does not match",
-    path: ["passwordConfirm"],
-  });
-
+const loginSchema = z.object({
+  email: z.string().trim().email("Invalid email"),
+  password: z.string().trim().nonempty("cannot be empty").min(8, "atlest 8 characters"),
+});
 export type LoginUserFields = z.infer<typeof loginSchema>;
 
 interface Props {
-  redirect?: string;
+  handleLogin: (data: LoginUserFields) => Promise<void>;
 }
 
-const Login: React.FC<Props> = ({ redirect = "" }) => {
+const Login: React.FC<Props> = ({ handleLogin }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     setError,
   } = useForm({
     resolver: zodResolver(loginSchema),
   });
 
+  const submitHandler: SubmitHandler<LoginUserFields> = async (data) => {
+    try {
+      await handleLogin(data);
+    } catch (error) {
+      if (error instanceof AxiosError && error.response?.data?.errors) {
+        const serializedErrors = error.response.data.errors as ServerErrors;
+        serializedErrors
+          .filter((err) => err.field && Object.keys(data).includes(err.field))
+          .map((err) =>
+            setError(err.field as keyof typeof data, { message: err.message, type: "server" }),
+          );
+      } else console.log(error);
+    }
+  };
 
   return (
     <div className="w-[30rem]">
       <AuthBlock>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit(submitHandler)} className="flex flex-col gap-4">
           {/* email */}
           <div>
             <label
@@ -80,7 +87,7 @@ const Login: React.FC<Props> = ({ redirect = "" }) => {
             type="submit"
             disabled={false}
             className={`rounded-base mt-3 w-full border-2 border-black px-3 py-2 font-medium ${
-              !false
+              !isSubmitting
                 ? "bg-pop-green/90 hover:bg-pop-green active:bg-green-dark"
                 : "bg-zinc-500 hover:bg-zinc-500 hover:text-black"
             }`}

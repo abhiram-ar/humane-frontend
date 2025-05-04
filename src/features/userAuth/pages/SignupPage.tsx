@@ -25,14 +25,13 @@ const SignupPage = () => {
 
   const handleOTPVerification = async (enteredOTP: string) => {
     try {
-      const res = await axiosInstance.post("/api/v1/user/auth/verify", {
+      await axiosInstance.post("/api/v1/user/auth/verify", {
         activationCode: enteredOTP,
         activationToken,
       });
-      if (res.status >= 200 && res.status < 300) {
-        toast.success("Account created", { position: "top-right" });
-        navigate("/auth/login");
-      }
+
+      toast.success("Account created", { position: "top-right" });
+      navigate("/auth/login");
     } catch (error) {
       if (error instanceof AxiosError && error.response?.data) {
         const serializedErrors = error.response.data.errors as ServerErrors;

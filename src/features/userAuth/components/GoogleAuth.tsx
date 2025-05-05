@@ -19,7 +19,7 @@ const SignInWithGoogle: React.FC = () => {
 
       if (res.data.data?.accessToken) {
         dispatch(setCredentials({ token: res.data.data.token }));
-        return navigate("/");
+        return navigate("/", { replace: true });
       }
 
       throw new Error("no accessToken in server response");

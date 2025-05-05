@@ -7,44 +7,52 @@ import ForgotPasswordPage from "@/features/userAuth/pages/ForgotPasswordPage";
 import HomePage from "@/features/home/pages/HomePage";
 import { onStartLoader } from "@/lib/onStartLoader";
 import { isAuthenticatedLoader } from "@/features/userAuth/services/isUserAuthenticatedLoader";
+import HumaeLoader from "@/components/HumaeLoader";
+import FadeTransitionLayout from "@/layout/FadeTransitionLayout";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    loader: onStartLoader,
-    hydrateFallbackElement: <div>loading</div>,
-    Component: HomePage,
-  },
-  {
-    path: "auth",
-    loader: isAuthenticatedLoader,
-    hydrateFallbackElement: <div>loading...</div>,
-    Component: AuthLayout,
+    Component: FadeTransitionLayout,
     children: [
       {
         index: true,
-        Component: LoginPage,
+        loader: onStartLoader,
+        hydrateFallbackElement: <HumaeLoader />,
+        Component: HomePage,
       },
       {
-        path: "login",
-        Component: LoginPage,
-      },
-      {
-        path: "signup",
-        Component: SignupPage,
-      },
-      {
-        path: "forgot-password",
-        Component: ForgotPasswordPage,
-      },
-      {
-        path: "recover-password",
-        Component: RecoverPasswordPage,
+        path: "auth",
+        loader: isAuthenticatedLoader,
+        hydrateFallbackElement: <HumaeLoader />,
+        Component: AuthLayout,
+        children: [
+          {
+            index: true,
+            Component: LoginPage,
+          },
+          {
+            path: "login",
+            Component: LoginPage,
+          },
+          {
+            path: "signup",
+            Component: SignupPage,
+          },
+          {
+            path: "forgot-password",
+            Component: ForgotPasswordPage,
+          },
+          {
+            path: "recover-password",
+            Component: RecoverPasswordPage,
+          },
+        ],
       },
     ],
   },
   {
     path: "/test",
-    Component: AuthLayout,
+    Component: HumaeLoader,
   },
 ]);

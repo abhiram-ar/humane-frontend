@@ -1,12 +1,22 @@
 import ChangePassword, { ChangePasswordField } from "../components/ChangePassword";
 import { api } from "@/lib/axios";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 
 const RecoverPasswordPage = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const recoveryToken = searchParams.get("recoveryToken");
+
   const handleRecoverPassword = async (data: ChangePasswordField) => {
+    if (!recoveryToken) {
+      console.log("No token to reset password");
+      toast.error("Invalid request", { position: "bottom-right" });
+      return;
+    }
+
     try {
       await api.patch("/api/v1/user/auth/recover-password", {
         recoveryToken: "",

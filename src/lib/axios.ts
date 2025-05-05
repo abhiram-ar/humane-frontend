@@ -66,7 +66,7 @@ api.interceptors.response.use(
       isRefreshing = true;
       try {
         const { data } = await axios.get<{ data: { token: string } }>(
-          "http://localhost/api/v1/user/auth/refresh",
+          "http://localhost/api/v1/global/auth/refresh",
         );
 
         const newToken = data.data.token;

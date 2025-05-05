@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router";
 import Login, { LoginUserFields } from "../components/Login";
-import {  api } from "@/lib/axios";
+import { api } from "@/lib/axios";
 import { AxiosError } from "axios";
 import { useAppDispatch } from "../hooks/store.hooks";
 import { setCredentials } from "../redux/userAuthSlice";
@@ -16,8 +16,8 @@ const LoginPage = () => {
       console.log(token);
       dispath(setCredentials({ token }));
 
-      // navigate
-      navigate("/auth/signup");
+      // dont want authicated uses to come back to login page
+      navigate("/", { replace: true });
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         // rethrow the error for the calling funcion,

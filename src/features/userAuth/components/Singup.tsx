@@ -3,6 +3,7 @@ import AuthBlock from "./AuthBlock";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
+import SignInWithGoogle from "./GoogleAuth";
 
 const signUpSchema = z
   .object({
@@ -21,9 +22,10 @@ export type SignupUser = z.infer<typeof signUpSchema>;
 
 interface Props {
   handleSignup: (data: SignupUser) => Promise<void>;
+  showGoogleAuth?: boolean;
 }
 
-const Signup: React.FC<Props> = ({ handleSignup }) => {
+const Signup: React.FC<Props> = ({ handleSignup, showGoogleAuth = true }) => {
   const {
     register,
     handleSubmit,
@@ -170,11 +172,16 @@ const Signup: React.FC<Props> = ({ handleSignup }) => {
           </button>
         </form>
 
-        <div className="my-5 flex items-center justify-between">
-          <hr className="w-2/5 border border-black text-black" />
-          OR
-          <hr className="w-2/5 border border-black text-black" />
-        </div>
+        {showGoogleAuth && (
+          <>
+            <div className="my-5 flex items-center justify-between">
+              <hr className="w-2/5 border border-black text-black" />
+              OR
+              <hr className="w-2/5 border border-black text-black" />
+            </div>
+            <SignInWithGoogle />
+          </>
+        )}
       </AuthBlock>
     </div>
   );

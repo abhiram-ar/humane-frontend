@@ -21,7 +21,7 @@ const SignInWithGoogle: React.FC = () => {
         dispatch(setCredentials({ token: res.data.data.token }));
         return navigate("/");
       }
-      
+
       throw new Error("no accessToken in server response");
     } catch (error) {
       toast.error("Something went wrong");

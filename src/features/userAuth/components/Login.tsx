@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ServerErrors } from "@/types/serverErrors";
 import { AxiosError } from "axios";
 import { Link } from "react-router";
+import SignInWithGoogle from "./GoogleAuth";
 
 const loginSchema = z.object({
   email: z.string().trim().email("Invalid email"),
@@ -15,9 +16,14 @@ export type LoginUserFields = z.infer<typeof loginSchema>;
 interface Props {
   handleLogin: (data: LoginUserFields) => Promise<void>;
   forgotPasswordPath?: string;
+  showGoogleAuth?: boolean;
 }
 
-const Login: React.FC<Props> = ({ handleLogin, forgotPasswordPath = "/auth/forgot-password" }) => {
+const Login: React.FC<Props> = ({
+  handleLogin,
+  forgotPasswordPath = "/auth/forgot-password",
+  showGoogleAuth = true,
+}) => {
   const {
     register,
     handleSubmit,
@@ -103,12 +109,16 @@ const Login: React.FC<Props> = ({ handleLogin, forgotPasswordPath = "/auth/forgo
             Login
           </button>
         </form>
-
-        <div className="my-5 flex items-center justify-between">
-          <hr className="w-2/5 border border-black text-black" />
-          OR
-          <hr className="w-2/5 border border-black text-black" />
-        </div>
+        {showGoogleAuth && (
+          <>
+            <div className="my-5 flex items-center justify-between">
+              <hr className="w-2/5 border border-black text-black" />
+              OR
+              <hr className="w-2/5 border border-black text-black" />
+            </div>
+            <SignInWithGoogle />
+          </>
+        )}
       </AuthBlock>
     </div>
   );

@@ -20,6 +20,7 @@ const HomePage = () => {
 
   return (
     <div>
+        <p className="text-white">User Protected route</p>
       <p>user token: {token}</p>
       <button onClick={handleLogut} className="border-2 bg-green-100 p-2 px-5 hover:bg-green-300">
         logut

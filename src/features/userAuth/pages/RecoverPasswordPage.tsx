@@ -18,13 +18,15 @@ const RecoverPasswordPage = () => {
     }
 
     try {
-      await api.patch("/api/v1/user/auth/recover-password", {
-        recoveryToken: "",
+      const res = await api.patch("/api/v1/user/auth/reset-password", {
+        recoveryToken,
         newPassword: data.password,
       });
+      console.log(res);
       toast.success("password changed", { position: "top-right" });
-      navigate("/auth/login");
+      navigate("/auth/login", { replace: true });
     } catch (error) {
+      console.log(error);
       if (error instanceof AxiosError && error.response?.data) {
         // rethrow the error for calling form field errors
         throw error;

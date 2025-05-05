@@ -1,9 +1,9 @@
 import { setCredentials } from "@/features/userAuth/redux/userAuthSlice";
-import { store } from "./../app/store/store";
 import { redirect } from "react-router";
 import axios from "axios";
+import { store } from "@/app/store/store";
 
-export const onStartLoader = async () => {
+export const isAuthenticatedLoader = async () => {
   const token = store.getState().userAuth.token;
   if (!token) {
     try {
@@ -12,17 +12,17 @@ export const onStartLoader = async () => {
       });
       if (res.data.data?.token) {
         store.dispatch(setCredentials({ token: res.data.data.token }));
-        return null;
+        return redirect("/");
       }
 
       console.log("On load refresh token succes but no token in response", res);
-      return redirect("/auth/login"); // something wrong with the refresh api
+      return null; // something wrong with the refresh api
     } catch (error) {
       console.log("error while cold start api fetch", error);
 
-      return redirect("/auth/login"); // possibly no refresh token
+      return null; // possibly no refresh token
     }
   }
 
-  return null; // token alreay exists
+  return redirect("/"); // token alreay exists
 };

@@ -6,8 +6,10 @@ import { useAppDispatch } from "../hooks/store.hooks";
 import { setCredentials } from "../redux/userAuthSlice";
 
 const LoginPage = () => {
+  
   const dispath = useAppDispatch();
   const navigate = useNavigate();
+
   const handleLogin = async (data: LoginUserFields) => {
     try {
       const res = await api.post("/api/v1/user/auth/login/email", data);

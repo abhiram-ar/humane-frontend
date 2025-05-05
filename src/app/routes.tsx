@@ -6,6 +6,7 @@ import RecoverPasswordPage from "@/features/userAuth/pages/RecoverPasswordPage";
 import ForgotPasswordPage from "@/features/userAuth/pages/ForgotPasswordPage";
 import HomePage from "@/features/home/pages/HomePage";
 import { onStartLoader } from "@/lib/onStartLoader";
+import { isAuthenticatedLoader } from "@/features/userAuth/services/isUserAuthenticatedLoader";
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +17,8 @@ export const router = createBrowserRouter([
   },
   {
     path: "auth",
+    loader: isAuthenticatedLoader,
+    hydrateFallbackElement: <div>loading...</div>,
     Component: AuthLayout,
     children: [
       {

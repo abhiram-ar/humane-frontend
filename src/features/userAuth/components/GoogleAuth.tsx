@@ -1,11 +1,32 @@
 import React, { useState } from "react";
 import { GoogleLogin, GoogleOAuthProvider, CredentialResponse } from "@react-oauth/google";
+import { api } from "@/lib/axios";
+import toast from "react-hot-toast";
+import { useAppDispatch } from "../hooks/store.hooks";
+import { useNavigate } from "react-router";
+import { setCredentials } from "../redux/userAuthSlice";
 
 const SignInWithGoogle: React.FC = () => {
   const [loading, setLoading] = useState(true);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
-    console.log(credentialResponse);
+    try {
+      const res = await api.post("/api/v1/user/auth/login/google", {
+        credentials: credentialResponse.credential,
+      });
+
+      if (res.data.data?.accessToken) {
+        dispatch(setCredentials({ token: res.data.data.token }));
+        return navigate("/");
+      }
+      
+      throw new Error("no accessToken in server response");
+    } catch (error) {
+      toast.error("Something went wrong");
+      console.log("error while verifying OAuth with Backend", error);
+    }
   };
 
   return (

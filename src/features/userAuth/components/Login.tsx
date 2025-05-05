@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ServerErrors } from "@/types/serverErrors";
 import { AxiosError } from "axios";
 import { Link } from "react-router";
+import SignInWithGoogle from "./GoogleAuth";
 
 const loginSchema = z.object({
   email: z.string().trim().email("Invalid email"),
@@ -109,6 +110,7 @@ const Login: React.FC<Props> = ({ handleLogin, forgotPasswordPath = "/auth/forgo
           OR
           <hr className="w-2/5 border border-black text-black" />
         </div>
+        <SignInWithGoogle />
       </AuthBlock>
     </div>
   );

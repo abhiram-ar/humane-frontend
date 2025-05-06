@@ -9,6 +9,11 @@ import { onStartLoader } from "@/lib/onStartLoader";
 import { isAuthenticatedLoader } from "@/features/userAuth/services/isUserAuthenticatedLoader";
 import HumaeLoader from "@/components/HumaeLoader";
 import FadeTransitionLayout from "@/layout/FadeTransitionLayout";
+import AdminAuthLayout from "@/features/userAuth/layout/AdminAuthLayout";
+import AdminLoginPage from "@/features/userAuth/pages/AdminLoginPage";
+import AdminDashboardLayout from "@/features/adminDashboard/layout/AdminDashboardLayout";
+import AdminHomePage from "@/features/adminDashboard/pages/AdminHomePage";
+import { isAdminAuthenticatedLoader } from "@/features/adminDashboard/services/isAdminAuthenticatedLoader";
 
 export const router = createBrowserRouter([
   {
@@ -52,7 +57,26 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/test",
-    Component: HumaeLoader,
+    path: "/admin",
+    children: [
+      {
+        path: "login",
+        Component: AdminAuthLayout,
+        children: [{ index: true, Component: AdminLoginPage }],
+      },
+      {
+        path: "dashboard",
+        loader: isAdminAuthenticatedLoader,
+        hydrateFallbackElement: <HumaeLoader />,
+        Component: AdminDashboardLayout,
+        children: [
+          { index: true, Component: AdminHomePage },
+          {
+            path: "home",
+            Component: AdminHomePage,
+          },
+        ],
+      },
+    ],
   },
 ]);

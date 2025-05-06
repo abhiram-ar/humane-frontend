@@ -17,12 +17,14 @@ interface Props {
   handleLogin: (data: LoginUserFields) => Promise<void>;
   forgotPasswordPath?: string;
   showGoogleAuth?: boolean;
+  showForgotPassword?: boolean;
 }
 
 const Login: React.FC<Props> = ({
   handleLogin,
   forgotPasswordPath = "/auth/forgot-password",
   showGoogleAuth = true,
+  showForgotPassword = true,
 }) => {
   const {
     register,
@@ -89,12 +91,14 @@ const Login: React.FC<Props> = ({
               id="password"
               className="bg-green-subtle w-full rounded-sm border-2 border-black px-2 py-1.5"
             />
-            <Link
-              to={forgotPasswordPath}
-              className="text-offwhite/50 hover:text-offwhite underline"
-            >
-              forgot Password?
-            </Link>
+            {showForgotPassword && (
+              <Link
+                to={forgotPasswordPath}
+                className="text-offwhite/50 hover:text-offwhite underline"
+              >
+                forgot Password?
+              </Link>
+            )}
           </div>
 
           <button

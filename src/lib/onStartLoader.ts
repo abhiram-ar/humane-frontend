@@ -3,6 +3,8 @@ import { store } from "./../app/store/store";
 import { redirect } from "react-router";
 import axios from "axios";
 import { setAppLoadingState } from "@/app/store/appSlice";
+import { jwtDecode } from "jwt-decode";
+import { JWTAuthPayload } from "@/types/JWTAuthPayload";
 
 export const onStartLoader = async () => {
   const token = store.getState().userAuth.token;
@@ -12,11 +14,14 @@ export const onStartLoader = async () => {
         withCredentials: true,
       });
       if (res.data.data?.token) {
-        store.dispatch(setCredentials({ token: res.data.data.token }));
-        return null;
+        const decoded: JWTAuthPayload = jwtDecode(res.data.data.token);
+        if (decoded.type === "anon") {
+          store.dispatch(setCredentials({ token: res.data.data.token }));
+          return null;
+        }
       }
 
-      console.log("On load refresh token succes but no token in response", res);
+      console.log("On load refresh token succes but no user token in response", res);
       return redirect("/auth/login"); // something wrong with the refresh api
     } catch (error) {
       console.log("error while cold start api fetch", error);

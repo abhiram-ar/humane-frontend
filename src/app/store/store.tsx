@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userAuthReducer from "./../../features/userAuth/redux/userAuthSlice";
 import globalAppReducer from "./appSlice";
+import adminAuthReducer from "@/features/userAuth/redux/adminAuthSlice";
 
 export const store = configureStore({
   reducer: {
     userAuth: userAuthReducer,
     globalApp: globalAppReducer,
+    adminAuth: adminAuthReducer,
   },
   devTools: true,
 });

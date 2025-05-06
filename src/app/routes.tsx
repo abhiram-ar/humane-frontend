@@ -14,6 +14,7 @@ import AdminLoginPage from "@/features/userAuth/pages/AdminLoginPage";
 import AdminDashboardLayout from "@/features/adminDashboard/layout/AdminDashboardLayout";
 import AdminHomePage from "@/features/adminDashboard/pages/AdminHomePage";
 import { isAdminAuthenticatedLoader } from "@/features/adminDashboard/services/isAdminAuthenticatedLoader";
+import AdminUserManagementPage from "@/features/adminDashboard/pages/AdminUserManagementPage";
 
 export const router = createBrowserRouter([
   {
@@ -76,6 +77,18 @@ export const router = createBrowserRouter([
             Component: AdminHomePage,
           },
         ],
+      },
+    ],
+  },
+  {
+    path: "admin",
+    Component: AdminDashboardLayout,
+    children: [
+      { index: true, Component: AdminHomePage },
+      { path: "home", Component: AdminHomePage },
+      {
+        path: "user",
+        Component: AdminUserManagementPage,
       },
     ],
   },

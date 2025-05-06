@@ -1,10 +1,15 @@
+import Sidebar from "@/features/adminDashboard/components/Sidebar";
 import { Outlet } from "react-router";
 
 const AdminDashboardLayout = () => {
   return (
     <div>
-      <h2>Admin dashboard</h2>
-      <Outlet />
+      <div>
+        <Sidebar />
+      </div>
+      <div className="bg-grey-dark-bg ml-72 min-h-screen py-8 px-10">
+        <Outlet />
+      </div>
     </div>
   );
 };

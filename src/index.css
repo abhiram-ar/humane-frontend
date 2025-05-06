@@ -13,6 +13,7 @@
   --color-grey-dark-bg: #212121;
   --color-red-blood: #e21212;
   --color-red-pure: #ff0000;
+  --color-almost-white: #eeeeee;
 }
 
 @theme inline {

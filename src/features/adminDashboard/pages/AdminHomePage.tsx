@@ -18,7 +18,7 @@ const AdminHomePage = () => {
   };
   return (
     <div>
-      <h2>Admin home</h2>
+      <h2>Admin home metrics</h2>
       <button className="border bg-red-200 px-5 py-2 hover:bg-red-400" onClick={handleAdminlogout}>
         Logout
       </button>

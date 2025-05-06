@@ -3,7 +3,7 @@ import humanelogo from "./../../../assets/humaneSegoeScriptBold.svg";
 
 const AdminAuthLayout = () => {
   return (
-    <div className="bg-red-950 h-screen w-full">
+    <div className="h-screen w-full bg-red-950">
       <div className="grid h-screen grid-cols-2">
         <div className="flex items-center justify-center">
           <Outlet />

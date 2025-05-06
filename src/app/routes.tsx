@@ -79,4 +79,8 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "test",
+    Component: AdminDashboardLayout,
+  },
 ]);

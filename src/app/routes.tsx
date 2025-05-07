@@ -72,24 +72,18 @@ export const router = createBrowserRouter([
         Component: AdminDashboardLayout,
         children: [
           { index: true, Component: AdminHomePage },
+          { path: "home", Component: AdminHomePage },
           {
-            path: "home",
-            Component: AdminHomePage,
+            path: "user",
+            Component: AdminUserManagementPage,
           },
         ],
       },
     ],
   },
   {
-    path: "admin",
+    path: "test",
     Component: AdminDashboardLayout,
-    children: [
-      { index: true, Component: AdminHomePage },
-      { path: "home", Component: AdminHomePage },
-      {
-        path: "user",
-        Component: AdminUserManagementPage,
-      },
-    ],
+    children: [{ index: true, Component: AdminHomePage }],
   },
 ]);

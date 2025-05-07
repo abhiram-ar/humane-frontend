@@ -1,11 +1,3 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/Table";
 import { useState } from "react";
 import { User } from "../types/userManagement.types";
 import UserManagementRow from "../components/UserManagementRow";
@@ -14,12 +6,14 @@ import { IQueryFilter } from "../types/QueryFilter";
 import { useUserListQuery } from "../hooks/useUserListQuery";
 import { useUserMutation } from "../hooks/userUserMutation";
 import Pagination from "../components/Pagination";
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/Table";
+import TableRowShimmer from "../components/TableRowShimmer";
+import TableNoItemRow from "../components/TableNoItemRow";
 
 const AdminUserManagementPage = () => {
   const [filter, setFilter] = useState<IQueryFilter>({ search: "", page: 1, limit: 13 });
 
-  const { data, isLoading } = useUserListQuery(filter);
-
+  const { data, isLoading, isError } = useUserListQuery(filter);
   const { mutate: mutateUser } = useUserMutation(filter);
 
   const handleToogleBlock = (user: User) => {
@@ -46,48 +40,31 @@ const AdminUserManagementPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {!data
-              ? Array.from({ length: 13 }).map((_, i) => (
-                  <TableRow key={i} className="animate-pulse">
-                    <TableCell colSpan={7}>
-                      <p className="bg-green-subtle/50 w-full animate-pulse rounded text-transparent transition-all duration-300 ease-out">
-                        {" "}
-                        -{" "}
-                      </p>
-                    </TableCell>
-                  </TableRow>
-                ))
-              : data.data.users.map((user) => (
-                  <UserManagementRow
-                    key={user.id}
-                    user={user}
-                    handleToogleBlock={handleToogleBlock}
-                  />
-                ))}
+            {isLoading && <TableRowShimmer rows={filter.limit} colSpan={7} />}
+
+            {data && data.data.users?.length > 0 ? (
+              data.data.users.map((user) => (
+                <UserManagementRow
+                  key={user.id}
+                  user={user}
+                  handleToogleBlock={handleToogleBlock}
+                />
+              ))
+            ) : (
+              <TableNoItemRow colSpan={7} message="No user found" />
+            )}
+
+            {isError && <TableNoItemRow colSpan={7} message="Something went wrong" />}
           </TableBody>
         </Table>
 
-        {data?.data && 
-          <Pagination filter={filter} setFilter={setFilter} totalPages={data.data.pagination?.totalPages} /> }
-          {/* // <div className="mt-5 flex items-center justify-center gap-5 font-semibold">
-          //   <button
-          //     className="rounded-2xl border border-black bg-zinc-400 px-5 py-1 text-black hover:bg-[#abf600] disabled:bg-zinc-900 disabled:text-zinc-700"
-          //     onClick={() => setFilter({ ...filter, page: filter.page - 1 })}
-          //     disabled={isLoading || filter.page <= 1}
-          //   >
-          //     prev
-          //   </button>
-          //   <p className="text-white">
-          //     {filter.page} of {data.data.pagination.totalPages}
-          //   </p>
-          //   <button
-          //     className="rounded-2xl border border-black bg-zinc-400 px-5 py-1 text-black hover:bg-[#abf600] disabled:bg-zinc-900 disabled:text-zinc-700"
-          //     onClick={() => setFilter({ ...filter, page: filter.page + 1 })}
-          //     disabled={isLoading || filter.page >= data.data.pagination.totalPages}
-          //   >
-          //     next
-          //   </button>
-          // </div> */}
+        {data?.data && (
+          <Pagination
+            filter={filter}
+            setFilter={setFilter}
+            totalPages={data.data.pagination?.totalPages}
+          />
+        )}
       </div>
     </div>
   );

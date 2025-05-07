@@ -12,7 +12,7 @@ import TableNoItemRow from "../components/TableNoItemRow";
 import Refresh from "../components/Refresh";
 
 const AdminUserManagementPage = () => {
-  const [filter, setFilter] = useState<IQueryFilter>({ search: "", page: 1, limit: 10 });
+  const [filter, setFilter] = useState<IQueryFilter>({ search: "", page: 1, limit: 11 });
 
   const { data, isLoading, isError, isRefetching, refetch } = useUserListQuery(filter);
   const { mutate: mutateUser } = useUserMutation(filter);

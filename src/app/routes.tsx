@@ -15,6 +15,7 @@ import AdminDashboardLayout from "@/features/adminDashboard/layout/AdminDashboar
 import AdminHomePage from "@/features/adminDashboard/pages/AdminHomePage";
 import { isAdminAuthenticatedLoader } from "@/features/adminDashboard/services/isAdminAuthenticatedLoader";
 import AdminUserManagementPage from "@/features/adminDashboard/pages/AdminUserManagementPage";
+import { adminLoginAuthChekerLoader } from "@/features/adminDashboard/services/loginAuthChecker.loader";
 
 export const router = createBrowserRouter([
   {
@@ -62,12 +63,13 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "login",
+        loader: adminLoginAuthChekerLoader,
         Component: AdminAuthLayout,
         children: [{ index: true, Component: AdminLoginPage }],
       },
       {
         path: "dashboard",
-        loader: isAdminAuthenticatedLoader,
+        loader: isAdminAuthenticatedLoader, // inverse of is adminLoginAuthChekerLoader
         hydrateFallbackElement: <HumaeLoader />,
         Component: AdminDashboardLayout,
         children: [

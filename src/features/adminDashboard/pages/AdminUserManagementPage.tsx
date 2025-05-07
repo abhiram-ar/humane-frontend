@@ -9,11 +9,12 @@ import Pagination from "../components/Pagination";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/Table";
 import TableRowShimmer from "../components/TableRowShimmer";
 import TableNoItemRow from "../components/TableNoItemRow";
+import Refresh from "../components/Refresh";
 
 const AdminUserManagementPage = () => {
-  const [filter, setFilter] = useState<IQueryFilter>({ search: "", page: 1, limit: 13 });
+  const [filter, setFilter] = useState<IQueryFilter>({ search: "", page: 1, limit: 10 });
 
-  const { data, isLoading, isError } = useUserListQuery(filter);
+  const { data, isLoading, isError, isRefetching, refetch } = useUserListQuery(filter);
   const { mutate: mutateUser } = useUserMutation(filter);
 
   const handleToogleBlock = (user: User) => {
@@ -24,8 +25,9 @@ const AdminUserManagementPage = () => {
     <div>
       <h2 className="text-almost-white mb-10 font-sans text-2xl font-semibold">User management</h2>
       <div>
-        <div className="mb-2">
+        <div className="mb-2 flex justify-between">
           <TableSearch search={filter.search} setFilter={setFilter} />
+          <Refresh isRefreshing={isRefetching} refetch={refetch} />
         </div>
         <Table>
           <TableHeader>

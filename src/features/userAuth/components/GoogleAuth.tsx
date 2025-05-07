@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 import { useAppDispatch } from "../hooks/store.hooks";
 import { useNavigate } from "react-router";
 import { setCredentials } from "../redux/userAuthSlice";
+import { AxiosError } from "axios";
+import { ServerErrors } from "@/types/serverErrors";
 
 const SignInWithGoogle: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -24,6 +26,12 @@ const SignInWithGoogle: React.FC = () => {
 
       throw new Error("no accessToken in server response");
     } catch (error) {
+      if (error instanceof AxiosError && error.response?.data) {
+        console.log(error);
+        const serverErrors = error.response.data.errors as ServerErrors;
+        serverErrors.forEach((err) => toast.error(err.message, { position: "top-right" }));
+        return;
+      }
       toast.error("Something went wrong");
       console.log("error while verifying OAuth with Backend", error);
     }

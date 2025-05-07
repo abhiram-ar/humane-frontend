@@ -6,58 +6,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/Table";
-import { api } from "@/lib/axios";
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { User, UserListResponse, UserToggleBlockResponse } from "../types/userManagement.types";
+import { User } from "../types/userManagement.types";
 import UserManagementRow from "../components/UserManagementRow";
 import TableSearch from "../components/TableSearch";
-
-const fetchUsers = async (search: string, page: number, limit: number) => {
-  const response = await api.get<UserListResponse>("/api/v1/admin/manage/user/list", {
-    params: { search, page, limit },
-  });
-  return response.data;
-};
-
-const updateUserBlockStatus = async ({
-  newBlockStatus,
-  userId,
-}: {
-  newBlockStatus: boolean;
-  userId: string;
-}) => {
-  const res = await api.patch<UserToggleBlockResponse>("/api/v1/admin/manage/user/block-status", {
-    newBlockStatus,
-    userId,
-  });
-  return res.data;
-};
+import { IQueryFilter } from "../types/QueryFilter";
+import { useUserListQuery } from "../hooks/useUserListQuery";
+import { useUserMutation } from "../hooks/userUserMutation";
 
 const AdminUserManagementPage = () => {
-  const [filter, setFilter] = useState({ search: "", page: 1, limit: 10 });
+  const [filter, setFilter] = useState<IQueryFilter>({ search: "", page: 1, limit: 13 });
 
-  const queryClient = useQueryClient();
+  const { data, isLoading } = useUserListQuery(filter);
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["user", { search: filter.search, page: filter.page }],
-    queryFn: () => fetchUsers(filter.search, filter.page, filter.limit),
-    placeholderData: keepPreviousData,
-  });
-
-  const mutateUser = useMutation({
-    mutationFn: updateUserBlockStatus,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user", { search: filter.search }] });
-    },
-  });
+  const { mutate: mutateUser } = useUserMutation(filter);
 
   const handleToogleBlock = (user: User) => {
-    mutateUser.mutate({ userId: user.id, newBlockStatus: !user.isBlocked });
+    mutateUser({ userId: user.id, newBlockStatus: !user.isBlocked });
   };
 
-  console.log("data", data);
-  console.log("error", error);
   return (
     <div>
       <h2 className="text-almost-white mb-10 font-sans text-2xl font-semibold">User management</h2>
@@ -79,7 +46,7 @@ const AdminUserManagementPage = () => {
           </TableHeader>
           <TableBody>
             {!data
-              ? Array.from({ length: 10 }).map((_, i) => (
+              ? Array.from({ length: 13 }).map((_, i) => (
                   <TableRow key={i} className="animate-pulse">
                     <TableCell colSpan={7}>
                       <p className="bg-green-subtle/50 w-full animate-pulse rounded text-transparent transition-all duration-300 ease-out">
@@ -90,7 +57,11 @@ const AdminUserManagementPage = () => {
                   </TableRow>
                 ))
               : data.data.users.map((user) => (
-                  <UserManagementRow user={user} handleToogleBlock={handleToogleBlock} />
+                  <UserManagementRow
+                    key={user.id}
+                    user={user}
+                    handleToogleBlock={handleToogleBlock}
+                  />
                 ))}
           </TableBody>
         </Table>

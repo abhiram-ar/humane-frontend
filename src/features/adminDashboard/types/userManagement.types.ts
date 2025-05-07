@@ -1,8 +1,12 @@
 export type User = {
   id: string;
   firstName: string;
+  lastName?: string;
   email: string;
   isBlocked: boolean;
+  isHotUser: boolean;
+  createdAt: string;
+  humaneScore: number;
 };
 
 export interface IPagination {

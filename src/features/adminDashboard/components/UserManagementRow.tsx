@@ -8,10 +8,12 @@ type props = {
 const UserManagementRow: React.FC<props> = ({ user }) => {
   return (
     <TableRow>
-      <TableCell>{user.id}</TableCell>
-      <TableCell>{user.firstName}</TableCell>
+      <TableCell>{user.firstName + " " + user.lastName}</TableCell>
       <TableCell>{user.email}</TableCell>
-      <TableCell>{String(user.isBlocked)}</TableCell>
+      <TableCell>{new Date(user.createdAt).toUTCString()}</TableCell>
+      <TableCell>{user.isHotUser ? "🔥" : "-"}</TableCell>
+      <TableCell>{user.humaneScore}</TableCell>
+      <TableCell>{user.isBlocked ? "🔴" : "🟢"}</TableCell>
       <TableCell>...</TableCell>
     </TableRow>
   );

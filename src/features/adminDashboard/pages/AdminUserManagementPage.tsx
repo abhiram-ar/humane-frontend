@@ -1,11 +1,19 @@
-import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/Table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/Table";
 import { api } from "@/lib/axios";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { UserListResponse } from "../types/userManagement.types";
 import UserManagementRow from "../components/UserManagementRow";
+import TableSearch from "../components/TableSearch";
 
-const fetchUsers = async (search: string, page: number, limit: number = 10) => {
+const fetchUsers = async (search: string, page: number, limit: number) => {
   const response = await api.get<UserListResponse>("/api/v1/admin/manage/user/list", {
     params: { search, page, limit },
   });
@@ -13,11 +21,11 @@ const fetchUsers = async (search: string, page: number, limit: number = 10) => {
 };
 
 const AdminUserManagementPage = () => {
-  const [filter, setFilter] = useState({ search: "", page: 1 });
+  const [filter, setFilter] = useState({ search: "", page: 1, limit: 10 });
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["user", filter.search, filter.page],
-    queryFn: () => fetchUsers(filter.search, filter.page),
+    queryFn: () => fetchUsers(filter.search, filter.page, filter.limit),
     placeholderData: keepPreviousData,
   });
 
@@ -27,18 +35,34 @@ const AdminUserManagementPage = () => {
     <div>
       <h2 className="text-almost-white mb-10 font-sans text-2xl font-semibold">User management</h2>
       <div>
+        <div className="mb-2">
+          <TableSearch search={filter.search} setFilter={setFilter} />
+        </div>
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead>FirstName</TableHead>
-              <TableHead>LastName</TableHead>
-              <TableHead>Email</TableHead>
+              <TableHead className="w-64">Name</TableHead>
+              <TableHead className="w-80">Email</TableHead>
+              <TableHead>CreatedAt</TableHead>
+              <TableHead>isHotUser</TableHead>
+              <TableHead>Humane Score</TableHead>
               <TableHead>isBlocked</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data && data.data.users.map((user) => <UserManagementRow key={user.id} user={user} />)}
+            {!data
+              ? Array.from({ length: 10 }).map((_, i) => (
+                  <TableRow key={i} className="animate-pulse">
+                    <TableCell colSpan={7}>
+                      <p className="bg-green-subtle/50 w-full animate-pulse rounded text-transparent transition-all duration-300 ease-out">
+                        {" "}
+                        -{" "}
+                      </p>
+                    </TableCell>
+                  </TableRow>
+                ))
+              : data.data.users.map((user) => <UserManagementRow user={user} />)}
           </TableBody>
         </Table>
 

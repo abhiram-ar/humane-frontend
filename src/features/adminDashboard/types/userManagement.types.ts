@@ -27,3 +27,11 @@ export interface UserListResponse {
     };
   };
 }
+
+export interface UserToggleBlockResponse {
+  success: boolean;
+  message: string;
+  data: {
+    users: User;
+  };
+}

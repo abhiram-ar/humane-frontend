@@ -7,9 +7,9 @@ import {
   TableRow,
 } from "@/components/ui/Table";
 import { api } from "@/lib/axios";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { UserListResponse } from "../types/userManagement.types";
+import { User, UserListResponse, UserToggleBlockResponse } from "../types/userManagement.types";
 import UserManagementRow from "../components/UserManagementRow";
 import TableSearch from "../components/TableSearch";
 
@@ -20,14 +20,41 @@ const fetchUsers = async (search: string, page: number, limit: number) => {
   return response.data;
 };
 
+const updateUserBlockStatus = async ({
+  newBlockStatus,
+  userId,
+}: {
+  newBlockStatus: boolean;
+  userId: string;
+}) => {
+  const res = await api.patch<UserToggleBlockResponse>("/api/v1/admin/manage/user/block-status", {
+    newBlockStatus,
+    userId,
+  });
+  return res.data;
+};
+
 const AdminUserManagementPage = () => {
   const [filter, setFilter] = useState({ search: "", page: 1, limit: 10 });
 
+  const queryClient = useQueryClient();
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ["user", filter.search, filter.page],
+    queryKey: ["user", { search: filter.search, page: filter.page }],
     queryFn: () => fetchUsers(filter.search, filter.page, filter.limit),
     placeholderData: keepPreviousData,
   });
+
+  const mutateUser = useMutation({
+    mutationFn: updateUserBlockStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", { search: filter.search }] });
+    },
+  });
+
+  const handleToogleBlock = (user: User) => {
+    mutateUser.mutate({ userId: user.id, newBlockStatus: !user.isBlocked });
+  };
 
   console.log("data", data);
   console.log("error", error);
@@ -62,7 +89,9 @@ const AdminUserManagementPage = () => {
                     </TableCell>
                   </TableRow>
                 ))
-              : data.data.users.map((user) => <UserManagementRow user={user} />)}
+              : data.data.users.map((user) => (
+                  <UserManagementRow user={user} handleToogleBlock={handleToogleBlock} />
+                ))}
           </TableBody>
         </Table>
 

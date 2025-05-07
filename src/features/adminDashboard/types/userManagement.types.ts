@@ -1,8 +1,12 @@
 export type User = {
   id: string;
   firstName: string;
+  lastName?: string;
   email: string;
   isBlocked: boolean;
+  isHotUser: boolean;
+  createdAt: string;
+  humaneScore: number;
 };
 
 export interface IPagination {
@@ -21,5 +25,13 @@ export interface UserListResponse {
     filter: {
       search?: string;
     };
+  };
+}
+
+export interface UserToggleBlockResponse {
+  success: boolean;
+  message: string;
+  data: {
+    user: User;
   };
 }

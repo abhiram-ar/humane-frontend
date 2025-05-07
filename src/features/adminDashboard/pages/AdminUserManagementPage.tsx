@@ -13,6 +13,7 @@ import TableSearch from "../components/TableSearch";
 import { IQueryFilter } from "../types/QueryFilter";
 import { useUserListQuery } from "../hooks/useUserListQuery";
 import { useUserMutation } from "../hooks/userUserMutation";
+import Pagination from "../components/Pagination";
 
 const AdminUserManagementPage = () => {
   const [filter, setFilter] = useState<IQueryFilter>({ search: "", page: 1, limit: 13 });
@@ -66,27 +67,27 @@ const AdminUserManagementPage = () => {
           </TableBody>
         </Table>
 
-        {data?.data && (
-          <div className="mt-5 flex items-center justify-center gap-5 font-semibold">
-            <button
-              className="rounded-2xl border border-black bg-zinc-400 px-5 py-1 text-black hover:bg-[#abf600] disabled:bg-zinc-900 disabled:text-zinc-700"
-              onClick={() => setFilter({ ...filter, page: filter.page - 1 })}
-              disabled={isLoading || filter.page <= 1}
-            >
-              prev
-            </button>
-            <p className="text-white">
-              {filter.page} of {data.data.pagination.totalPages}
-            </p>
-            <button
-              className="rounded-2xl border border-black bg-zinc-400 px-5 py-1 text-black hover:bg-[#abf600] disabled:bg-zinc-900 disabled:text-zinc-700"
-              onClick={() => setFilter({ ...filter, page: filter.page + 1 })}
-              disabled={isLoading || filter.page >= data.data.pagination.totalPages}
-            >
-              next
-            </button>
-          </div>
-        )}
+        {data?.data && 
+          <Pagination filter={filter} setFilter={setFilter} totalPages={data.data.pagination?.totalPages} /> }
+          {/* // <div className="mt-5 flex items-center justify-center gap-5 font-semibold">
+          //   <button
+          //     className="rounded-2xl border border-black bg-zinc-400 px-5 py-1 text-black hover:bg-[#abf600] disabled:bg-zinc-900 disabled:text-zinc-700"
+          //     onClick={() => setFilter({ ...filter, page: filter.page - 1 })}
+          //     disabled={isLoading || filter.page <= 1}
+          //   >
+          //     prev
+          //   </button>
+          //   <p className="text-white">
+          //     {filter.page} of {data.data.pagination.totalPages}
+          //   </p>
+          //   <button
+          //     className="rounded-2xl border border-black bg-zinc-400 px-5 py-1 text-black hover:bg-[#abf600] disabled:bg-zinc-900 disabled:text-zinc-700"
+          //     onClick={() => setFilter({ ...filter, page: filter.page + 1 })}
+          //     disabled={isLoading || filter.page >= data.data.pagination.totalPages}
+          //   >
+          //     next
+          //   </button>
+          // </div> */}
       </div>
     </div>
   );

@@ -26,7 +26,7 @@ const EditProfileForm = () => {
         <div className="w-full">
           <label
             htmlFor="firstName"
-            className="text-almost-white flex items-baseline gap-2 font-semibold"
+            className="text-almost-white ms-1.5 flex items-baseline gap-2 font-semibold"
           >
             first name
             {errors && errors.firstName && (
@@ -38,7 +38,7 @@ const EditProfileForm = () => {
             {...register("firstName")}
             placeholder="eg: Jhon"
             id="firstName"
-            className="bg-green-subtle w-full rounded-sm border border-black px-2 py-1.5"
+            className="w-full rounded-md border border-zinc-500/50 bg-zinc-600 px-2 py-1.5 text-white outline-0 active:ring-0"
           />
         </div>
 
@@ -46,7 +46,7 @@ const EditProfileForm = () => {
         <div className="w-full">
           <label
             htmlFor="lastName"
-            className="text-almost-white flex items-baseline gap-2 font-semibold"
+            className="text-almost-white ms-1.5 flex items-baseline gap-2 font-semibold"
           >
             last name
             {errors && errors.lastName && (
@@ -59,13 +59,16 @@ const EditProfileForm = () => {
             {...register("lastName")}
             placeholder="eg: Doe"
             id="lastName"
-            className="bg-green-subtle w-full rounded-sm border border-black px-2 py-1.5"
+            className="w-full rounded-md border border-zinc-500/50 bg-zinc-600 px-2 py-1.5 text-white outline-0 active:ring-0"
           />
         </div>
       </div>
       {/* bio */}
       <div className="mt-3 w-full">
-        <label htmlFor="bio" className="text-almost-white flex items-baseline gap-2 font-semibold">
+        <label
+          htmlFor="bio"
+          className="text-almost-white ms-1.5 flex items-baseline gap-2 font-semibold"
+        >
           bio
           {errors && errors.bio && (
             <p className="font-normal text-red-500">({errors.bio.message})</p>
@@ -77,13 +80,13 @@ const EditProfileForm = () => {
           {...register("bio")}
           placeholder="eg: Doe"
           id="bio"
-          className="bg-green-subtle w-full resize-none rounded-sm border border-black px-2 py-1.5"
+          className="w-full resize-none rounded-md border border-zinc-500/50 bg-zinc-600 px-2 py-1.5 text-white outline-0 active:ring-0"
         />
       </div>
 
       <div className="flex gap-5">
         <DialogClose
-          className={`rounded-base mt-5 w-full rounded-md border border-black px-3 py-2 font-medium ${
+          className={`rounded-base mt-5 w-full rounded-3xl border border-black px-3 py-2 font-medium ${
             !isSubmitting
               ? "active:bg-grey-light bg-white/90 hover:bg-white"
               : "bg-zinc-500 hover:bg-zinc-500 hover:text-black"
@@ -95,7 +98,7 @@ const EditProfileForm = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className={`rounded-base mt-5 w-full rounded-md border border-black px-3 py-2 font-medium ${
+          className={`rounded-base mt-5 w-full rounded-3xl border border-black px-3 py-2 font-medium ${
             !isSubmitting
               ? "bg-pop-green/90 hover:bg-pop-green active:bg-green-dark"
               : "bg-zinc-500 hover:bg-zinc-500 hover:text-black"

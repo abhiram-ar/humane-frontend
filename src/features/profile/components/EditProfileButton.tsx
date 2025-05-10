@@ -16,7 +16,7 @@ const EditProfileButton = () => {
             Edit profile
           </button>
         </DialogTrigger>
-        <DialogContent className="border-grey-dark-bg bg-[#5b5b5b]">
+        <DialogContent className="border-grey-dark-bg bg-[#272727]">
           <DialogHeader>
             <DialogTitle className="text-almost-white">Edit profile</DialogTitle>
           </DialogHeader>

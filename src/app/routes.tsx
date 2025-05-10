@@ -17,6 +17,7 @@ import { isAdminAuthenticatedLoader } from "@/features/adminDashboard/services/i
 import AdminUserManagementPage from "@/features/adminDashboard/pages/AdminUserManagementPage";
 import { adminLoginAuthChekerLoader } from "@/features/adminDashboard/services/loginAuthChecker.loader";
 import PageNotFoundPage from "@/layout/PageNotFoundPage";
+import HomeLayout from "@/features/home/layout/HomeLayout";
 
 export const router = createBrowserRouter([
   {
@@ -24,10 +25,32 @@ export const router = createBrowserRouter([
     Component: FadeTransitionLayout,
     children: [
       {
-        index: true,
         loader: onStartLoader,
         hydrateFallbackElement: <HumaeLoader />,
-        Component: HomePage,
+        Component: HomeLayout,
+        children: [
+          { index: true, Component: PageNotFoundPage }, // feed page
+          {
+            path: "search",
+            Component: PageNotFoundPage,
+          },
+          {
+            path: "message",
+            Component: PageNotFoundPage,
+          },
+          {
+            path: "notification",
+            Component: PageNotFoundPage,
+          },
+          {
+            path: "profile",
+            Component: PageNotFoundPage,
+          },
+          {
+            path: "settings",
+            Component: PageNotFoundPage,
+          },
+        ],
       },
       {
         path: "auth",
@@ -87,7 +110,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "test",
-    Component: AdminDashboardLayout,
+    Component: HomeLayout,
     children: [{ index: true, Component: AdminHomePage }],
   },
 ]);

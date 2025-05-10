@@ -17,6 +17,7 @@ import { isAdminAuthenticatedLoader } from "@/features/admin/services/isAdminAut
 import AdminDashboardLayout from "@/features/admin/layout/AdminDashboardLayout";
 import AdminHomePage from "@/features/admin/pages/AdminHomePage";
 import AdminUserManagementPage from "@/features/admin/pages/AdminUserManagementPage";
+import CurrentUserProfilePage from "@/features/profile/pages/CurrentUserProfilePage";
 
 export const router = createBrowserRouter([
   {
@@ -43,7 +44,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "profile",
-            Component: PageNotFoundPage,
+            Component: CurrentUserProfilePage,
           },
           {
             path: "settings",

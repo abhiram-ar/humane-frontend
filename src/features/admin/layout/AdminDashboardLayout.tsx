@@ -1,4 +1,4 @@
-import Sidebar from "@/features/adminDashboard/components/Sidebar";
+import Sidebar from "@/features/admin/components/Sidebar";
 import { Outlet } from "react-router";
 
 const AdminDashboardLayout = () => {

@@ -10,13 +10,13 @@ import HumaeLoader from "@/components/HumaeLoader";
 import FadeTransitionLayout from "@/layout/FadeTransitionLayout";
 import AdminAuthLayout from "@/features/userAuth/layout/AdminAuthLayout";
 import AdminLoginPage from "@/features/userAuth/pages/AdminLoginPage";
-import AdminDashboardLayout from "@/features/adminDashboard/layout/AdminDashboardLayout";
-import AdminHomePage from "@/features/adminDashboard/pages/AdminHomePage";
-import { isAdminAuthenticatedLoader } from "@/features/adminDashboard/services/isAdminAuthenticatedLoader";
-import AdminUserManagementPage from "@/features/adminDashboard/pages/AdminUserManagementPage";
-import { adminLoginAuthChekerLoader } from "@/features/adminDashboard/services/loginAuthChecker.loader";
 import PageNotFoundPage from "@/layout/PageNotFoundPage";
 import HomeLayout from "@/features/home/layout/HomeLayout";
+import { adminLoginAuthChekerLoader } from "@/features/admin/services/loginAuthChecker.loader";
+import { isAdminAuthenticatedLoader } from "@/features/admin/services/isAdminAuthenticatedLoader";
+import AdminDashboardLayout from "@/features/admin/layout/AdminDashboardLayout";
+import AdminHomePage from "@/features/admin/pages/AdminHomePage";
+import AdminUserManagementPage from "@/features/admin/pages/AdminUserManagementPage";
 
 export const router = createBrowserRouter([
   {

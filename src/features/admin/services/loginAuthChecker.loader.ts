@@ -3,7 +3,7 @@ import axios from "axios";
 import { store } from "@/app/store/store";
 import { setAppLoadingState } from "@/app/store/appSlice";
 import { jwtDecode } from "jwt-decode";
-import { setAdminCredentials } from "@/features/userAuth/redux/adminAuthSlice";
+import { setAdminCredentials } from "@/features/admin/redux/adminAuthSlice";
 import { JWTAuthPayload } from "@/types/JWTAuthPayload";
 
 export const adminLoginAuthChekerLoader = async () => {

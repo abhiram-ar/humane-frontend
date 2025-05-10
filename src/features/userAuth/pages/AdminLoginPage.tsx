@@ -3,7 +3,7 @@ import Login from "../components/Login";
 import { api } from "@/lib/axios";
 import { AxiosError } from "axios";
 import { useAppDispatch } from "../hooks/store.hooks";
-import { setAdminCredentials } from "../redux/adminAuthSlice";
+import { setAdminCredentials } from "../../admin/redux/adminAuthSlice";
 
 const AdminLoginPage = () => {
   const dispath = useAppDispatch();

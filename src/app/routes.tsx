@@ -4,7 +4,6 @@ import LoginPage from "../features/userAuth/pages/loginPage";
 import SignupPage from "../features/userAuth/pages/SignupPage";
 import RecoverPasswordPage from "@/features/userAuth/pages/RecoverPasswordPage";
 import ForgotPasswordPage from "@/features/userAuth/pages/ForgotPasswordPage";
-import HomePage from "@/features/home/pages/HomePage";
 import { onStartLoader } from "@/lib/onStartLoader";
 import { isAuthenticatedLoader } from "@/features/userAuth/services/isUserAuthenticatedLoader";
 import HumaeLoader from "@/components/HumaeLoader";

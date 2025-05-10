@@ -16,6 +16,7 @@ import AdminHomePage from "@/features/adminDashboard/pages/AdminHomePage";
 import { isAdminAuthenticatedLoader } from "@/features/adminDashboard/services/isAdminAuthenticatedLoader";
 import AdminUserManagementPage from "@/features/adminDashboard/pages/AdminUserManagementPage";
 import { adminLoginAuthChekerLoader } from "@/features/adminDashboard/services/loginAuthChecker.loader";
+import PageNotFoundPage from "@/layout/PageNotFoundPage";
 
 export const router = createBrowserRouter([
   {
@@ -61,6 +62,7 @@ export const router = createBrowserRouter([
   {
     path: "/admin",
     children: [
+      { index: true, element: <PageNotFoundPage /> },
       {
         path: "login",
         loader: adminLoginAuthChekerLoader,

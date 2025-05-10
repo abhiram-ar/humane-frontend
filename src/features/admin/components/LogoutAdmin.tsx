@@ -1,5 +1,5 @@
 import { useAppDispatch } from "@/features/userAuth/hooks/store.hooks";
-import { logoutAdmin } from "@/features/userAuth/redux/adminAuthSlice";
+import { logoutAdmin } from "@/features/admin/redux/adminAuthSlice";
 import { api } from "@/lib/axios";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router";

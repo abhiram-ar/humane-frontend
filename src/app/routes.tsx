@@ -4,19 +4,20 @@ import LoginPage from "../features/userAuth/pages/loginPage";
 import SignupPage from "../features/userAuth/pages/SignupPage";
 import RecoverPasswordPage from "@/features/userAuth/pages/RecoverPasswordPage";
 import ForgotPasswordPage from "@/features/userAuth/pages/ForgotPasswordPage";
-import HomePage from "@/features/home/pages/HomePage";
 import { onStartLoader } from "@/lib/onStartLoader";
 import { isAuthenticatedLoader } from "@/features/userAuth/services/isUserAuthenticatedLoader";
 import HumaeLoader from "@/components/HumaeLoader";
 import FadeTransitionLayout from "@/layout/FadeTransitionLayout";
 import AdminAuthLayout from "@/features/userAuth/layout/AdminAuthLayout";
 import AdminLoginPage from "@/features/userAuth/pages/AdminLoginPage";
-import AdminDashboardLayout from "@/features/adminDashboard/layout/AdminDashboardLayout";
-import AdminHomePage from "@/features/adminDashboard/pages/AdminHomePage";
-import { isAdminAuthenticatedLoader } from "@/features/adminDashboard/services/isAdminAuthenticatedLoader";
-import AdminUserManagementPage from "@/features/adminDashboard/pages/AdminUserManagementPage";
-import { adminLoginAuthChekerLoader } from "@/features/adminDashboard/services/loginAuthChecker.loader";
 import PageNotFoundPage from "@/layout/PageNotFoundPage";
+import HomeLayout from "@/features/home/layout/HomeLayout";
+import { adminLoginAuthChekerLoader } from "@/features/admin/services/loginAuthChecker.loader";
+import { isAdminAuthenticatedLoader } from "@/features/admin/services/isAdminAuthenticatedLoader";
+import AdminDashboardLayout from "@/features/admin/layout/AdminDashboardLayout";
+import AdminHomePage from "@/features/admin/pages/AdminHomePage";
+import AdminUserManagementPage from "@/features/admin/pages/AdminUserManagementPage";
+import CurrentUserProfilePage from "@/features/profile/pages/CurrentUserProfilePage";
 
 export const router = createBrowserRouter([
   {
@@ -24,10 +25,32 @@ export const router = createBrowserRouter([
     Component: FadeTransitionLayout,
     children: [
       {
-        index: true,
         loader: onStartLoader,
         hydrateFallbackElement: <HumaeLoader />,
-        Component: HomePage,
+        Component: HomeLayout,
+        children: [
+          { index: true, Component: PageNotFoundPage }, // feed page
+          {
+            path: "search",
+            Component: PageNotFoundPage,
+          },
+          {
+            path: "message",
+            Component: PageNotFoundPage,
+          },
+          {
+            path: "notification",
+            Component: PageNotFoundPage,
+          },
+          {
+            path: "profile",
+            Component: CurrentUserProfilePage,
+          },
+          {
+            path: "settings",
+            Component: PageNotFoundPage,
+          },
+        ],
       },
       {
         path: "auth",
@@ -87,7 +110,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "test",
-    Component: AdminDashboardLayout,
+    Component: HomeLayout,
     children: [{ index: true, Component: AdminHomePage }],
   },
 ]);

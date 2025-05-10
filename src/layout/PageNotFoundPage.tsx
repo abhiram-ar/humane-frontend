@@ -5,7 +5,7 @@ const ErrorPage = () => {
   return (
     <>
       <div className="bg-grey-dark-bg flex h-screen w-full items-center justify-center">
-        <div className="text-center">
+        <div className="text-center -mt-30">
           <img src={humanelogo} alt="" />
           <p className="text-offwhite mb-5 text-xl">Page not found 😵</p>
           <Link

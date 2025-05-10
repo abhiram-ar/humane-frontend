@@ -3,10 +3,10 @@ import axios from "axios";
 import { store } from "@/app/store/store";
 import { setAppLoadingState } from "@/app/store/appSlice";
 import { jwtDecode } from "jwt-decode";
-import { setAdminCredentials } from "@/features/userAuth/redux/adminAuthSlice";
+import { setAdminCredentials } from "@/features/admin/redux/adminAuthSlice";
 import { JWTAuthPayload } from "@/types/JWTAuthPayload";
 
-export const adminLoginAuthChekerLoader = async () => {
+export const isAdminAuthenticatedLoader = async () => {
   const token = store.getState().adminAuth.token;
   if (!token) {
     try {
@@ -16,25 +16,26 @@ export const adminLoginAuthChekerLoader = async () => {
 
       if (res.data.data?.token) {
         const decoded: JWTAuthPayload = jwtDecode(res.data.data.token);
+        console.log(decoded)
         if (decoded.type === "admin") {
           store.dispatch(setAdminCredentials({ token: res.data.data.token }));
-          return redirect("/admin/dashboard");
+          return null;
         } else {
           throw new Error("Admin trying to login with user credentials");
         }
       }
 
       console.log("On load refresh token succes but no token in response", res);
-      return null; // something wrong with the refresh api
+      return redirect("/admin/login"); // something wrong with the refresh api
     } catch (error) {
-      console.log("No admin session while cold start api fetch", error);
+      console.log("error while cold start api fetch", error);
 
-      return null; // possibly no refresh token
+      return redirect("/admin/login"); // possibly no refresh token
     } finally {
       store.dispatch(setAppLoadingState(false));
     }
   }
 
   store.dispatch(setAppLoadingState(false));
-  return redirect("/admin/dashboard"); // token alreay exists
+  return null; // token alreay exists
 };

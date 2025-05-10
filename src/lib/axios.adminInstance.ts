@@ -1,5 +1,5 @@
 import { store } from "@/app/store/store";
-import { setAdminCredentials } from "@/features/userAuth/redux/adminAuthSlice";
+import { setAdminCredentials } from "@/features/admin/redux/adminAuthSlice";
 import { JWTAuthPayload } from "@/types/JWTAuthPayload";
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
 import { jwtDecode } from "jwt-decode";

@@ -3,12 +3,12 @@ import testProfile from "@/assets/testProfile.png";
 type Props = {
   url: string;
 };
-const ProfilePic: React.FC<Props> = ({ url = testProfile }) => {
+const ProfilePic: React.FC<Props> = ({ url }) => {
   return (
-    <div className="h-52 w-52 border border-blue-600">
+    <div className="border-grey-light h-52 w-52 overflow-hidden rounded-full border-3">
       <img
         src={`https://d4pllizvq43wd.cloudfront.net/${url}`}
-        className="border-grey-light h-full w-full rounded-full border-3 object-cover"
+        className="h-full w-full object-cover"
         alt=""
       />
     </div>

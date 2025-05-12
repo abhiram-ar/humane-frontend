@@ -14,15 +14,25 @@ const ProfilePicConfig = () => {
 
   return (
     <div className="">
-      <ProfilePic url={data?.avatarId} />
-      <div className="absolute inset-0 flex h-52 w-52 items-center justify-center rounded-full bg-zinc-900/50 opacity-0 transition-opacity duration-300 ease-out hover:opacity-100">
-        {/* view image remove and uplod config */}
-        <div title="remove photo" className="flex items-center justify-center gap-3 text-white">
-          <RemoveProfilePicture />
-          <ViewPicture src={testImg} />
-          <UploadProfilePic />
+      {data?.avatarId ? (
+        <>
+          <ProfilePic url={data?.avatarId} />
+          <div className="absolute inset-0 flex h-52 w-52 items-center justify-center rounded-full bg-zinc-900/50 opacity-0 transition-opacity duration-300 ease-out hover:opacity-100">
+            {/* view image remove and uplod config */}
+            <div title="remove photo" className="flex items-center justify-center gap-3 text-white">
+              <RemoveProfilePicture />
+              <ViewPicture src={testImg} />
+              <UploadProfilePic />
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="border-grey-light flex h-52 w-52 items-center justify-center rounded-full border-3 bg-zinc-600">
+          <div className="text-pop-green scale-125">
+            <UploadProfilePic />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

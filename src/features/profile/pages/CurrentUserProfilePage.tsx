@@ -21,7 +21,7 @@ const CurrentUserProfilePage = () => {
 
   return (
     <div className="relative h-screen border border-red-300 xl:me-90">
-      <CoverPhoto url={data?.coverPhoto} />
+      <CoverPhoto />
 
       <div className="px-10">
         <div className="relative flex h-fit w-full justify-between border">

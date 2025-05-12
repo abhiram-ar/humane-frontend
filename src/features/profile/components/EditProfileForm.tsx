@@ -9,7 +9,7 @@ import { z } from "zod";
 const editProfileSchema = z.object({
   firstName: z.string().trim().nonempty("required"),
   lastName: z.string().trim().optional(),
-  bio: z.string().trim().max(80, "max 80").optional(),
+  bio: z.string().trim().max(256, "max 256").optional(),
 });
 export type EditFormFields = z.infer<typeof editProfileSchema>;
 
@@ -109,7 +109,7 @@ const EditProfileForm: React.FC<Props> = ({ nameAndBio, handleEditProfile }) => 
         </label>
 
         <textarea
-          rows={3}
+          rows={10}
           {...register("bio")}
           placeholder="eg: Doe"
           id="bio"

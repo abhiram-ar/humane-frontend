@@ -44,7 +44,7 @@ const CurrentUserProfilePage = () => {
               </h3>
               <h5 className="text-pop-green">Humane score: {data?.humaneScore}</h5>
 
-              <div className="flex gap-5">
+              <div className="flex gap-5 mt-3">
                 {/* Todo: date */}
                 {/* <h5 className="flex items-center gap-2 text-zinc-400">
                   <Cake size={20} />
@@ -66,9 +66,9 @@ const CurrentUserProfilePage = () => {
               <span className="text-pop-green">{circleCount}</span> humans in circle
             </p>
           </div>
-          <div>
+          <div className="mt-3">
             {data.bio ? (
-              <p className="mt-5 text-lg text-white">{data?.bio}</p>
+              <pre className=" text-lg font-sans text-white">{data?.bio}</pre>
             ) : (
               <p className="text-green-subtle/50 quote font-normal italic">
                 (Let the world know who you are — add a short bio to your profile.)

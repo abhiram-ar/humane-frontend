@@ -1,9 +1,9 @@
-import { Calendar } from "lucide-react";
+import { Cake, Calendar } from "lucide-react";
 import CoverPhoto from "../components/CoverPhoto";
 import EditProfileButton from "../components/EditProfileButton";
-import ProfilePic from "../components/ProfilePic";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserProfile } from "../services/fetchUserProfile.service";
+import ProfilePicConfig from "../components/ProfilePicConfig";
 
 const CurrentUserProfilePage = () => {
   const circleCount = 102;
@@ -26,7 +26,7 @@ const CurrentUserProfilePage = () => {
       <div className="px-10">
         <div className="relative flex h-fit w-full justify-between border">
           <div className="relative bottom-25 -mb-25 h-fit">
-            <ProfilePic url={data?.avatarId} />
+            <ProfilePicConfig />
           </div>
 
           <div className="p-5">
@@ -44,12 +44,12 @@ const CurrentUserProfilePage = () => {
               </h3>
               <h5 className="text-pop-green">Humane score: {data?.humaneScore}</h5>
 
-              <div className="flex gap-5 mt-3">
+              <div className="mt-3 flex gap-5">
                 {/* Todo: date */}
-                {/* <h5 className="flex items-center gap-2 text-zinc-400">
+                <h5 className="flex items-center gap-2 text-zinc-400">
                   <Cake size={20} />
                   Born 23 May 1999
-                </h5> */}
+                </h5>
                 <h5 className="flex items-center gap-2 text-zinc-400">
                   <Calendar size={20} />
                   Joined{" "}
@@ -68,7 +68,7 @@ const CurrentUserProfilePage = () => {
           </div>
           <div className="mt-3">
             {data.bio ? (
-              <pre className=" text-lg font-sans text-white">{data?.bio}</pre>
+              <pre className="font-sans text-lg text-white">{data?.bio}</pre>
             ) : (
               <p className="text-green-subtle/50 quote font-normal italic">
                 (Let the world know who you are — add a short bio to your profile.)

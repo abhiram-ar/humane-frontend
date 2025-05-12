@@ -1,12 +1,14 @@
+import EditProfileForm, { EditFormFields } from "./EditProfileForm";
+import React, { useRef } from "react";
+import useMutateUserProfile from "../hooks/useMutateUserProfile";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import EditProfileForm from "./EditProfileForm";
-import React from "react";
 
 type Props = {
   nameAndBio: {
@@ -17,6 +19,25 @@ type Props = {
 };
 
 const EditProfileButton: React.FC<Props> = (props) => {
+  const { mutate: mutateUserProfile } = useMutateUserProfile();
+
+  const closeDialogRef = useRef(null);
+
+  const handleEditProfile = async (data: EditFormFields): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      mutateUserProfile(data, {
+        onSuccess: () => {
+          // this onSuccess will run after the onSucess callback defined in the global mutation
+          if (closeDialogRef.current) {
+            (closeDialogRef.current as HTMLButtonElement).click();
+          }
+          resolve();
+        },
+        onError: (err) => reject(err), // throw back the error for the calling form handler to show field errors
+      });
+    });
+  };
+
   return (
     <>
       <Dialog>
@@ -29,7 +50,8 @@ const EditProfileButton: React.FC<Props> = (props) => {
           <DialogHeader>
             <DialogTitle className="text-almost-white">Edit profile</DialogTitle>
           </DialogHeader>
-          <EditProfileForm {...props} />
+          <EditProfileForm {...props} handleEditProfile={handleEditProfile} />
+          <DialogClose ref={closeDialogRef} />
         </DialogContent>
       </Dialog>
     </>

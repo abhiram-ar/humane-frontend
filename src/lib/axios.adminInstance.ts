@@ -69,6 +69,7 @@ adminApi.interceptors.response.use(
       try {
         const { data } = await axios.get<{ data: { token: string } }>(
           "http://localhost/api/v1/global/auth/refresh",
+          { withCredentials: true },
         );
 
         const newToken = data.data.token;

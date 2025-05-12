@@ -1,7 +1,9 @@
 import { DialogClose } from "@/components/ui/dialog";
+import { ServerErrors } from "@/types/serverErrors";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
 const editProfileSchema = z.object({
@@ -9,7 +11,7 @@ const editProfileSchema = z.object({
   lastName: z.string().optional(),
   bio: z.string().max(80, "max 80").optional(),
 });
-type EditFormFields = z.infer<typeof editProfileSchema>;
+export type EditFormFields = z.infer<typeof editProfileSchema>;
 
 type Props = {
   nameAndBio: {
@@ -17,13 +19,15 @@ type Props = {
     lastName?: string;
     bio?: string;
   };
+handleEditProfile(data: EditFormFields): Promise<void>;
 };
 
-const EditProfileForm: React.FC<Props> = ({ nameAndBio }) => {
+const EditProfileForm: React.FC<Props> = ({ nameAndBio, handleEditProfile }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    setError,
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<EditFormFields>({
     resolver: zodResolver(editProfileSchema),
     defaultValues: {
@@ -33,8 +37,23 @@ const EditProfileForm: React.FC<Props> = ({ nameAndBio }) => {
     },
   });
 
+  const submitHandler: SubmitHandler<EditFormFields> = async (data) => {
+    try {
+      await handleEditProfile(data);
+    } catch (error) {
+      if (error instanceof AxiosError && error.response?.data?.errors) {
+        const serializedErrors = error.response.data.errors as ServerErrors;
+        serializedErrors
+          .filter((err) => err.field && Object.keys(data).includes(err.field))
+          .map((err) =>
+            setError(err.field as keyof typeof data, { message: err.message, type: "server" }),
+          );
+      } else console.log(error);
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit((data) => console.log(data))}>
+    <form onSubmit={handleSubmit(submitHandler)}>
       {/* name */}
       <div className="flex justify-between gap-5">
         <div className="w-full">
@@ -111,9 +130,9 @@ const EditProfileForm: React.FC<Props> = ({ nameAndBio }) => {
 
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={!isDirty || isSubmitting}
           className={`rounded-base mt-5 w-full rounded-3xl border border-black px-3 py-2 font-medium ${
-            !isSubmitting
+            isDirty || isSubmitting
               ? "bg-pop-green/90 hover:bg-pop-green active:bg-green-dark"
               : "bg-zinc-500 hover:bg-zinc-500 hover:text-black"
           }`}

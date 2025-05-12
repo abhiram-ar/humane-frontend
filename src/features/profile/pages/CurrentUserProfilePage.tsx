@@ -5,7 +5,7 @@ import ProfilePic from "../components/ProfilePic";
 import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 
-type FetchUserProfileResponse = {
+export type FetchUserProfileResponse = {
   success: boolean;
   message: string;
   data: {
@@ -88,10 +88,13 @@ const CurrentUserProfilePage = () => {
             </p>
           </div>
           <div>
-            <p className="mt-5 text-lg text-white">{data?.bio}</p>
-            <p className="text-green-subtle/50 quote font-normal italic">
-              (Let the world know who you are — add a short bio to your profile.)
-            </p>
+            {data.bio ? (
+              <p className="mt-5 text-lg text-white">{data?.bio}</p>
+            ) : (
+              <p className="text-green-subtle/50 quote font-normal italic">
+                (Let the world know who you are — add a short bio to your profile.)
+              </p>
+            )}
           </div>
         </div>
       </div>

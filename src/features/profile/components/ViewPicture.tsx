@@ -6,9 +6,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScanEye } from "lucide-react";
-import testImg from "@/assets/testProfile.png";
 
-const ViewPicture = () => {
+type Props = {
+  src: string;
+};
+const ViewPicture: React.FC<Props> = ({ src }) => {
   return (
     <>
       <Dialog>
@@ -30,7 +32,7 @@ const ViewPicture = () => {
           </DialogHeader>
           <div className="mt-3 flex aspect-square w-full items-center justify-center">
             <div className="h-full w-full overflow-clip rounded-md">
-              <img src={testImg} className="h-full w-full object-cover" alt="profile-picture" />
+              <img src={src} className="h-full w-full object-cover" alt="profile-picture" />
             </div>
           </div>
         </DialogContent>

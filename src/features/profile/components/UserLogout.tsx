@@ -72,7 +72,7 @@ const UserLogout = () => {
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleLogut}
-            className="hover:bg-red-blood rounded-2xl bg-zinc-600 ease-out"
+            className="hover:bg-red-blood cursor-pointer rounded-2xl bg-zinc-600 ease-out"
           >
             Logout
           </AlertDialogAction>

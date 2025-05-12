@@ -19,7 +19,8 @@ type UpdateProfilePhotoResponse = {
   success: boolean;
   message: string;
   data: {
-    avatar: string;
+    avatarKey: string;
+    avatarURL: string;
   };
 };
 
@@ -40,7 +41,7 @@ const UploadProfilePic = () => {
     onSuccess: (data) => {
       queryClient.setQueryData(["user-profile"], (oldData: FetchUserProfileResponse) => {
         if (oldData) {
-          return { ...oldData, avatarId: data.data.avatar };
+          return { ...oldData, avatarURL: data.data.avatarURL };
         }
 
         return oldData;

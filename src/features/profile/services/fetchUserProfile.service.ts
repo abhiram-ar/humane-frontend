@@ -9,8 +9,8 @@ export type FetchUserProfileResponse = {
       firstName: string;
       lastName?: string;
       bio?: string;
-      avatarId?: string;
-      coverPhoto?: string;
+      avatarURL?: string;
+      coverPhotoURL?: string;
       createdAt: string;
       humaneScore: number;
     };

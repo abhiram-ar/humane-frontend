@@ -1,5 +1,6 @@
 import { DialogClose } from "@/components/ui/dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -10,13 +11,26 @@ const editProfileSchema = z.object({
 });
 type EditFormFields = z.infer<typeof editProfileSchema>;
 
-const EditProfileForm = () => {
+type Props = {
+  nameAndBio: {
+    firstName: string;
+    lastName?: string;
+    bio?: string;
+  };
+};
+
+const EditProfileForm: React.FC<Props> = ({ nameAndBio }) => {
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<EditFormFields>({
     resolver: zodResolver(editProfileSchema),
+    defaultValues: {
+      firstName: nameAndBio.firstName,
+      lastName: nameAndBio.lastName,
+      bio: nameAndBio.lastName,
+    },
   });
 
   return (

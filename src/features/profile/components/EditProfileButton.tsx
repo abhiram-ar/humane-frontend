@@ -6,8 +6,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import EditProfileForm from "./EditProfileForm";
+import React from "react";
 
-const EditProfileButton = () => {
+type Props = {
+  nameAndBio: {
+    firstName: string;
+    lastName?: string;
+    bio?: string;
+  };
+};
+
+const EditProfileButton: React.FC<Props> = (props) => {
   return (
     <>
       <Dialog>
@@ -16,11 +25,11 @@ const EditProfileButton = () => {
             Edit profile
           </button>
         </DialogTrigger>
-        <DialogContent className="border-grey-dark-bg bg-[#272727]">
+        <DialogContent className="border-grey-dark-bg bg-[#272727]" aria-describedby="edit profile">
           <DialogHeader>
             <DialogTitle className="text-almost-white">Edit profile</DialogTitle>
           </DialogHeader>
-          <EditProfileForm />
+          <EditProfileForm {...props} />
         </DialogContent>
       </Dialog>
     </>

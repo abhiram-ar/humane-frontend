@@ -65,8 +65,10 @@ api.interceptors.response.use(
       // other wise flag current resqust is refreshing
       isRefreshing = true;
       try {
+        console.log("query failed, refreshing accessToken");
         const { data } = await axios.get<{ data: { token: string } }>(
           "http://localhost/api/v1/global/auth/refresh",
+          { withCredentials: true },
         );
 
         const newToken = data.data.token;
@@ -80,6 +82,7 @@ api.interceptors.response.use(
         return api(originalReq);
       } catch (refreshError) {
         processQueue(refreshError as AxiosError);
+        console.log("error refrehing token", refreshError);
       } finally {
         isRefreshing = false;
       }
@@ -89,4 +92,3 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
-

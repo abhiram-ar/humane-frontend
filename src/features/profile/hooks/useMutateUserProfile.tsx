@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateUserProfile } from "../services/updateUserProfile.service";
-import { FetchUserProfileResponse } from "../pages/CurrentUserProfilePage";
+import { FetchUserProfileResponse } from "../services/fetchUserProfile.service";
 
 const useMutateUserProfile = () => {
   const queryClient = useQueryClient();

@@ -1,35 +1,14 @@
-import { Cake, Calendar } from "lucide-react";
+import { Calendar } from "lucide-react";
 import CoverPhoto from "../components/CoverPhoto";
 import EditProfileButton from "../components/EditProfileButton";
 import ProfilePic from "../components/ProfilePic";
-import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
-
-export type FetchUserProfileResponse = {
-  success: boolean;
-  message: string;
-  data: {
-    profile: {
-      firstName: string;
-      lastName?: string;
-      bio?: string;
-      avatarId?: string;
-      coverPhoto?: string;
-      createdAt: string;
-      humaneScore: number;
-    };
-  };
-};
-
-const fetchUserProfile = async () => {
-  const res = await api.get<FetchUserProfileResponse>("/api/v1/anon/profile/");
-  return res.data.data.profile;
-};
+import { fetchUserProfile } from "../services/fetchUserProfile.service";
 
 const CurrentUserProfilePage = () => {
   const circleCount = 102;
 
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["user-profile"],
     queryFn: fetchUserProfile,
   });

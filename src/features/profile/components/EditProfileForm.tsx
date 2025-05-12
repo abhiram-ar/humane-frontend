@@ -7,9 +7,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 
 const editProfileSchema = z.object({
-  firstName: z.string().nonempty("required"),
-  lastName: z.string().optional(),
-  bio: z.string().max(80, "max 80").optional(),
+  firstName: z.string().trim().nonempty("required"),
+  lastName: z.string().trim().optional(),
+  bio: z.string().trim().max(80, "max 80").optional(),
 });
 export type EditFormFields = z.infer<typeof editProfileSchema>;
 
@@ -19,7 +19,7 @@ type Props = {
     lastName?: string;
     bio?: string;
   };
-handleEditProfile(data: EditFormFields): Promise<void>;
+  handleEditProfile(data: EditFormFields): Promise<void>;
 };
 
 const EditProfileForm: React.FC<Props> = ({ nameAndBio, handleEditProfile }) => {
@@ -33,7 +33,7 @@ const EditProfileForm: React.FC<Props> = ({ nameAndBio, handleEditProfile }) => 
     defaultValues: {
       firstName: nameAndBio.firstName,
       lastName: nameAndBio.lastName,
-      bio: nameAndBio.lastName,
+      bio: nameAndBio.bio,
     },
   });
 

@@ -20,11 +20,11 @@ const CurrentUserProfilePage = () => {
   console.log(data);
 
   return (
-    <div className="relative h-screen border border-red-300 xl:me-90">
+    <div className="relative h-screen xl:me-90 border-x border-zinc-400/50">
       <CoverPhoto />
 
       <div className="px-10">
-        <div className="relative flex h-fit w-full justify-between border">
+        <div className="relative flex h-fit w-full justify-between">
           <div className="relative bottom-25 -mb-25 h-fit">
             <ProfilePicConfig />
           </div>

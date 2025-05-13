@@ -10,28 +10,30 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import useMutateUserAvatarPhoto from "../hooks/useMutateUserAvatarPhoto";
 import { FetchUserProfileResponse } from "../services/fetchUserProfile.service";
 import { useQueryClient } from "@tanstack/react-query";
+import useUserCoverPhotoMutation from "../hooks/useUserCoverPhotoMutation";
 
 const CoverPhotoRemove = () => {
-  
   const queryClient = useQueryClient();
 
-  const { mutate: updateUserAvatarPhoto } = useMutateUserAvatarPhoto();
+  const { mutate: removeUserCoverPhoto } = useUserCoverPhotoMutation();
 
   const handleRemoveProfilePhoto = async () => {
-    updateUserAvatarPhoto("", {
+    removeUserCoverPhoto("", {
       onSuccess: () => {
-        queryClient.setQueryData(["user-profile"], (oldData: FetchUserProfileResponse) => {
-          if (oldData) {
-            return {
-              ...oldData,
-              avatarURL: null, // global behavior set the response of the mutation as URL, which is just the CDN link
-            };
-          }
-          return oldData;
-        });
+        queryClient.setQueryData(
+          ["user-profile"],
+          (oldData: FetchUserProfileResponse["data"]["profile"]) => {
+            if (oldData) {
+              return {
+                ...oldData,
+                coverPhotoURL: undefined, // global behavior set the response of the mutation as URL, which is just the CDN link
+              } as FetchUserProfileResponse["data"]["profile"];
+            }
+            return oldData;
+          },
+        );
       },
     });
   };
@@ -42,7 +44,7 @@ const CoverPhotoRemove = () => {
         <AlertDialogTrigger asChild>
           <button
             title="update photo"
-            className="hover:bg-pop-green scale-90 cursor-pointer rounded-full bg-zinc-600/80 backdrop-blur-sm p-3 transition-all duration-200 ease-out hover:scale-105 hover:text-black"
+            className="hover:bg-pop-green scale-90 cursor-pointer rounded-full bg-zinc-600/80 p-3 backdrop-blur-sm transition-all duration-200 ease-out hover:scale-105 hover:text-black"
           >
             <ImageMinus />
           </button>

@@ -12,32 +12,12 @@ import { api } from "@/lib/axios";
 import { GetPresignedURLResponse } from "../Types/GetPresingedURLResponse";
 import axios from "axios";
 import { useRef } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateUserCoverPhoto } from "../services/updateUserCoverPhoto.service";
-import { FetchUserProfileResponse } from "../services/fetchUserProfile.service";
+import useUserCoverPhotoMutation from "../hooks/useUserCoverPhotoMutation";
 
 const CoverPhotoUpload = () => {
   const closeDialogRef = useRef<HTMLButtonElement | null>(null);
 
-  const queryClient = useQueryClient();
-
-  const { mutate: mutateUserCoverPhoto } = useMutation({
-    mutationFn: updateUserCoverPhoto,
-    onSuccess: (data) => {
-      queryClient.setQueryData(
-        ["user-profile"],
-        (oldData: FetchUserProfileResponse["data"]["profile"]) => {
-          if (oldData) {
-            return {
-              ...oldData,
-              coverPhotoURL: data.data.coverPhotoURL,
-            } as FetchUserProfileResponse["data"]["profile"];
-          }
-          return oldData;
-        },
-      );
-    },
-  });
+  const { mutate: mutateUserCoverPhoto } = useUserCoverPhotoMutation();
 
   const handleUpload = async (file: File): Promise<void> => {
     // move the path logic to backend

@@ -9,7 +9,7 @@ const FadeTransitionLayout = () => {
     <div className="bg-grey-dark-bg relative h-screen w-screen overflow-hidden">
       <div
         className={`absolute inset-0 flex items-center justify-center transition-all duration-700 ${
-          appLoading ? "z-50 scale-100 opacity-100" : "pointer-events-none z-0 scale-95 opacity-0"
+          appLoading ? "z-50 scale-100 opacity-100" : "pointer-events-none -z-50 scale-95 opacity-0"
         }`}
       >
         <HumaeLoader />

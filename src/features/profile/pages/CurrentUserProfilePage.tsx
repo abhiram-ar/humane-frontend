@@ -1,4 +1,4 @@
-import { Cake, Calendar } from "lucide-react";
+import { Calendar } from "lucide-react";
 import EditProfileButton from "../components/EditProfileButton";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserProfile } from "../services/fetchUserProfile.service";
@@ -46,10 +46,10 @@ const CurrentUserProfilePage = () => {
 
               <div className="mt-3 flex gap-5">
                 {/* Todo: date */}
-                <h5 className="flex items-center gap-2 text-zinc-400">
+                {/* <h5 className="flex items-center gap-2 text-zinc-400">
                   <Cake size={20} />
                   Born 23 May 1999
-                </h5>
+                </h5> */}
                 <h5 className="flex items-center gap-2 text-zinc-400">
                   <Calendar size={20} />
                   Joined{" "}

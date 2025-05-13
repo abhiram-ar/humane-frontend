@@ -104,6 +104,10 @@ export const router = createBrowserRouter([
             path: "user",
             Component: AdminUserManagementPage,
           },
+          {
+            path: "reports",
+            Component: PageNotFoundPage,
+          },
         ],
       },
     ],

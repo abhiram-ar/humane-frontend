@@ -1,5 +1,4 @@
-import { LogOut } from "lucide-react";
-import testProfile from "@/assets/testProfile.png";
+import { LogOut, User } from "lucide-react";
 import { useState } from "react";
 import {
   AlertDialog,
@@ -16,12 +15,17 @@ import { useNavigate } from "react-router";
 import { useAppDispatch } from "@/features/userAuth/hooks/store.hooks";
 import { logout } from "@/features/userAuth/redux/userAuthSlice";
 import { api } from "@/lib/axios";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUserProfile } from "../services/fetchUserProfile.service";
 
 const UserLogout = () => {
   const [showLogo, setShowlogo] = useState(false);
+  const [isProfilePicLoading, setProfilePicLoading] = useState(true);
 
   const navigate = useNavigate();
   const dispath = useAppDispatch();
+
+  const { data } = useQuery({ queryKey: ["user-profile"], queryFn: fetchUserProfile });
 
   const handleLogut = async () => {
     try {
@@ -39,7 +43,7 @@ const UserLogout = () => {
         <div
           onMouseEnter={() => setShowlogo(true)}
           onMouseLeave={() => setShowlogo(false)}
-          className="relative flex cursor-pointer items-center gap-3 rounded-e-2xl px-10 py-3 text-xl transition-all duration-500 ease-out hover:scale-[1.02] hover:bg-zinc-700/50"
+          className="relative flex cursor-pointer items-center gap-3 rounded-e-2xl -ms-3 px-10 py-3 text-xl transition-all duration-500 ease-out hover:scale-[1.02] hover:bg-zinc-700/50"
         >
           <LogOut
             className={`rotate-180 transform transition-all duration-300 ${showLogo ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"}`}
@@ -48,13 +52,27 @@ const UserLogout = () => {
           <div
             className={`flex transform items-center gap-3 transition-all duration-300 ${showLogo ? "translate-x-0 scale-90" : "-translate-x-8"}`}
           >
-            <div className="border-grey-light h-10 w-10 overflow-clip rounded-full">
-              <img src={testProfile} className="h-full w-full object-cover" alt="profilepic" />
-            </div>
+            {data?.avatarURL ? (
+              <div className="border-grey-light relative h-10 w-10 overflow-clip rounded-full">
+                {isProfilePicLoading && (
+                  <div className="absolute inset-0 animate-pulse bg-zinc-400"></div>
+                )}
+                <img
+                  src={data?.avatarURL}
+                  className={`h-full w-full object-cover transition-all duration-100 ease-in ${isProfilePicLoading ? "scale-102 opacity-0" : "scale-100 opacity-100"} `}
+                  alt="profilepic"
+                  onLoad={() => setProfilePicLoading(false)}
+                />
+              </div>
+            ) : (
+              <div className="border-grey-light bg-zinc-600/50 text-offwhite relative h-10 w-10 overflow-clip rounded-full border flex justify-center items-center">
+                <User />
+              </div>
+            )}
             <h2
               className={`transition-all duration-300 ${showLogo ? "text-white" : "text-zinc-300"}`}
             >
-              Satoshi
+              {data?.firstName}
             </h2>
           </div>
         </div>

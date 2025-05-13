@@ -51,7 +51,7 @@ const CoverPhotoRemove = () => {
         </AlertDialogTrigger>
         <AlertDialogContent className="border-grey-dark-bg text-almost-white bg-[#272727]">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to cover photo?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure you want to remove cover photo?</AlertDialogTitle>
             <AlertDialogDescription>You cannot undo this action.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

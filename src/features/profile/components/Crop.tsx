@@ -25,9 +25,10 @@ function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: numbe
 }
 type ImgCropProps = {
   handleUpload: (file: File) => Promise<void>;
+  aspectRatio?: number;
 };
 
-export default function ImgCrop({ handleUpload }: ImgCropProps) {
+export default function ImgCrop({ handleUpload, aspectRatio = 1 / 1 }: ImgCropProps) {
   const [imgSrc, setImgSrc] = useState("");
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -35,7 +36,7 @@ export default function ImgCrop({ handleUpload }: ImgCropProps) {
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [scale] = useState(1);
   const [rotate] = useState(0);
-  const [aspect] = useState<number | undefined>(1 / 1);
+  const [aspect] = useState<number | undefined>(aspectRatio);
   const [isUploding, setIsUploading] = useState(false);
 
   function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {

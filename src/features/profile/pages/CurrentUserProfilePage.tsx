@@ -1,9 +1,9 @@
 import { Cake, Calendar } from "lucide-react";
-import CoverPhoto from "../components/CoverPhoto";
 import EditProfileButton from "../components/EditProfileButton";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserProfile } from "../services/fetchUserProfile.service";
 import ProfilePicConfig from "../components/ProfilePicConfig";
+import CoverPhotoConfig from "../components/CoverPhotoConfig";
 
 const CurrentUserProfilePage = () => {
   const circleCount = 102;
@@ -20,8 +20,8 @@ const CurrentUserProfilePage = () => {
   console.log(data);
 
   return (
-    <div className="relative h-screen xl:me-90 border-x border-zinc-400/50">
-      <CoverPhoto />
+    <div className="relative h-screen border-x border-zinc-400/50 xl:me-90">
+      <CoverPhotoConfig />
 
       <div className="px-10">
         <div className="relative flex h-fit w-full justify-between">

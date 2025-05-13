@@ -9,8 +9,9 @@ import { ScanEye } from "lucide-react";
 
 type Props = {
   src: string;
+  title: string;
 };
-const ViewPicture: React.FC<Props> = ({ src }) => {
+const ViewPicture: React.FC<Props> = ({ src, title }) => {
   return (
     <>
       <Dialog>
@@ -28,7 +29,7 @@ const ViewPicture: React.FC<Props> = ({ src }) => {
           aria-description="view profile photo"
         >
           <DialogHeader>
-            <DialogTitle className="text-almost-white">View Profile photo</DialogTitle>
+            <DialogTitle className="text-almost-white">{title}</DialogTitle>
           </DialogHeader>
           <div className="mt-3 flex aspect-square w-full items-center justify-center">
             <div className="h-full w-full overflow-clip rounded-md">

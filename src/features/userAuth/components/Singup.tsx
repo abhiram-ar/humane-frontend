@@ -164,8 +164,8 @@ const Signup: React.FC<Props> = ({ handleSignup, showGoogleAuth = true }) => {
             disabled={isSubmitting}
             className={`rounded-base w-full border-2 border-black px-3 py-2 font-medium ${
               !isSubmitting
-                ? "bg-pop-green/90 hover:bg-pop-green active:bg-green-dark"
-                : "bg-zinc-500 hover:bg-zinc-500 hover:text-black"
+                ? "bg-pop-green/90 hover:bg-pop-green active:bg-green-dark cursor-pointer"
+                : "bg-zinc-500 hover:bg-zinc-500 hover:text-black cursor-not-allowed"
             }`}
           >
             Sign up

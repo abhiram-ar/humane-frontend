@@ -12,42 +12,12 @@ import { api } from "@/lib/axios";
 import { GetPresignedURLResponse } from "../Types/GetPresingedURLResponse";
 import axios from "axios";
 import { useRef } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FetchUserProfileResponse } from "../services/fetchUserProfile.service";
-
-type UpdateProfilePhotoResponse = {
-  success: boolean;
-  message: string;
-  data: {
-    avatarKey: string;
-    avatarURL: string;
-  };
-};
-
-const updataProfilePhoto = async (newKey: string) => {
-  const res = await api.patch<UpdateProfilePhotoResponse>("/api/v1/anon/profile/avatar", {
-    newAvatarKey: newKey,
-  });
-  return res.data;
-};
+import useMutateUserAvatarPhoto from "../hooks/useMutateUserAvatarPhoto";
 
 const UploadProfilePic = () => {
   const closeDialogRef = useRef<HTMLButtonElement | null>(null);
 
-  const queryClient = useQueryClient();
-
-  const { mutate: mutateUserProfile } = useMutation({
-    mutationFn: updataProfilePhoto,
-    onSuccess: (data) => {
-      queryClient.setQueryData(["user-profile"], (oldData: FetchUserProfileResponse) => {
-        if (oldData) {
-          return { ...oldData, avatarURL: data.data.avatarURL };
-        }
-
-        return oldData;
-      });
-    },
-  });
+  const { mutate: mutateUserProfile } = useMutateUserAvatarPhoto();
 
   const handleUpload = async (file: File): Promise<void> => {
     // move the path logic to backend

@@ -50,7 +50,8 @@ const UploadProfilePic = () => {
   });
 
   const handleUpload = async (file: File): Promise<void> => {
-    // s3 path
+    // move the path logic to backend
+    // and send back the path in presinged url response
     const key = `profile-pic/${file.name}`;
 
     const res = await api.post<GetPresignedURLResponse>("/api/v1/anon/profile/upload/pre-signed", {

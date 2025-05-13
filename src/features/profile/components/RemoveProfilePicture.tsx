@@ -10,8 +10,31 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import useMutateUserAvatarPhoto from "../hooks/useMutateUserAvatarPhoto";
+import { FetchUserProfileResponse } from "../services/fetchUserProfile.service";
+import { useQueryClient } from "@tanstack/react-query";
 
 const RemoveProfilePicture = () => {
+  const queryClient = useQueryClient();
+
+  const { mutate: updateUserAvatarPhoto } = useMutateUserAvatarPhoto();
+
+  const handleRemoveProfilePhoto = async () => {
+    updateUserAvatarPhoto("", {
+      onSuccess: () => {
+        queryClient.setQueryData(["user-profile"], (oldData: FetchUserProfileResponse) => {
+          if (oldData) {
+            return {
+              ...oldData,
+              avatarURL: null, // global behavior set the response of the mutation as URL, which is just the CDN link
+            };
+          }
+          return oldData;
+        });
+      },
+    });
+  };
+
   return (
     <>
       <AlertDialog>
@@ -29,7 +52,10 @@ const RemoveProfilePicture = () => {
             <AlertDialogCancel className="cursor-pointer rounded-2xl border-0 text-black hover:bg-white/80">
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction className="bg-red-blood rounded-2xl ease-out hover:bg-red-800 cursor-pointer">
+            <AlertDialogAction
+              onClick={handleRemoveProfilePhoto}
+              className="bg-red-blood cursor-pointer rounded-2xl ease-out hover:bg-red-800"
+            >
               Remove
             </AlertDialogAction>
           </AlertDialogFooter>

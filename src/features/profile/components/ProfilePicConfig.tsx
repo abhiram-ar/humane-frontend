@@ -13,7 +13,7 @@ const ProfilePicConfig = () => {
 
   return (
     <div className="">
-      {data?.avatarURL ? (
+      {data?.avatarURL && data.avatarURL !== "" ? (
         <>
           <ProfilePic url={data?.avatarURL} />
           <div className="absolute inset-0 flex h-52 w-52 items-center justify-center rounded-full bg-zinc-900/50 opacity-0 transition-opacity duration-300 ease-out hover:opacity-100">

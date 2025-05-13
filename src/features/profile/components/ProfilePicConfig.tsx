@@ -27,8 +27,11 @@ const ProfilePicConfig = () => {
         </>
       ) : (
         <div className="border-grey-light flex h-52 w-52 items-center justify-center rounded-full border-3 bg-zinc-600">
-          <div className="text-pop-green scale-125">
-            <UploadProfilePic />
+          <div className="text-center">
+            <div className="text-pop-green scale-125">
+              <UploadProfilePic />
+            </div>
+            <p className="-mb-5 text-zinc-400">upload profile pic</p>
           </div>
         </div>
       )}

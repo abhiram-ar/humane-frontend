@@ -1,9 +1,12 @@
-import testImg from "@/assets/testCover.png";
+import React from "react";
 
-const CoverPhoto = () => {
+type Props = {
+  url: string;
+};
+const CoverPhoto: React.FC<Props> = ({ url }) => {
   return (
-    <div className="w-full h-60 overflow-clip border-2 border-green-500">
-      <img className="h-full w-full object-cover" src={testImg} alt="" />
+    <div className="h-60 w-full overflow-clip border-2 border-green-500">
+      <img className="h-full w-full object-cover" src={url} alt="" />
     </div>
   );
 };

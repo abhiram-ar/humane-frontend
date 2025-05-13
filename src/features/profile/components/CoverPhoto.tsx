@@ -5,7 +5,7 @@ type Props = {
 };
 const CoverPhoto: React.FC<Props> = ({ url }) => {
   return (
-    <div className="h-60 w-full overflow-clip border-2 border-green-500">
+    <div className="h-60 w-full bg-zinc-400 overflow-clip border-2 border-green-500">
       <img className="h-full w-full object-cover" src={url} alt="" />
     </div>
   );

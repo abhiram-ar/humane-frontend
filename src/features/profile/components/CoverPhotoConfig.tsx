@@ -3,6 +3,7 @@ import CoverPhotoUpload from "./CoverPhotoUpload";
 import CoverPhotoRemove from "./CoverPhotoRemove";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserProfile } from "../services/fetchUserProfile.service";
+import ViewPicture from "./ViewPicture";
 
 const CoverPhotoConfig = () => {
   const { data, isLoading } = useQuery({ queryKey: ["user-profile"], queryFn: fetchUserProfile });
@@ -17,9 +18,11 @@ const CoverPhotoConfig = () => {
             <CoverPhotoRemove />
             <CoverPhotoUpload />
           </div>
-          <div className="h-60 w-full" onClick={() => console.log("clic")}>
-            <CoverPhoto url={data?.coverPhotoURL} />
-          </div>
+          <ViewPicture src={data?.coverPhotoURL} title="Cover photo">
+            <button className="h-60 w-full">
+              <CoverPhoto url={data?.coverPhotoURL} />
+            </button>
+          </ViewPicture>
         </div>
       ) : (
         <>

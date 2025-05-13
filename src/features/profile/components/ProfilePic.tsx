@@ -1,5 +1,3 @@
-import testProfile from "@/assets/testProfile.png";
-
 type Props = {
   url: string;
 };

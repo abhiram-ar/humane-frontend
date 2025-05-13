@@ -14,7 +14,7 @@ const CoverPhotoConfig = () => {
     <>
       {data && data.coverPhotoURL ? (
         <div className="group relative flex h-60 w-full flex-col items-center overflow-clip">
-          <div className="absolute bottom-2 flex h-15 w-fit translate-y-10 items-center justify-center gap-0 border border-red-500 text-white opacity-0 transition-all duration-300 ease-in-out group-hover:translate-y-0 group-hover:gap-5 group-hover:opacity-100">
+          <div className="absolute bottom-2 flex h-15 w-fit translate-y-10 items-center justify-center gap-0 text-white opacity-0 transition-all duration-300 ease-in-out group-hover:translate-y-0 group-hover:gap-5 group-hover:opacity-100">
             <CoverPhotoRemove />
             <CoverPhotoUpload />
           </div>

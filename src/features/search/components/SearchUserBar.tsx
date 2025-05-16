@@ -2,8 +2,8 @@ import { Search } from "lucide-react";
 
 const SearchUserBar = () => {
   return (
-    <div className="bg-grey-light group flex h-25 items-center justify-center gap-2 px-5 py-2 text-white">
-      <Search className="opacity-50 transition-all duration-100 ease-in group-focus-within:opacity-100" />
+    <div className="bg-grey-light group flex h-25 items-center justify-center gap-2 px-5 py-2">
+      <Search className="text-pop-green opacity-50 transition-all duration-100 ease-in group-focus-within:opacity-100" />
       <input
         type="text"
         className="w-full text-lg text-white focus:outline-none"

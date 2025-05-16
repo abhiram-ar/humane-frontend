@@ -1,4 +1,6 @@
 {
     "window.title": "${dirty}${rootName}${separator}${separator}${activeEditorShort}${profileName}${separator}${appName}",
-    "workbench.tree.indent": 15
+    "workbench.tree.indent": 15,
+    "template-string-converter.addBracketsToProps": true,
+    "template-string-converter.autoRemoveTemplateString": true
 }

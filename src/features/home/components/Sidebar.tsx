@@ -22,11 +22,11 @@ const config: SidebarCongfig[] = [
 const Sidebar = () => {
   return (
     <div className="bg-grey fixed flex h-screen w-90 flex-col justify-between text-white">
-      <div className="text-pop-green px-12 pt-8 text-2xl font-bold">
+      <div className="text-pop-green px-12 pt-3 text-2xl font-bold">
         <img src={humanelogo} alt="" />
       </div>
 
-      <div className="-mt-20">
+      <div className="-mt-15">
         <div className="me-5">
           <div>
             {config.map((data, index) => (

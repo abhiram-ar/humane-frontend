@@ -9,7 +9,7 @@ export type UpdateUserAvatarPhotoResponse = {
   };
 };
 export const updateUserAvatarPhoto = async (newKey: string) => {
-  const res = await api.patch<UpdateUserAvatarPhotoResponse>("/api/v1/anon/profile/avatar", {
+  const res = await api.patch<UpdateUserAvatarPhotoResponse>("/api/v1/user/profile/avatar", {
     newAvatarKey: newKey,
   });
   return res.data;

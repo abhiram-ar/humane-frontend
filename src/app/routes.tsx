@@ -18,6 +18,7 @@ import AdminDashboardLayout from "@/features/admin/layout/AdminDashboardLayout";
 import AdminHomePage from "@/features/admin/pages/AdminHomePage";
 import AdminUserManagementPage from "@/features/admin/pages/AdminUserManagementPage";
 import CurrentUserProfilePage from "@/features/profile/pages/CurrentUserProfilePage";
+import SearchPage from "@/features/search/pages/SearchPage";
 
 export const router = createBrowserRouter([
   {
@@ -32,7 +33,7 @@ export const router = createBrowserRouter([
           { index: true, Component: PageNotFoundPage }, // feed page
           {
             path: "search",
-            Component: PageNotFoundPage,
+            Component: SearchPage,
           },
           {
             path: "message",

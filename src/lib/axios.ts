@@ -1,6 +1,8 @@
 import { store } from "@/app/store/store";
 import { setCredentials } from "@/features/userAuth/redux/userAuthSlice";
+import { JWTAuthPayload } from "@/types/JWTAuthPayload";
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { jwtDecode } from "jwt-decode";
 
 export const api: AxiosInstance = axios.create({
   baseURL: "http://localhost",
@@ -72,6 +74,12 @@ api.interceptors.response.use(
         );
 
         const newToken = data.data.token;
+        const decoded = jwtDecode<JWTAuthPayload>(newToken);
+
+        if (decoded.type !== "user") {
+          throw new Error("API refresh error, get a non user accessToken after refresh");
+        }
+
         store.dispatch(setCredentials({ token: newToken }));
         processQueue(null, newToken);
 

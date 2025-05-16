@@ -17,6 +17,6 @@ export type FetchUserProfileResponse = {
   };
 };
 export const fetchUserProfile = async () => {
-  const res = await api.get<FetchUserProfileResponse>("/api/v1/anon/profile/");
+  const res = await api.get<FetchUserProfileResponse>("/api/v1/user/profile/");
   return res.data.data.profile;
 };

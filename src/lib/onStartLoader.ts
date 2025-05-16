@@ -15,7 +15,7 @@ export const onStartLoader = async () => {
       });
       if (res.data.data?.token) {
         const decoded: JWTAuthPayload = jwtDecode(res.data.data.token);
-        if (decoded.type === "anon") {
+        if (decoded.type === "user") {
           store.dispatch(setCredentials({ token: res.data.data.token }));
           return null;
         }

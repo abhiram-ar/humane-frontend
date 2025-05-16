@@ -24,7 +24,7 @@ const CoverPhotoUpload = () => {
     // and send back the path in presinged url response
     const key = `cover-photo/${file.name}`;
 
-    const res = await api.post<GetPresignedURLResponse>("/api/v1/anon/profile/upload/pre-signed", {
+    const res = await api.post<GetPresignedURLResponse>("/api/v1/user/profile/upload/pre-signed", {
       fileName: key,
       mimeType: file.type,
     });

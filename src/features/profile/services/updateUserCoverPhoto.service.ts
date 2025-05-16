@@ -9,7 +9,7 @@ export type UpdateUserCoverPhotoResponse = {
   };
 };
 export const updateUserCoverPhoto = async (newKey: string) => {
-  const res = await api.patch<UpdateUserCoverPhotoResponse>("/api/v1/anon/profile/cover-photo", {
+  const res = await api.patch<UpdateUserCoverPhotoResponse>("/api/v1/user/profile/cover-photo", {
     newCoverPhotoKey: newKey,
   });
   return res.data;

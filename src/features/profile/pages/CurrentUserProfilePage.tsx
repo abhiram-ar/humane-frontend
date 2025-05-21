@@ -68,7 +68,7 @@ const CurrentUserProfilePage = () => {
           </div>
           <div className="mt-3">
             {data.bio ? (
-              <pre className="font-sans text-lg text-white">{data?.bio}</pre>
+              <pre className="font-sans text-lg text-white text-wrap">{data?.bio}</pre>
             ) : (
               <p className="text-green-subtle/50 quote font-normal italic">
                 (Let the world know who you are — add a short bio to your profile.)

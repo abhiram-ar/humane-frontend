@@ -5,7 +5,7 @@ const HomeLayout = () => {
   return (
     <div>
       <Sidebar />
-      <div className="bg-grey-dark-bg ml-90 min-h-screen">
+      <div className="bg-grey-dark-bg ml-90 min-h-screen h-screen overflow-auto">
         <Outlet />
       </div>
     </div>

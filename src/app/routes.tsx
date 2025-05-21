@@ -19,6 +19,7 @@ import AdminHomePage from "@/features/admin/pages/AdminHomePage";
 import AdminUserManagementPage from "@/features/admin/pages/AdminUserManagementPage";
 import CurrentUserProfilePage from "@/features/profile/pages/CurrentUserProfilePage";
 import SearchPage from "@/features/search/pages/SearchPage";
+import PubliicUserProfile from "@/features/profile/pages/PubliicUserProfile";
 
 export const router = createBrowserRouter([
   {
@@ -116,6 +117,6 @@ export const router = createBrowserRouter([
   {
     path: "test",
     Component: HomeLayout,
-    children: [{ index: true, Component: AdminHomePage }],
+    children: [{ index: true, Component: PubliicUserProfile }],
   },
 ]);

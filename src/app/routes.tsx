@@ -52,6 +52,10 @@ export const router = createBrowserRouter([
             path: "settings",
             Component: PageNotFoundPage,
           },
+          {
+            path: "user/:id",
+            Component: PubliicUserProfile,
+          },
         ],
       },
       {

@@ -35,7 +35,7 @@ const SearchPage = () => {
     // note: in our api, if send the request after the last page, cusor will be null
     // returing undefined makes the hasNestPage turn false
     getNextPageParam: (lastPage) => (lastPage.scroll.hasMore ? lastPage.scroll.cursor : undefined),
-    enabled: query!.length > 2,
+    enabled: query!.trim().length > 2, // dont want to fire a query if the str for short string
   });
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const SearchPage = () => {
       return;
     }
     const observer = new IntersectionObserver((entry) => {
-      // make sure we dont fetch the page when a request is in fligh
+      // make sure we dont fetch the page when a request is in flight
       if (entry[0].isIntersecting && hasNextPage && !isFetching) {
         fetchNextPage();
       }

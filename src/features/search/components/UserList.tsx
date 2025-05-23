@@ -1,7 +1,7 @@
-import React from "react";
 import testProfile from "@/assets/testProfile.png";
 import UserListItem from "./UserListItem";
 import { Link } from "react-router";
+
 
 const demoUsers = [
   { id: 1, name: "Alice Johnson", email: "alice@example.com", profile: testProfile },
@@ -41,6 +41,7 @@ const demoUsers = [
 ];
 
 const UserList = () => {
+  
   return (
     <div className="h-full p-5 text-lg text-white">
       {demoUsers.map((user) => (

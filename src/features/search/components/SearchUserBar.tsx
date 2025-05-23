@@ -2,10 +2,11 @@ import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 
 type Props = {
-  state: ReturnType<typeof useState<string>>;
+  query: string;
+  setQuery: (query: string) => void;
 };
 
-const SearchUserBar: React.FC<Props> = ({ state: [query, setQuery] }) => {
+const SearchUserBar: React.FC<Props> = ({ query, setQuery }) => {
   const [value, setValue] = useState(query);
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import SearchUserBar from "../components/SearchUserBar";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { InfiniteScrollResponse } from "../Types/SearchResult";
@@ -6,9 +6,20 @@ import { api } from "@/lib/axios";
 import UserListItem from "../components/UserListItem";
 import { Link } from "react-router";
 import { Loader } from "lucide-react";
+import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
+import { setSearchQuery } from "../redux/mainSearchSlice";
 
 const SearchPage = () => {
-  const [query, setQuery] = useState<string | undefined>("");
+  const query = useAppSelector((state) => state.mainSearch.query);
+  const dispatch = useAppDispatch();
+
+  const setQuery = useCallback(
+    (query: string) => {
+      dispatch(setSearchQuery(query));
+    },
+    [dispatch],
+  );
+
   const observerRef = useRef<HTMLDivElement | null>(null);
 
   const { isLoading, data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
@@ -35,7 +46,7 @@ const SearchPage = () => {
     // note: in our api, if send the request after the last page, cusor will be null
     // returing undefined makes the hasNestPage turn false
     getNextPageParam: (lastPage) => (lastPage.scroll.hasMore ? lastPage.scroll.cursor : undefined),
-    enabled: query!.trim().length > 2, // dont want to fire a query if the str for short string
+    enabled: query!.trim().length > 2, // dont want to fire a query if for short string
   });
 
   useEffect(() => {
@@ -57,7 +68,7 @@ const SearchPage = () => {
   return (
     <div className="min-h-full w-120 border-x border-zinc-400/50">
       <div className="sticky top-0 z-20">
-        <SearchUserBar state={[query, setQuery]} />
+        <SearchUserBar query={query} setQuery={setQuery} />
       </div>
 
       <div className="px-5 pt-5 text-lg text-white">

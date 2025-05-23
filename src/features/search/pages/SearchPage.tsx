@@ -8,10 +8,10 @@ import { Link } from "react-router";
 import { Loader } from "lucide-react";
 
 const SearchPage = () => {
-  const [query, setQuery] = useState<string | undefined>("emma");
+  const [query, setQuery] = useState<string | undefined>("");
   const observerRef = useRef<HTMLDivElement | null>(null);
 
-  const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
+  const { isLoading, data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
     queryKey: ["find-users", query],
     queryFn: async ({ pageParam }) => {
       const queryParams =
@@ -35,10 +35,11 @@ const SearchPage = () => {
     // note: in our api, if send the request after the last page, cusor will be null
     // returing undefined makes the hasNestPage turn false
     getNextPageParam: (lastPage) => (lastPage.scroll.hasMore ? lastPage.scroll.cursor : undefined),
+    enabled: query!.length > 2,
   });
 
   useEffect(() => {
-    if (!observerRef.current) {
+    if (!observerRef.current || !hasNextPage) {
       return;
     }
     const observer = new IntersectionObserver((entry) => {
@@ -50,9 +51,9 @@ const SearchPage = () => {
     observer.observe(observerRef.current);
 
     return () => observer.disconnect();
-  });
+  }, [fetchNextPage, hasNextPage, isFetching]);
 
-  console.log("hasnext", hasNextPage);
+  console.log("hasnext", hasNextPage, data);
   return (
     <div className="min-h-full w-120 border-x border-zinc-400/50">
       <div className="sticky top-0 z-20">
@@ -75,11 +76,13 @@ const SearchPage = () => {
       <div ref={observerRef} />
 
       <div className="pb-5">
-        {hasNextPage && isFetching ? (
+        {(isFetching || isLoading) && (
           <div className="flex justify-center">
             <Loader className="text-pop-green/75 animate-spin" />
           </div>
-        ) : (
+        )}
+
+        {data && !hasNextPage && !isFetching && (
           <p className="text-center text-sm text-zinc-400">No more matches</p>
         )}
       </div>

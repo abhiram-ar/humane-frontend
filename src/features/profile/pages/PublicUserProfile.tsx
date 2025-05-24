@@ -3,31 +3,51 @@ import ProfilePic from "../components/ProfilePic";
 import testProfile from "@/assets/testProfile.png";
 import testCover from "@/assets/testCover.png";
 import { Calendar } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/axios";
+import { useParams } from "react-router";
+import PageNotFound from "@/layout/PageNotFoundPage";
+import { GetPublicUserProfileResponse } from "../Types/GetPublicUserProfileResponse";
+
+const circleCount = 102;
+const mututal = 12;
+let relationShipStatus: "stranger" | "requested" | "friends" = "friends";
+
+// const data = {
+//   firstName: "Satoshi",
+//   lastName: "kwan",
+//   createdAt: new Date(),
+//   humaneScore: 1000,
+//   bio:
+//     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis exercitationem natus deserunt?" +
+//     "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis exercitationem natus deserunt?",
+// };
+
+const getPublicUserProfie = async (userId: string) => {
+  const res = await api.get<GetPublicUserProfileResponse>(`/api/v1/query/public/user/${userId}`);
+  return res.data.data;
+};
 
 const PubliicUserProfile = () => {
-  const circleCount = 102;
-  const mututal = 12;
-  let relationShipStatus: "stranger" | "requested" | "friends" = "friends"
+  const { id } = useParams<{ id: string }>();
 
+  const { data } = useQuery({
+    queryKey: ["user", id],
+    queryFn: () => getPublicUserProfie(id!),
+    enabled: !!id,
+  });
+  // if (!id) return <PageNotFound />;
 
-  const data = {
-    firstName: "Satoshi",
-    lastName: "kwan",
-    createdAt: new Date(),
-    humaneScore: 1000,
-    bio:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis exercitationem natus deserunt?" +
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis exercitationem natus deserunt?",
-  };
+  console.log(id, data);
 
   return (
     <div className="relative h-screen border-x border-zinc-400/50 xl:me-90">
-      <CoverPhoto url={testCover} />
+      <CoverPhoto url={data?.user.coverPhotoURL} />
 
       <div className="px-10">
         <div className="relative flex h-fit w-full justify-between">
           <div className="relative bottom-25 -mb-25 h-fit">
-            <ProfilePic url={testProfile} />
+            <ProfilePic url={data?.user.avatarURL} />
           </div>
 
           <div className="py-5">
@@ -55,9 +75,9 @@ const PubliicUserProfile = () => {
             {/* below profile pic */}
             <div>
               <h3 className="text-2xl font-bold">
-                {data?.firstName} {data?.lastName}
+                {data?.user.firstName} {data?.user.lastName}
               </h3>
-              <h5 className="text-pop-green">Humane score: {data?.humaneScore}</h5>
+              <h5 className="text-pop-green">Humane score: {1000}</h5>
 
               <div className="mt-3 flex gap-5">
                 {/* Todo: date */}
@@ -68,8 +88,8 @@ const PubliicUserProfile = () => {
                 <h5 className="flex items-center gap-2 text-zinc-400">
                   <Calendar size={20} />
                   Joined{" "}
-                  {data?.createdAt &&
-                    new Date(data.createdAt).toLocaleString("en-US", {
+                  {data?.user.createdAt &&
+                    new Date(data.user.createdAt).toLocaleString("en-US", {
                       month: "long",
                       year: "numeric",
                     })}{" "}
@@ -88,7 +108,9 @@ const PubliicUserProfile = () => {
             </div>
           </div>
           <div className="mt-3">
-            {data.bio && <pre className="font-sans text-lg text-wrap text-white">{data?.bio}</pre>}
+            {data?.user.bio && (
+              <pre className="font-sans text-lg text-wrap text-white">{data?.user.bio}</pre>
+            )}
           </div>
         </div>
       </div>

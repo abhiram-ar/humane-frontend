@@ -2,7 +2,7 @@ import { ImageOff } from "lucide-react";
 import React, { useState } from "react";
 
 type Props = {
-  url: string;
+  url?: string;
 };
 const CoverPhoto: React.FC<Props> = ({ url }) => {
   const [isLoading, setIsLoading] = useState(true);

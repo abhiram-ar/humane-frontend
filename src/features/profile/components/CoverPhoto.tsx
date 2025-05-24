@@ -2,7 +2,7 @@ import { ImageOff } from "lucide-react";
 import React, { useState } from "react";
 
 type Props = {
-  url?: string;
+  url: string;
 };
 const CoverPhoto: React.FC<Props> = ({ url }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -13,7 +13,7 @@ const CoverPhoto: React.FC<Props> = ({ url }) => {
       {(isError || !url) && (
         <div
           onLoad={() => setIsLoading(false)}
-          className={`animate-in absolute inset-0 z-10 flex h-full w-full scale-110 items-center justify-center bg-zinc-600 text-white/30 duration-[2000]`}
+          className={`animate-in z-5 absolute inset-0 flex h-full w-full scale-110 items-center justify-center bg-zinc-600 text-zinc-400 `}
         >
           <ImageOff size={40} />
         </div>

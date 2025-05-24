@@ -1,5 +1,5 @@
 import { User } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type Props = {
   url?: string;
@@ -10,7 +10,9 @@ const ProfilePic: React.FC<Props> = ({ url }) => {
 
   return (
     <div className="border-grey-light relative h-52 w-52 overflow-clip rounded-full border-3 bg-zinc-500">
-      {isLoading && url && <div className="absolute inset-0 z-20 animate-pulse bg-red-400"></div>}
+      {isLoading && url && (
+        <div className="absolute inset-0 z-20 animate-pulse bg-zinc-400/50"></div>
+      )}
       {(isError || !url) && (
         <div
           onLoad={() => setIsLoading(false)}

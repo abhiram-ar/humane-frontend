@@ -4,6 +4,7 @@ import { Calendar } from "lucide-react";
 import { useParams } from "react-router";
 import PageNotFound from "@/layout/PageNotFoundPage";
 import usePublicUserProfileQuery from "../hooks/usePublicUserProfileQuery";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const circleCount = 102;
 const mututal = 12;
@@ -11,8 +12,7 @@ const relationShipStatus = "friends";
 
 const PubliicUserProfile = () => {
   const { id } = useParams<{ id: string }>();
-  const { isError, isLoading, user, httpStatus } = usePublicUserProfileQuery(id);
-
+  const { isError, user, httpStatus } = usePublicUserProfileQuery(id);
 
   if (!id || (httpStatus && httpStatus === 404))
     return <PageNotFound message="User not found ❌" />;
@@ -52,29 +52,40 @@ const PubliicUserProfile = () => {
         <div>
           <div className="flex justify-between text-lg text-white">
             {/* below profile pic */}
-            <div>
-              <h3
-                className={`mt-1 text-2xl font-bold ${isLoading ? "w-52 animate-pulse rounded-2xl bg-zinc-500/50 text-transparent" : ""}`}
-              >{`${user?.firstName} ${user?.lastName || ""}`}</h3>
-              <h5 className="text-pop-green">Humane score: {1000}</h5>
 
-              <div className="mt-3 flex gap-5">
-                {/* Todo: date */}
-                {/* <h5 className="flex items-center gap-2 text-zinc-400">
-                  <Cake size={20} />
-                  Born 23 May 1999
-                </h5> */}
-                <h5 className="flex items-center gap-2 text-zinc-400">
-                  <Calendar size={20} />
-                  Joined{" "}
-                  {user?.createdAt &&
-                    new Date(user.createdAt).toLocaleString("en-US", {
-                      month: "long",
-                      year: "numeric",
-                    })}{" "}
-                </h5>
+            {user ? (
+              <>
+                <div>
+                  <h3
+                    className={`text-2xl font-bold`}
+                  >{`${user.firstName} ${user.lastName || ""}`}</h3>
+                  <h5 className="text-pop-green">Humane score: {1000}</h5>
+
+                  <div className="mt-3 flex gap-5">
+                    {/* Todo: date */}
+                    {/* <h5 className="flex items-center gap-2 text-zinc-400">
+                      <Cake size={20} />
+                      Born 23 May 1999
+                    </h5> */}
+                    <h5 className="flex items-center gap-2 text-zinc-400">
+                      <Calendar size={20} />
+                      Joined{" "}
+                      {user.createdAt &&
+                        new Date(user.createdAt).toLocaleString("en-US", {
+                          month: "long",
+                          year: "numeric",
+                        })}
+                    </h5>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col">
+                <Skeleton className="my-1 h-5 w-52" />
+                <Skeleton className="my-1 h-5 w-30" />
+                <Skeleton className="my-3 h-5 w-52" />
               </div>
-            </div>
+            )}
 
             {/* opposite side to profile pic  */}
             <div className="text-end">

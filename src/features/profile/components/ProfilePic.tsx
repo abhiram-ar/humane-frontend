@@ -9,7 +9,7 @@ const ProfilePic: React.FC<Props> = ({ url }) => {
   const [isError, setIsError] = useState(false);
 
   return (
-    <div className="border-grey-light relative z-20 h-52 w-52 overflow-clip rounded-full border-3 bg-zinc-500">
+    <div className="border-grey-light relative z-10 h-52 w-52 overflow-clip rounded-full border-3 bg-zinc-500">
       {isLoading && url && <div className="absolute inset-0 animate-pulse bg-zinc-400/50"></div>}
       {(isError || !url) && (
         <div

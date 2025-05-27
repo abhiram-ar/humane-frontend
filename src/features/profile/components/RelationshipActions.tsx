@@ -1,3 +1,14 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/lib/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -189,12 +200,32 @@ const RelationshipActions: React.FC<Props> = ({ userId }) => {
       )}
 
       {data?.status === "friends" && (
-        <button
-          className="cursor-pointer rounded-full bg-zinc-400/90 px-4 py-1 font-semibold text-black hover:bg-zinc-400"
-          onClick={() => removeFriendship(userId)}
-        >
-          Remove Friend
-        </button>
+        <>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button className="cursor-pointer rounded-full bg-zinc-400/90 px-4 py-1 font-semibold text-black hover:bg-zinc-400">
+                Remove Friend
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="border-grey-dark-bg text-almost-white bg-[#272727]">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you sure you want to remove this friend?</AlertDialogTitle>
+                <AlertDialogDescription>You cannot undo this action.</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="cursor-pointer rounded-2xl border-0 text-black hover:bg-white/80">
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => removeFriendship(userId)}
+                  className="bg-red-blood cursor-pointer rounded-2xl ease-out hover:bg-red-800"
+                >
+                  Remove
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
       )}
     </div>
   );

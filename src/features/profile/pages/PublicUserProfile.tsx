@@ -5,10 +5,10 @@ import { useParams } from "react-router";
 import PageNotFound from "@/layout/PageNotFoundPage";
 import usePublicUserProfileQuery from "../hooks/usePublicUserProfileQuery";
 import { Skeleton } from "@/components/ui/skeleton";
+import RelationshipActions from "../components/RelationshipActions";
 
 const circleCount = 102;
 const mututal = 12;
-const relationShipStatus = "friends";
 
 const PubliicUserProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -30,22 +30,8 @@ const PubliicUserProfile = () => {
           </div>
 
           <div className="py-5">
-            {/* {relationShipStatus === "stranger" && (
-              <button className="bg-pop-green/95 hover:bg-pop-green cursor-pointer rounded-full px-4 py-1 font-semibold text-black">
-                Add to circle{" "}
-              </button>
-            )}
-            {relationShipStatus === "requested" && (
-              <button className="bg-offwhite cursor-pointer rounded-full px-4 py-1 font-semibold text-black hover:bg-white">
-                Requested
-              </button>
-            )} */}
-
-            {relationShipStatus === "friends" && (
-              <button className="cursor-pointer rounded-full bg-zinc-400/90 px-4 py-1 font-semibold text-black hover:bg-zinc-400">
-                Remove from circle
-              </button>
-            )}
+            <RelationshipActions userId={id} />
+           
           </div>
         </div>
 

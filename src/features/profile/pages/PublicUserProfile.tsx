@@ -6,6 +6,7 @@ import PageNotFound from "@/layout/PageNotFoundPage";
 import usePublicUserProfileQuery from "../hooks/usePublicUserProfileQuery";
 import { Skeleton } from "@/components/ui/skeleton";
 import RelationshipActions from "../components/RelationshipActions";
+import UserFriends from "../components/UserFriends.trigger";
 
 const circleCount = 102;
 const mututal = 12;
@@ -31,7 +32,6 @@ const PubliicUserProfile = () => {
 
           <div className="py-5">
             <RelationshipActions userId={id} />
-           
           </div>
         </div>
 
@@ -75,9 +75,7 @@ const PubliicUserProfile = () => {
 
             {/* opposite side to profile pic  */}
             <div className="text-end">
-              <p>
-                <span className="text-pop-green">{circleCount}</span> humans in circle
-              </p>
+              <UserFriends userId={id} />
               <p>
                 <span className="text-pop-green">{mututal}</span> mutual
               </p>

@@ -15,6 +15,9 @@ import useSendFriendReqMutation from "../../hooks/useSendFriendReqMutation";
 import useCancelFriendReqMutation from "../../hooks/useCancelFriendReqMutation";
 import useAcceptFriendReqMutation from "../../hooks/useAcceptFriendReqMutation";
 import useRemoveFriendshipMutation from "../../hooks/useRemoveFriendshipMutation";
+import ButtonPop from "@/components/ButtonPop";
+import ButtonNeutal from "@/components/ButtonNeutal";
+import ButtonLowPriority from "@/components/ButtonLowPriority";
 
 type Props = {
   userId: string;
@@ -41,49 +44,31 @@ const RelationshipActions: React.FC<Props> = ({ userId }) => {
   return (
     <div>
       {data?.status === "strangers" && (
-        <button
-          className="bg-pop-green/95 hover:bg-pop-green cursor-pointer rounded-full px-4 py-1 font-semibold text-black"
-          onClick={() => sendFriendRequest(userId)}
-        >
-          Add Friend{" "}
-        </button>
+        <ButtonPop onClick={() => sendFriendRequest(userId)}>Add Friend </ButtonPop>
       )}
 
       {data?.status === "friendReqWaitingApproval" && (
         <div className="flex gap-2">
-          <button
-            className="bg-pop-green/95 hover:bg-pop-green cursor-pointer rounded-full px-4 py-1 font-semibold text-black"
-            onClick={() => acceptFriendReq(userId)}
-          >
-            Accept{" "}
-          </button>
-          <button
-            className="bg-offwhite cursor-pointer rounded-full px-4 py-1 font-semibold text-black hover:bg-white"
-            onClick={() => removeFriendship(userId)}
-            title="cancel"
-          >
+          <ButtonPop onClick={() => acceptFriendReq(userId)}>Accept </ButtonPop>
+          <ButtonNeutal onClick={() => removeFriendship(userId)} title="cancel">
             Decline
-          </button>
+          </ButtonNeutal>
         </div>
       )}
 
       {data?.status === "friendreqSend" && (
-        <button
-          className="bg-offwhite cursor-pointer rounded-full px-4 py-1 font-semibold text-black hover:bg-white"
-          onClick={() => cancelFriendReq(userId)}
-          title="cancel"
-        >
+        <ButtonNeutal onClick={() => cancelFriendReq(userId)} title="cancel">
           cancel Request
-        </button>
+        </ButtonNeutal>
       )}
 
       {data?.status === "friends" && (
         <>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <button className="cursor-pointer rounded-full bg-zinc-400/90 px-4 py-1 font-semibold text-black hover:bg-zinc-400">
+              <ButtonLowPriority>
                 Remove Friend
-              </button>
+              </ButtonLowPriority>
             </AlertDialogTrigger>
             <AlertDialogContent className="border-grey-dark-bg text-almost-white bg-[#272727]">
               <AlertDialogHeader>

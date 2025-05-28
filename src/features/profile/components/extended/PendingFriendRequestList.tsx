@@ -12,13 +12,6 @@ import ButtonPop from "@/components/ButtonPop";
 import ButtonNeutal from "@/components/ButtonNeutal";
 
 // TODO: reafacor
-export type FriendList = {
-  id: string;
-  firstName: string;
-  lastName?: string | null;
-  status: "PENDING" | "ACCEPTED";
-  avatarURL: string | null;
-}[];
 
 export type FriendRequestList = {
   id: string;
@@ -47,9 +40,7 @@ const PendingRecivedFriendRequest: React.FC<Props> = ({ userId }) => {
   const { data, isLoading } = useQuery({
     queryKey: ["friend-req", "list", userId],
     queryFn: async () => {
-      const res = await api.get<GetFriendReqResponse>("/api/v1/user/social/friend-req", {
-        params: { targetUserId: userId },
-      });
+      const res = await api.get<GetFriendReqResponse>("/api/v1/user/social/friend-req");
       return res.data.data;
     },
   });

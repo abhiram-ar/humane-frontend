@@ -27,13 +27,15 @@ const UserFriends: React.FC<Props> = ({ userId }) => {
   const { data, isLoading } = useQuery({
     queryKey: ["user-friends", "count", userId],
     queryFn: async () => {
-      const res = await api.get<GetFriendsCountResponse>("/api/v1/user/social/friend/count");
+      const res = await api.get<GetFriendsCountResponse>("/api/v1/user/social/friend/count", {
+        params: { targetUserId: userId },
+      });
       return res.data.data;
     },
   });
-  console.log(data);
+
   return (
-    <>
+    <div>
       <Dialog>
         <DialogTrigger>
           <p className="decoration-pop-green cursor-pointer underline-offset-3 hover:underline">
@@ -50,7 +52,7 @@ const UserFriends: React.FC<Props> = ({ userId }) => {
           <UserFriendList userId={userId} />
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 };
 

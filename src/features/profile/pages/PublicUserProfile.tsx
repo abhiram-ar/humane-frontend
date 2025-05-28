@@ -7,9 +7,8 @@ import usePublicUserProfileQuery from "../hooks/usePublicUserProfileQuery";
 import { Skeleton } from "@/components/ui/skeleton";
 import RelationshipActions from "../components/RelationshipActions";
 import UserFriends from "../components/UserFriends.trigger";
+import UserMutualFriends from "../components/UserMutualFriends.trigger";
 
-const circleCount = 102;
-const mututal = 12;
 
 const PubliicUserProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -76,9 +75,7 @@ const PubliicUserProfile = () => {
             {/* opposite side to profile pic  */}
             <div className="text-end">
               <UserFriends userId={id} />
-              <p>
-                <span className="text-pop-green">{mututal}</span> mutual
-              </p>
+              <UserMutualFriends userId={id} />
             </div>
           </div>
           <div className="mt-3">

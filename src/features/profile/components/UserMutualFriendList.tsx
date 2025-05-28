@@ -3,6 +3,7 @@ import { api } from "@/lib/axios";
 import { UserListInfinityScollParams } from "@/types/UserListInfinityScrollParams.type";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
+import { Link } from "react-router";
 
 // TODO: reafacor
 export type FriendList = {
@@ -13,11 +14,11 @@ export type FriendList = {
   avatarURL: string | null;
 }[];
 
-export type GetFriendsListResponse = {
+export type GetMutualFriendsListResponse = {
   success: boolean;
   message: string;
   data: {
-    friends: FriendList;
+    mutualFriends: FriendList;
     from: UserListInfinityScollParams;
   };
 };
@@ -25,11 +26,11 @@ export type GetFriendsListResponse = {
 type Props = {
   userId: string;
 };
-const UserFriendList: React.FC<Props> = ({ userId }) => {
+const UserMutualFriendList: React.FC<Props> = ({ userId }) => {
   const { data, isLoading } = useQuery({
-    queryKey: ["user-friends", "list", userId],
+    queryKey: ["user-mutual-friends", "list", userId],
     queryFn: async () => {
-      const res = await api.get<GetFriendsListResponse>("/api/v1/user/social/friend", {
+      const res = await api.get<GetMutualFriendsListResponse>("/api/v1/user/social/friend/mutual", {
         params: { targetUserId: userId },
       });
       return res.data.data;
@@ -41,15 +42,16 @@ const UserFriendList: React.FC<Props> = ({ userId }) => {
   return (
     <div className="h-100 overflow-y-auto text-white">
       {data &&
-        data.friends.map((friend) => (
-          <UserListItem
-            key={friend.id}
-            profileURL={friend.avatarURL}
-            userName={`${friend.firstName} ${friend.lastName ?? ""}`}
-          />
+        data.mutualFriends.map((friend) => (
+          <Link key={friend.id} to={`/user/${friend.id}`}>
+            <UserListItem
+              profileURL={friend.avatarURL}
+              userName={`${friend.firstName} ${friend.lastName ?? ""}`}
+            />
+          </Link>
         ))}
     </div>
   );
 };
 
-export default UserFriendList;
+export default UserMutualFriendList;

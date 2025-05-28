@@ -6,9 +6,8 @@ import PageNotFound from "@/layout/PageNotFoundPage";
 import usePublicUserProfileQuery from "../hooks/usePublicUserProfileQuery";
 import { Skeleton } from "@/components/ui/skeleton";
 import RelationshipActions from "../components/extended/RelationshipActions";
-import Friends from "../components/extended/Friends.trigger";
 import UserMutualFriends from "../components/extended/UserMutualFriends.trigger";
-
+import Friends from "../components/extended/Friends.trigger";
 
 const PubliicUserProfile = () => {
   const { id } = useParams<{ id: string }>();

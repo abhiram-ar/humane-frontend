@@ -5,9 +5,9 @@ import { InfiniteScrollResponse } from "../Types/SearchResult";
 import { api } from "@/lib/axios";
 import UserListItem from "../components/UserListItem";
 import { Link } from "react-router";
-import { Loader } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
 import { setSearchQuery } from "../redux/mainSearchSlice";
+import Spinner from "@/components/Spinner";
 
 const SearchPage = () => {
   const query = useAppSelector((state) => state.mainSearch.query);
@@ -77,6 +77,7 @@ const SearchPage = () => {
           .map((user) => (
             <Link key={user.id} to={`/user/${user.id}`}>
               <UserListItem
+                className="mb-4"
                 profileURL={user.avatarURL}
                 userName={`${user.firstName} ${user.lastName || ""}`}
               />
@@ -87,11 +88,7 @@ const SearchPage = () => {
       <div ref={observerRef} />
 
       <div className="pb-5">
-        {(isFetching || isLoading) && (
-          <div className="flex justify-center">
-            <Loader className="text-pop-green/75 animate-spin" />
-          </div>
-        )}
+        {(isFetching || isLoading) && <Spinner />}
 
         {data && !hasNextPage && !isFetching && (
           <p className="text-center text-sm text-zinc-400">No more matches</p>

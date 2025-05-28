@@ -4,14 +4,17 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchUserProfile } from "../services/fetchUserProfile.service";
 import ProfilePicConfig from "../components/extended/ProfilePicConfig";
 import CoverPhotoConfig from "../components/extended/CoverPhotoConfig";
+import useUserId from "../hooks/useUserId";
+import PendingFriendRequests from "../components/extended/PendingFriends.trigger";
+import Friends from "../components/extended/Friends.trigger";
 
 const CurrentUserProfilePage = () => {
-  const circleCount = 102;
-
   const { data } = useQuery({
     queryKey: ["user-profile"],
     queryFn: fetchUserProfile,
   });
+
+  const userId = useUserId();
 
   if (!data) {
     return <div>loading</div>;
@@ -61,14 +64,16 @@ const CurrentUserProfilePage = () => {
                 </h5>
               </div>
             </div>
-
-            <p>
-              <span className="text-pop-green">{circleCount}</span> humans in circle
-            </p>
+            {userId && (
+              <div className="flex flex-col text-right">
+                <Friends userId={userId} />
+                <PendingFriendRequests userId={userId} />
+              </div>
+            )}
           </div>
           <div className="mt-3">
             {data.bio ? (
-              <pre className="font-sans text-lg text-white text-wrap">{data?.bio}</pre>
+              <pre className="font-sans text-lg text-wrap text-white">{data?.bio}</pre>
             ) : (
               <p className="text-green-subtle/50 quote font-normal italic">
                 (Let the world know who you are — add a short bio to your profile.)

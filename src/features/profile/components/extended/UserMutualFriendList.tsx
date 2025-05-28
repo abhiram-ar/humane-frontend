@@ -1,3 +1,4 @@
+import Spinner from "@/components/Spinner";
 import UserListItem from "@/features/search/components/UserListItem";
 import { api } from "@/lib/axios";
 import { UserListInfinityScollParams } from "@/types/UserListInfinityScrollParams.type";
@@ -37,13 +38,13 @@ const UserMutualFriendList: React.FC<Props> = ({ userId }) => {
     },
   });
 
-  if (isLoading) <div>loadin..</div>;
+  if (isLoading) <Spinner />;
 
   return (
     <div className="h-100 overflow-y-auto text-white">
       {data &&
         data.mutualFriends.map((friend) => (
-          <Link key={friend.id} to={`/user/${friend.id}`}>
+          <Link key={friend.id} to={`/user/${friend.id}`} target="_blank">
             <UserListItem
               profileURL={friend.avatarURL}
               userName={`${friend.firstName} ${friend.lastName ?? ""}`}

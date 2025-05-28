@@ -49,7 +49,7 @@ const RelationshipActions: React.FC<Props> = ({ userId }) => {
 
       {data?.status === "friendReqWaitingApproval" && (
         <div className="flex gap-2">
-          <ButtonPop onClick={() => acceptFriendReq(userId)}>Accept </ButtonPop>
+          <ButtonPop onClick={() => acceptFriendReq(userId)}>Accept Request</ButtonPop>
           <ButtonNeutal onClick={() => removeFriendship(userId)} title="cancel">
             Decline
           </ButtonNeutal>

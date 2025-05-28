@@ -16,7 +16,7 @@ import { useAppDispatch } from "@/features/userAuth/hooks/store.hooks";
 import { logout } from "@/features/userAuth/redux/userAuthSlice";
 import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
-import { fetchUserProfile } from "../services/fetchUserProfile.service";
+import { fetchUserProfile } from "../../services/fetchUserProfile.service";
 
 const UserLogout = () => {
   const [showLogo, setShowlogo] = useState(false);

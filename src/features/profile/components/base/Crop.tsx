@@ -4,7 +4,7 @@ import ReactCrop, { centerCrop, makeAspectCrop, Crop, PixelCrop } from "react-im
 import { canvasPreview } from "./CanvasPreview";
 
 import "react-image-crop/dist/ReactCrop.css";
-import { useDebounceEffect } from "../hooks/useDebounceEffect";
+import { useDebounceEffect } from "../../hooks/useDebounceEffect";
 import { Loader } from "lucide-react";
 
 // This to make and center a % aspect crop

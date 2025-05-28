@@ -9,7 +9,7 @@ import { shimmer } from "@/constants/shimmerStyle";
 import { api } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import UserFriendList from "./UserFriendList";
+import FriendList from "./FriendList";
 
 type GetFriendsCountResponse = {
   success: boolean;
@@ -23,7 +23,7 @@ type Props = {
   userId: string;
 };
 
-const UserFriends: React.FC<Props> = ({ userId }) => {
+const Friends: React.FC<Props> = ({ userId }) => {
   const { data, isLoading } = useQuery({
     queryKey: ["user-friends", "count", userId],
     queryFn: async () => {
@@ -49,11 +49,11 @@ const UserFriends: React.FC<Props> = ({ userId }) => {
           <DialogHeader>
             <DialogTitle className="text-almost-white">Friends</DialogTitle>
           </DialogHeader>
-          <UserFriendList userId={userId} />
+          <FriendList userId={userId} />
         </DialogContent>
       </Dialog>
     </div>
   );
 };
 
-export default UserFriends;
+export default Friends;

@@ -1,9 +1,9 @@
 import { Calendar } from "lucide-react";
-import EditProfileButton from "../components/EditProfileButton";
+import EditProfileButton from "../components/extended/EditProfileButton";
 import { useQuery } from "@tanstack/react-query";
 import { fetchUserProfile } from "../services/fetchUserProfile.service";
-import ProfilePicConfig from "../components/ProfilePicConfig";
-import CoverPhotoConfig from "../components/CoverPhotoConfig";
+import ProfilePicConfig from "../components/extended/ProfilePicConfig";
+import CoverPhotoConfig from "../components/extended/CoverPhotoConfig";
 
 const CurrentUserProfilePage = () => {
   const circleCount = 102;

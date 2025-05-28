@@ -10,17 +10,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import useMutateUserAvatarPhoto from "../hooks/useMutateUserAvatarPhoto";
-import { FetchUserProfileResponse } from "../services/fetchUserProfile.service";
+import { FetchUserProfileResponse } from "../../services/fetchUserProfile.service";
 import { useQueryClient } from "@tanstack/react-query";
+import useUserCoverPhotoMutation from "../../hooks/useUserCoverPhotoMutation";
 
-const RemoveProfilePicture = () => {
+const CoverPhotoRemove = () => {
   const queryClient = useQueryClient();
 
-  const { mutate: updateUserAvatarPhoto } = useMutateUserAvatarPhoto();
+  const { mutate: removeUserCoverPhoto } = useUserCoverPhotoMutation();
 
   const handleRemoveProfilePhoto = async () => {
-    updateUserAvatarPhoto("", {
+    removeUserCoverPhoto("", {
       onSuccess: () => {
         queryClient.setQueryData(
           ["user-profile"],
@@ -28,8 +28,8 @@ const RemoveProfilePicture = () => {
             if (oldData) {
               return {
                 ...oldData,
-                avatarURL: null, // global behavior set the response of the mutation as URL, which is just the CDN link
-              };
+                coverPhotoURL: undefined, // global behavior set the response of the mutation as URL, which is just the CDN link
+              } as FetchUserProfileResponse["data"]["profile"];
             }
             return oldData;
           },
@@ -41,14 +41,17 @@ const RemoveProfilePicture = () => {
   return (
     <>
       <AlertDialog>
-        <AlertDialogTrigger>
-          <div className="hover:bg-pop-green scale-90 cursor-pointer rounded-full bg-zinc-600 p-2 transition-all duration-200 ease-out hover:scale-105 hover:text-black">
+        <AlertDialogTrigger asChild>
+          <button
+            title="update photo"
+            className="hover:bg-pop-green scale-90 cursor-pointer rounded-full bg-zinc-600/80 p-3 backdrop-blur-sm transition-all duration-200 ease-out hover:scale-105 hover:text-black"
+          >
             <ImageMinus />
-          </div>
+          </button>
         </AlertDialogTrigger>
         <AlertDialogContent className="border-grey-dark-bg text-almost-white bg-[#272727]">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to remove profile picture?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure you want to remove cover photo?</AlertDialogTitle>
             <AlertDialogDescription>You cannot undo this action.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -68,4 +71,4 @@ const RemoveProfilePicture = () => {
   );
 };
 
-export default RemoveProfilePicture;
+export default CoverPhotoRemove;

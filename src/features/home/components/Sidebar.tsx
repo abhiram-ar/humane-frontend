@@ -2,7 +2,7 @@ import { Bell, Home, LucideIcon, MessageSquareText, Settings, User, UserRound } 
 import { NavLink } from "react-router";
 import humanelogo from "@/assets/humaneSegoeScriptBold.svg";
 import CreatePostButton from "./CreatePostButton";
-import UserLogout from "@/features/profile/components/UserLogout";
+import UserLogout from "@/features/profile/components/extended/UserLogout";
 
 type SidebarCongfig = {
   name: string;

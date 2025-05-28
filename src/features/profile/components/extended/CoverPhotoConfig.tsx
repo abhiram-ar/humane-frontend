@@ -1,9 +1,9 @@
-import CoverPhoto from "./CoverPhoto";
+import CoverPhoto from "../base/CoverPhoto";
 import CoverPhotoUpload from "./CoverPhotoUpload";
 import CoverPhotoRemove from "./CoverPhotoRemove";
 import { useQuery } from "@tanstack/react-query";
-import { fetchUserProfile } from "../services/fetchUserProfile.service";
-import ViewPicture from "./ViewPicture";
+import { fetchUserProfile } from "../../services/fetchUserProfile.service";
+import ViewPicture from "../base/ViewPicture";
 
 const CoverPhotoConfig = () => {
   const { data, isLoading } = useQuery({ queryKey: ["user-profile"], queryFn: fetchUserProfile });

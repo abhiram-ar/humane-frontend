@@ -25,7 +25,7 @@ export type GetFriendsListResponse = {
 type Props = {
   userId: string;
 };
-const UserFriendList: React.FC<Props> = ({ userId }) => {
+const FriendList: React.FC<Props> = ({ userId }) => {
   const { data, isLoading } = useQuery({
     queryKey: ["user-friends", "list", userId],
     queryFn: async () => {
@@ -52,4 +52,4 @@ const UserFriendList: React.FC<Props> = ({ userId }) => {
   );
 };
 
-export default UserFriendList;
+export default FriendList;

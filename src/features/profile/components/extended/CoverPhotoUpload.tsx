@@ -1,5 +1,5 @@
 import { DialogClose, DialogDescription } from "@radix-ui/react-dialog";
-import ImgCrop from "./Crop";
+import ImgCrop from "../base/Crop";
 import { ImageUp } from "lucide-react";
 import {
   Dialog,
@@ -9,20 +9,20 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { api } from "@/lib/axios";
-import { GetPresignedURLResponse } from "../Types/GetPresingedURLResponse";
+import { GetPresignedURLResponse } from "../../Types/GetPresingedURLResponse";
 import axios from "axios";
 import { useRef } from "react";
-import useMutateUserAvatarPhoto from "../hooks/useMutateUserAvatarPhoto";
+import useUserCoverPhotoMutation from "../../hooks/useUserCoverPhotoMutation";
 
-const UploadProfilePic = () => {
+const CoverPhotoUpload = () => {
   const closeDialogRef = useRef<HTMLButtonElement | null>(null);
 
-  const { mutate: mutateUserProfile } = useMutateUserAvatarPhoto();
+  const { mutate: mutateUserCoverPhoto } = useUserCoverPhotoMutation();
 
   const handleUpload = async (file: File): Promise<void> => {
     // move the path logic to backend
     // and send back the path in presinged url response
-    const key = `profile-pic/${file.name}`;
+    const key = `cover-photo/${file.name}`;
 
     const res = await api.post<GetPresignedURLResponse>("/api/v1/user/profile/upload/pre-signed", {
       fileName: key,
@@ -34,7 +34,7 @@ const UploadProfilePic = () => {
       headers: { "Content-Type": file.type },
     });
 
-    mutateUserProfile(key);
+    mutateUserCoverPhoto(key);
 
     closeDialogRef.current?.click();
 
@@ -47,7 +47,7 @@ const UploadProfilePic = () => {
         <DialogTrigger asChild>
           <button
             title="update photo"
-            className="hover:bg-pop-green scale-90 cursor-pointer rounded-full bg-zinc-600 p-2 transition-all duration-200 ease-out hover:scale-105 hover:text-black"
+            className="hover:bg-pop-green scale-90 cursor-pointer rounded-full bg-zinc-600/80 p-3 backdrop-blur-sm transition-all duration-200 ease-out hover:scale-105 hover:text-black"
           >
             <ImageUp />
           </button>
@@ -58,13 +58,13 @@ const UploadProfilePic = () => {
           aria-description="view profile photo"
         >
           <DialogHeader>
-            <DialogTitle className="text-almost-white">Upload profile photo</DialogTitle>
+            <DialogTitle className="text-almost-white">Upload Cover photo</DialogTitle>
             <DialogDescription className="text-sm text-zinc-500">
               Photo should hava 1:1 aspect ratio
             </DialogDescription>
             {/* body */}
             <div>
-              <ImgCrop handleUpload={handleUpload} />
+              <ImgCrop handleUpload={handleUpload} aspectRatio={2 / 1} />
             </div>
           </DialogHeader>
           <DialogClose ref={closeDialogRef} />
@@ -74,4 +74,4 @@ const UploadProfilePic = () => {
   );
 };
 
-export default UploadProfilePic;
+export default CoverPhotoUpload;

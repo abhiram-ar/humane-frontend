@@ -1,5 +1,5 @@
 import { api } from "@/lib/axios";
-import { EditFormFields } from "../components/EditProfileForm";
+import { EditFormFields } from "../components/extended/EditProfileForm";
 
 type UpdateProfileReponse = {
   success: boolean;

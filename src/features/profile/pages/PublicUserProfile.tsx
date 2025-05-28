@@ -1,13 +1,13 @@
-import CoverPhoto from "../components/CoverPhoto";
-import ProfilePic from "../components/ProfilePic";
+import CoverPhoto from "../components/base/CoverPhoto";
+import ProfilePic from "../components/base/ProfilePic";
 import { Calendar } from "lucide-react";
 import { useParams } from "react-router";
 import PageNotFound from "@/layout/PageNotFoundPage";
 import usePublicUserProfileQuery from "../hooks/usePublicUserProfileQuery";
 import { Skeleton } from "@/components/ui/skeleton";
-import RelationshipActions from "../components/RelationshipActions";
-import UserFriends from "../components/UserFriends.trigger";
-import UserMutualFriends from "../components/UserMutualFriends.trigger";
+import RelationshipActions from "../components/extended/RelationshipActions";
+import Friends from "../components/extended/Friends.trigger";
+import UserMutualFriends from "../components/extended/UserMutualFriends.trigger";
 
 
 const PubliicUserProfile = () => {
@@ -47,7 +47,7 @@ const PubliicUserProfile = () => {
                   <h5 className="text-pop-green">Humane score: {1000}</h5>
 
                   <div className="mt-3 flex gap-5">
-                    {/* Todo: date */}
+                    {/* TODO: date */}
                     {/* <h5 className="flex items-center gap-2 text-zinc-400">
                       <Cake size={20} />
                       Born 23 May 1999
@@ -74,7 +74,7 @@ const PubliicUserProfile = () => {
 
             {/* opposite side to profile pic  */}
             <div className="text-end">
-              <UserFriends userId={id} />
+              <Friends userId={id} />
               <UserMutualFriends userId={id} />
             </div>
           </div>

@@ -1,6 +1,6 @@
 import EditProfileForm, { EditFormFields } from "./EditProfileForm";
 import React, { useRef } from "react";
-import useMutateUserProfile from "../hooks/useMutateUserProfile";
+import useMutateUserProfile from "../../hooks/useMutateUserProfile";
 import {
   Dialog,
   DialogClose,

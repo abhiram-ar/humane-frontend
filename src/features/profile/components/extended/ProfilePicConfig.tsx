@@ -1,9 +1,9 @@
-import ProfilePic from "./ProfilePic";
-import ViewPicture from "./ViewPicture";
+import ProfilePic from "../base/ProfilePic";
+import ViewPicture from "../base/ViewPicture";
 import RemoveProfilePicture from "./RemoveProfilePicture";
 import UploadProfilePic from "./UploadProfilePic";
 import { useQuery } from "@tanstack/react-query";
-import { fetchUserProfile } from "../services/fetchUserProfile.service";
+import { fetchUserProfile } from "../../services/fetchUserProfile.service";
 
 const ProfilePicConfig = () => {
   const { data } = useQuery({

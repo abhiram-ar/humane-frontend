@@ -1,7 +1,7 @@
 import Spinner from "@/components/Spinner";
 import UserListItem from "@/features/search/components/UserListItem";
 import { api } from "@/lib/axios";
-import { UserListInfinityScollParams } from "@/types/UserListInfinityScrollParams.type";
+import { UserListInfinityScollParams } from "@/types/UserInfinitryScrollParams.type";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { Link } from "react-router";

@@ -1,38 +1,11 @@
 import Spinner from "@/components/Spinner";
 import UserListItem from "@/features/search/components/UserListItem";
-import { api } from "@/lib/axios";
 import { queryClient } from "@/lib/reactQuery";
-import { RelationshipStatus } from "@/types/RelationshipStatus";
-import {
-  UserListInfinityScollParams,
-  UserListInfinityScollQueryParams,
-} from "@/types/UserInfinitryScrollParams.type";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import React, { useEffect, useRef } from "react";
 import { Link } from "react-router";
 import useCancelFriendReqMutation from "../../hooks/useCancelFriendReqMutation";
 import ButtonNeutal from "@/components/ButtonNeutal";
-
-// TODO: reafacor
-
-
-export type FriendRequestList = {
-  id: string;
-  firstName: string;
-  lastName?: string;
-  createdAt: string;
-  status: RelationshipStatus;
-  avatarURL: string | null;
-}[];
-
-export type GetUserSendFriendReqResponse = {
-  success: boolean;
-  message: string;
-  data: {
-    friendReqs: FriendRequestList;
-    from: UserListInfinityScollParams;
-  };
-};
+import useUserSendFriendReqInfiniteQuery from "../../hooks/useUserSendFriendReqInfiniteQuery";
 
 type Props = {
   userId: string;
@@ -48,25 +21,7 @@ const PendingSendRequest: React.FC<Props> = () => {
     fetchNextPage,
     isFetching,
     hasNextPage,
-  } = useInfiniteQuery({
-    queryKey: ["friend-req-send", "list"],
-    queryFn: async ({ pageParam }) => {
-      const queryParams: UserListInfinityScollQueryParams = { size: 9 };
-
-      if (pageParam.createdAt !== "ini" && pageParam.lastId !== "ini") {
-        queryParams.createdAt = pageParam?.createdAt;
-        queryParams.lastId = pageParam?.lastId;
-      }
-
-      const res = await api.get<GetUserSendFriendReqResponse>(
-        "/api/v1/user/social/friend-req/sent",
-        { params: queryParams },
-      );
-      return res.data.data;
-    },
-    initialPageParam: { lastId: "ini", createdAt: "ini" },
-    getNextPageParam: (lastPage) => (lastPage.from?.hasMore ? lastPage.from : null),
-  });
+  } = useUserSendFriendReqInfiniteQuery();
 
   const handleCancelReq = (targetUserId: string) => {
     cancelFriendReq(targetUserId, {
@@ -97,7 +52,7 @@ const PendingSendRequest: React.FC<Props> = () => {
     observer.observe(observerRef.current);
 
     return () => observer.disconnect();
-  });
+  }, [fetchNextPage, hasNextPage, isFetching]);
 
   return (
     <div className="h-100 overflow-y-auto py-1 text-white">

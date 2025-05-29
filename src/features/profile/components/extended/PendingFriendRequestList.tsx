@@ -1,84 +1,78 @@
 import Spinner from "@/components/Spinner";
 import UserListItem from "@/features/search/components/UserListItem";
-import { api } from "@/lib/axios";
-import { RelationshipStatus } from "@/types/RelationshipStatus";
-import { UserListInfinityScollParams } from "@/types/UserInfinitryScrollParams.type";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import React from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import React, { useEffect, useRef } from "react";
 import { Link } from "react-router";
 import useAcceptFriendReqMutation from "../../hooks/useAcceptFriendReqMutation";
 import useRemoveFriendshipMutation from "../../hooks/useRemoveFriendshipMutation";
 import ButtonPop from "@/components/ButtonPop";
 import ButtonNeutal from "@/components/ButtonNeutal";
+import useRecivedFriendReqInfiniteQuery from "../../hooks/useRecivedFriendReqInfiniteQuery";
 
 // TODO: reafacor
-
-export type FriendRequestList = {
-  id: string;
-  firstName: string;
-  lastName?: string;
-  createdAt: string;
-  status: RelationshipStatus;
-  avatarURL: string | null;
-}[];
-
-export type GetFriendReqResponse = {
-  success: boolean;
-  message: string;
-  data: {
-    friendReqs: FriendRequestList;
-    from: UserListInfinityScollParams;
-  };
-};
 
 type Props = {
   userId: string;
 };
-const PendingRecivedFriendRequest: React.FC<Props> = ({ userId }) => {
+const PendingRecivedFriendRequest: React.FC<Props> = () => {
   const { mutate: acceptFriendReq } = useAcceptFriendReqMutation();
   const { mutate: declineFriendReq } = useRemoveFriendshipMutation();
-  const { data, isLoading } = useQuery({
-    queryKey: ["friend-req", "list", userId],
-    queryFn: async () => {
-      const res = await api.get<GetFriendReqResponse>("/api/v1/user/social/friend-req");
-      return res.data.data;
-    },
-  });
+  const observerRef = useRef<HTMLDivElement | null>(null);
+  const {
+    data: infiniteData,
+    isLoading,
+    isFetching,
+    hasNextPage,
+    fetchNextPage,
+  } = useRecivedFriendReqInfiniteQuery();
 
   const queryClient = useQueryClient();
 
+  useEffect(() => {
+    if (!observerRef.current) return;
+
+    const observer = new IntersectionObserver((entity) => {
+      if (entity[0].isIntersecting && !isFetching && hasNextPage) {
+        fetchNextPage();
+      }
+    });
+    observer.observe(observerRef.current);
+
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetching]);
+
   const handleAcceptReq = (targetUserId: string) => {
     acceptFriendReq(targetUserId, {
-      onSuccess: (data) => {
-        queryClient.setQueryData(
-          ["friend-req", "list", userId],
-          (oldData: GetFriendReqResponse["data"]) => {
-            return oldData
-              ? ({
-                  ...oldData,
-                  friendReqs: oldData.friendReqs.filter((req) => req.id !== data.requesterId),
-                } as GetFriendReqResponse["data"])
-              : oldData;
-          },
-        );
+      onSuccess: (res) => {
+        queryClient.setQueryData(["friend-req-recived", "list"], (oldData: typeof infiniteData) => {
+          const newPagesArray =
+            oldData?.pages.map((page) => ({
+              friendReqs: page.friendReqs.filter((user) => user.id !== res.requesterId),
+            })) ?? [];
+
+          return {
+            pages: newPagesArray,
+            pageParams: oldData?.pageParams,
+          };
+        });
       },
     });
   };
 
   const handleDeclineReq = (targetUserId: string) => {
     declineFriendReq(targetUserId, {
-      onSuccess: (data) => {
-        queryClient.setQueryData(
-          ["friend-req", "list", userId],
-          (oldData: GetFriendReqResponse["data"]) => {
-            return oldData
-              ? ({
-                  ...oldData,
-                  friendReqs: oldData.friendReqs.filter((req) => req.id !== data.targetUserId),
-                } as GetFriendReqResponse["data"])
-              : oldData;
-          },
-        );
+      onSuccess: (res) => {
+        queryClient.setQueryData(["friend-req-recived", "list"], (oldData: typeof infiniteData) => {
+          const newPagesArray =
+            oldData?.pages.map((page) => ({
+              friendReqs: page.friendReqs.filter((user) => user.id !== res.targetUserId),
+            })) ?? [];
+
+          return {
+            pages: newPagesArray,
+            pageParams: oldData?.pageParams,
+          };
+        });
       },
     });
   };
@@ -87,27 +81,37 @@ const PendingRecivedFriendRequest: React.FC<Props> = ({ userId }) => {
 
   return (
     <div className="h-100 overflow-y-auto text-white">
-      {data &&
-        data.friendReqs.map((friend) => (
-          <div className="flex justify-between px-2">
-            <Link key={friend.id} to={`/user/${friend.id}`} target="">
-              <UserListItem
-                profileURL={friend.avatarURL}
-                userName={`${friend.firstName} ${friend.lastName ?? ""}`}
-                className="mb-0"
-              />
-            </Link>
+      {infiniteData &&
+        infiniteData?.pages?.map((page) =>
+          page?.friendReqs?.map((user) => (
+            <div key={user.id} className="mx-2 flex justify-between">
+              <Link to={`/user/${user.id}`} target="">
+                <UserListItem
+                  profileURL={user.avatarURL}
+                  userName={`${user.firstName} ${user.lastName ?? ""}`}
+                  className="mb-0"
+                />
+              </Link>
 
-            <div className="flex gap-1">
-              <ButtonPop className="h-fit" onClick={() => handleAcceptReq(friend.id)}>
-                Accept
-              </ButtonPop>
-              <ButtonNeutal className="h-fit" onClick={() => handleDeclineReq(friend.id)}>
-                Decline
-              </ButtonNeutal>
+              <div className="flex gap-1">
+                <ButtonPop className="h-fit" onClick={() => handleAcceptReq(user.id)}>
+                  Accept
+                </ButtonPop>
+                <ButtonNeutal className="h-fit" onClick={() => handleDeclineReq(user.id)}>
+                  Decline
+                </ButtonNeutal>
+              </div>
             </div>
-          </div>
-        ))}
+          )),
+        )}
+
+      {isLoading || isFetching ? (
+        <Spinner />
+      ) : (
+        <p className="text-center text-sm text-zinc-400">No more request</p>
+      )}
+
+      <div ref={observerRef}></div>
     </div>
   );
 };

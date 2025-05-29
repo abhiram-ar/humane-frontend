@@ -18,6 +18,8 @@ const PendingRecivedFriendRequest: React.FC<Props> = () => {
   const { mutate: acceptFriendReq } = useAcceptFriendReqMutation();
   const { mutate: declineFriendReq } = useRemoveFriendshipMutation();
   const observerRef = useRef<HTMLDivElement | null>(null);
+  const queryClient = useQueryClient();
+  
   const {
     data: infiniteData,
     isLoading,
@@ -26,8 +28,7 @@ const PendingRecivedFriendRequest: React.FC<Props> = () => {
     fetchNextPage,
   } = useRecivedFriendReqInfiniteQuery();
 
-  const queryClient = useQueryClient();
-
+  
   useEffect(() => {
     if (!observerRef.current) return;
 

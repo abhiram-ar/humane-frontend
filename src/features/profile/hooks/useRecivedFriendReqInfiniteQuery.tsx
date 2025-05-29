@@ -1,6 +1,9 @@
 import { api } from "@/lib/axios";
 import { RelationshipStatus } from "@/types/RelationshipStatus";
-import { UserListInfinityScollParams, UserListInfinityScollQueryParams } from "@/types/UserInfinitryScrollParams.type";
+import {
+  UserListInfinityScollParams,
+  UserListInfinityScollQueryParams,
+} from "@/types/UserInfinitryScrollParams.type";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 export type FriendRequestList = {
@@ -21,7 +24,6 @@ export type GetFriendReqResponse = {
   };
 };
 
-
 const useRecivedFriendReqInfiniteQuery = () => {
   return useInfiniteQuery({
     queryKey: ["friend-req-recived", "list"],
@@ -33,13 +35,14 @@ const useRecivedFriendReqInfiniteQuery = () => {
         queryParams.lastId = pageParam?.lastId;
       }
 
-      const res = await api.get<GetFriendReqResponse>("/api/v1/user/social/friend-req");
+      const res = await api.get<GetFriendReqResponse>("/api/v1/user/social/friend-req", {
+        params: queryParams,
+      });
       return res.data.data;
     },
     initialPageParam: { lastId: "ini", createdAt: "ini" },
     getNextPageParam: (lastPage) => (lastPage.from?.hasMore ? lastPage.from : null),
   });
-      
-}
+};
 
-export default useRecivedFriendReqInfiniteQuery
+export default useRecivedFriendReqInfiniteQuery;

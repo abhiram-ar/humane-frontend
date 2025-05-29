@@ -1,56 +1,62 @@
 import Spinner from "@/components/Spinner";
 import UserListItem from "@/features/search/components/UserListItem";
-import { api } from "@/lib/axios";
-import { UserListInfinityScollParams } from "@/types/UserInfinitryScrollParams.type";
-import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Link } from "react-router";
+import useMutualFriendsListInfniteQuery from "../../hooks/useMutualFriendsListInfniteQuery";
 
 // TODO: reafacor
-export type FriendList = {
-  id: string;
-  firstName: string;
-  lastName?: string | null;
-  status: "PENDING" | "ACCEPTED";
-  avatarURL: string | null;
-}[];
-
-export type GetMutualFriendsListResponse = {
-  success: boolean;
-  message: string;
-  data: {
-    mutualFriends: FriendList;
-    from: UserListInfinityScollParams;
-  };
-};
 
 type Props = {
   userId: string;
 };
 const UserMutualFriendList: React.FC<Props> = ({ userId }) => {
-  const { data, isLoading } = useQuery({
-    queryKey: ["user-mutual-friends", "list", userId],
-    queryFn: async () => {
-      const res = await api.get<GetMutualFriendsListResponse>("/api/v1/user/social/friend/mutual", {
-        params: { targetUserId: userId },
-      });
-      return res.data.data;
-    },
-  });
+  const observerRef = useRef<HTMLDivElement | null>(null);
 
-  if (isLoading) <Spinner />;
+  const {
+    data: infiniteData,
+    isLoading,
+    isFetching,
+    hasNextPage,
+    fetchNextPage,
+  } = useMutualFriendsListInfniteQuery(userId);
+
+  useEffect(() => {
+    if (!observerRef.current) return;
+
+    const observer = new IntersectionObserver((entity) => {
+      if (entity[0].isIntersecting && !isFetching && hasNextPage) {
+        fetchNextPage();
+      }
+    });
+    observer.observe(observerRef.current);
+
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetching]);
 
   return (
-    <div className="h-100 overflow-y-auto text-white">
-      {data &&
-        data.mutualFriends.map((friend) => (
-          <Link key={friend.id} to={`/user/${friend.id}`} target="_blank">
-            <UserListItem
-              profileURL={friend.avatarURL}
-              userName={`${friend.firstName} ${friend.lastName ?? ""}`}
-            />
-          </Link>
-        ))}
+    <div className="h-100 overflow-y-auto pb-1 text-white">
+      {infiniteData &&
+        infiniteData?.pages?.map((page) =>
+          page?.mutualFriends?.map((user) => (
+            <div key={user.id} className="flex justify-between">
+              <Link to={`/user/${user.id}`} target="">
+                <UserListItem
+                  profileURL={user.avatarURL}
+                  userName={`${user.firstName} ${user.lastName ?? ""}`}
+                  className="mb-0"
+                />
+              </Link>
+            </div>
+          )),
+        )}
+
+      {isLoading || isFetching ? (
+        <Spinner />
+      ) : (
+        <p className="text-center text-sm text-zinc-400">No more friends</p>
+      )}
+
+      <div ref={observerRef}></div>
     </div>
   );
 };

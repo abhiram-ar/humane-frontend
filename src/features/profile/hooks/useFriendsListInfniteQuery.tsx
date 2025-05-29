@@ -24,7 +24,7 @@ export type GetFriendsListResponse = {
 
 const useFriendsListInfniteQuery = (userId: string) => {
   return useInfiniteQuery({
-    queryKey: ["user-friends", "list"],
+    queryKey: ["user-friends", "list", userId],
     queryFn: async ({ pageParam }) => {
       const queryParams: UserListInfinityScollQueryParams & { targetUserId: string } = {
         size: 9,

@@ -8,19 +8,34 @@ import {
 import React, { useState } from "react";
 import PendingRecivedFriendRequest from "./PendingFriendRequestList";
 import PendingSendRequest from "./PendingSendRequestList";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/axios";
+import { ServerAPIResponse } from "@/types/ServerAPIResponse";
 
 type Props = {
   userId: string;
 };
 
+type FriendReqCountResponseData = { count: number };
+
 const PendingFriendRequests: React.FC<Props> = ({ userId }) => {
+  const { data: friendReq } = useQuery({
+    queryKey: ["friend-req-recived", "count"],
+    queryFn: async () => {
+      const res = await api.get<ServerAPIResponse<FriendReqCountResponseData>>(
+        "/api/v1/user/social/friend-req/count",
+      );
+      return res.data.data;
+    },
+  });
+
   const [section, setSection] = useState<"recived" | "send">("recived");
   return (
     <div>
       <Dialog>
         <DialogTrigger>
           <p className="decoration-pop-green cursor-pointer underline-offset-3 hover:underline">
-            <span className={`text-pop-green`}>{10}</span> Pending request
+            <span className={`text-pop-green`}>{friendReq?.count || ""}</span> Pending request
           </p>
         </DialogTrigger>
         <DialogContent className="border-grey-dark-bg bg-[#272727]" aria-describedby="edit profile">

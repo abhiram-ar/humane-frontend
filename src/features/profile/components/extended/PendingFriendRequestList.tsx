@@ -4,10 +4,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useRef } from "react";
 import { Link } from "react-router";
 import useAcceptFriendReqMutation from "../../hooks/useAcceptFriendReqMutation";
-import useRemoveFriendshipMutation from "../../hooks/useRemoveFriendshipMutation";
 import ButtonPop from "@/components/ButtonPop";
 import ButtonNeutal from "@/components/ButtonNeutal";
 import useRecivedFriendReqInfiniteQuery from "../../hooks/useRecivedFriendReqInfiniteQuery";
+import useDeclineFriendReqMutation from "../../hooks/useDeclineFriendReqMutation";
 
 // TODO: reafacor
 
@@ -16,10 +16,10 @@ type Props = {
 };
 const PendingRecivedFriendRequest: React.FC<Props> = () => {
   const { mutate: acceptFriendReq } = useAcceptFriendReqMutation();
-  const { mutate: declineFriendReq } = useRemoveFriendshipMutation();
+  const { mutate: declineFriendReq } = useDeclineFriendReqMutation();
   const observerRef = useRef<HTMLDivElement | null>(null);
   const queryClient = useQueryClient();
-  
+
   const {
     data: infiniteData,
     isLoading,
@@ -28,7 +28,6 @@ const PendingRecivedFriendRequest: React.FC<Props> = () => {
     fetchNextPage,
   } = useRecivedFriendReqInfiniteQuery();
 
-  
   useEffect(() => {
     if (!observerRef.current) return;
 

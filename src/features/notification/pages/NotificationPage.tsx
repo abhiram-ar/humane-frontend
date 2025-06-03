@@ -1,5 +1,5 @@
 import { useAppSelector } from "@/features/userAuth/hooks/store.hooks";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { io, Socket } from "socket.io-client";
 import { ClientToServerEvents, ServerToClientEvents } from "../Types/SocketIOConfig.types";
 import FriendReqNoti from "../Components/FriendReqNoti";
@@ -37,7 +37,7 @@ const NotificationPage = () => {
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [token]);
 
   const tempNotis: FriendReqNotification[] = Array(20)
     .fill(0)
@@ -55,7 +55,7 @@ const NotificationPage = () => {
   console.log(Math.random());
   return (
     <div className="min-h-full w-120 border-x border-zinc-400/50">
-      <h2 className="text-offwhite border-b border-zinc-400/50 px-5 py-10 text-xl font-semibold">
+      <h2 className="text-almost-white border-b border-zinc-400/50 px-5 py-10 text-xl font-semibold">
         Notifications
       </h2>
 

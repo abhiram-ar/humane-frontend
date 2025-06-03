@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { io, Socket } from "socket.io-client";
 import { ClientToServerEvents, ServerToClientEvents } from "../Types/SocketIOConfig.types";
 import FriendReqNoti from "../Components/FriendReqNoti";
+import { FriendReqNotification } from "../Types/FriendReqNoti";
 
 const NotificationPage = () => {
   const token = useAppSelector((state) => state.userAuth.token);
@@ -37,6 +38,21 @@ const NotificationPage = () => {
       socket.disconnect();
     };
   }, []);
+
+  const tempNotis: FriendReqNotification[] = Array(20)
+    .fill(0)
+    .map(() => ({
+      type: "friend-req",
+      id: "",
+      isRead: Math.random() > 0.5 ? true : false,
+      updatedAt: "",
+      friendshipId: "",
+      reciverId: "",
+      requesterId: "",
+      createdAt: "",
+      status: Math.random() > 0.5 ? "ACCEPTED" : "PENDING",
+    }));
+  console.log(Math.random());
   return (
     <div className="min-h-full w-120 border-x border-zinc-400/50">
       <h2 className="text-offwhite border-b border-zinc-400/50 px-5 py-10 text-xl font-semibold">
@@ -44,7 +60,9 @@ const NotificationPage = () => {
       </h2>
 
       <div>
-        <FriendReqNoti />
+        {tempNotis.map((noti, i) => (
+          <FriendReqNoti key={i} noti={noti} />
+        ))}
       </div>
     </div>
   );

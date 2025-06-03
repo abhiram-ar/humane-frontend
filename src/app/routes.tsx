@@ -20,6 +20,7 @@ import AdminUserManagementPage from "@/features/admin/pages/AdminUserManagementP
 import CurrentUserProfilePage from "@/features/profile/pages/CurrentUserProfilePage";
 import SearchPage from "@/features/search/pages/SearchPage";
 import PubliicUserProfile from "@/features/profile/pages/PublicUserProfile";
+import NotificationPage from "@/features/notification/pages/NotificationPage";
 
 export const router = createBrowserRouter([
   {
@@ -42,7 +43,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "notification",
-            Component: PageNotFoundPage,
+            Component: NotificationPage,
           },
           {
             path: "profile",

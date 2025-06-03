@@ -16,6 +16,11 @@ const notificationSlice = createSlice({
     setNotificationList: (state, action: PayloadAction<CombinedNotification[]>) => {
       state.noti = action.payload;
     },
+
+    add: (state, action: PayloadAction<CombinedNotification>) => {
+      state.noti.unshift(action.payload);
+    },
+
     removeNotification: (state, action: PayloadAction<CombinedNotification>) => {
       state.noti = state.noti.filter((noti) => noti.id !== action.payload.id);
     },

@@ -1,14 +1,12 @@
 import ProfilePicSmall from "./ProfilePicSmall";
 import { Link } from "react-router";
-import ButtonPop from "@/components/ButtonPop";
-import { FriendReqNotification } from "../Types/FriendReqNoti";
-import ButtonLowPriority from "@/components/ButtonLowPriority";
 import { ActionableUser } from "../Types/CombinedNotiWithActionableUser";
+import { FriendReqAcceptedNotification } from "../Types/FriendReqAcceptedNoti";
 
 type Props = {
-  noti: FriendReqNotification & ActionableUser;
+  noti: FriendReqAcceptedNotification & ActionableUser;
 };
-const FriendReqNoti: React.FC<Props> = ({ noti }) => {
+const FriendReqAcceptedNoti: React.FC<Props> = ({ noti }) => {
   if (!noti.actionableUser) {
     console.error("actionable user missing for friendReq noti", noti);
     return;
@@ -27,22 +25,11 @@ const FriendReqNoti: React.FC<Props> = ({ noti }) => {
           >
             {`${noti.actionableUser.firstName} ${noti.actionableUser.lastName || ""}`}
           </Link>{" "}
-          Send you a friend request
+          Accepted your request
         </div>
-      </div>
-      <div>
-        {noti.metadata.reqStatus === "PENDING" && (
-          <Link to={`/user/${noti.actionableUser.id}`}>
-            <ButtonPop>View</ButtonPop>
-          </Link>
-        )}
-
-        {noti.metadata.reqStatus === "ACCEPTED" && (
-          <ButtonLowPriority disabled={true}>Accepted</ButtonLowPriority>
-        )}
       </div>
     </div>
   );
 };
 
-export default FriendReqNoti;
+export default FriendReqAcceptedNoti;

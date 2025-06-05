@@ -2,6 +2,7 @@ import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.
 import FriendReqNoti from "../Components/FriendReqNoti";
 import { useEffect } from "react";
 import { markAllAsRead } from "../redux/notificationSlice";
+import FriendReqAcceptedNoti from "../Components/FriendReqAcceptedNoti";
 
 // const tempNotis: FriendReqNotification[] = Array(20)
 //   .fill(0)
@@ -32,9 +33,11 @@ const NotificationPage = () => {
       </h2>
 
       <div>
-        {recentNoti.map((noti) => (
-          <FriendReqNoti key={noti.id} noti={noti} />
-        ))}
+        {recentNoti.map((noti) => {
+          if (noti.type === "friend-req") return <FriendReqNoti key={noti.id} noti={noti} />;
+          else if (noti.type === "friend-req.accepted")
+            return <FriendReqAcceptedNoti key={noti.id} noti={noti} />;
+        })}
       </div>
     </div>
   );

@@ -35,9 +35,8 @@ const notificationSlice = createSlice({
       state.recentNoti[idx] = action.payload;
     },
 
-    markAsRead: (state, action: PayloadAction<CombinedNotificationWithActionableUser>) => {
-      const idx = state.recentNoti.findIndex((noti) => noti.id === action.payload.id);
-      state.recentNoti[idx].isRead = true;
+    markAllAsRead: (state) => {
+      state.recentNoti.forEach((noti) => (noti.isRead = true));
     },
   },
 });
@@ -46,7 +45,7 @@ export const {
   setNotificationList,
   removeNotification,
   addNotification,
-  markAsRead,
+  markAllAsRead,
   updateNotification,
 } = notificationSlice.actions;
 export default notificationSlice.reducer;

@@ -15,6 +15,7 @@ import {
   setNotificationList,
   updateNotification,
 } from "@/features/notification/redux/notificationSlice";
+import { NavLink } from "react-router";
 
 type GetRecentNotificationResponse = {
   success: boolean;
@@ -28,7 +29,11 @@ type GetRecentNotificationResponse = {
   };
 };
 
-const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuItem>> = (props) => {
+const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuItem>> = ({
+  Icon,
+  path,
+  name,
+}) => {
   const token = useAppSelector((state) => state.userAuth.token);
   const dispatch = useAppDispatch();
 
@@ -90,7 +95,49 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
     }
   }, [data, dispatch]);
 
-  return <SidebarMenuItem {...props} />;
+  const unreadNoti = useAppSelector((state) =>
+    state.notifications.recentNoti.reduce(
+      (unread: number, current) => (current.isRead === false ? unread + 1 : unread),
+      0,
+    ),
+  );
+
+  const veryRecentNotiId = useAppSelector((state) => {
+    const size = state.notifications.recentNoti.length;
+    if (size <= 0) return null;
+    return state.notifications.recentNoti[size - 1].id;
+  });
+
+  const handleMarkAsDone = () => {
+    if (veryRecentNotiId) {
+      api
+        .patch("/api/v1/notification/isRead", { fromId: veryRecentNotiId })
+        .catch((err) => console.log("error while marking notification as read", err));
+    }
+  };
+
+  return (
+    <div onClick={handleMarkAsDone}>
+      <NavLink
+        to={path}
+        className={({ isActive }) =>
+          `my-3 flex items-center gap-3 rounded-e-2xl px-10 py-3 text-xl transition-all duration-500 ease-out ${
+            isActive ? "bg-grey-light font-semibold" : "hover:bg-zinc-700/50"
+          }`
+        }
+      >
+        <div className="relative">
+          {unreadNoti > 0 ? (
+            <div className="bg-pop-green absolute -top-1.5 -left-1 rounded-full px-1.25 text-xs text-black">
+              {unreadNoti}
+            </div>
+          ) : null}
+          <Icon />
+        </div>
+        {name}
+      </NavLink>
+    </div>
+  );
 };
 
 export default NotificationSidebarMenuItem;

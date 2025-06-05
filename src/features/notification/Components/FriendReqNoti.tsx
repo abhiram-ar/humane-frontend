@@ -3,30 +3,19 @@ import { Link } from "react-router";
 import ButtonPop from "@/components/ButtonPop";
 import { FriendReqNotification } from "../Types/FriendReqNoti";
 import ButtonLowPriority from "@/components/ButtonLowPriority";
-import useUserId from "@/features/profile/hooks/useUserId";
 import { ActionableUser } from "../Types/CombinedNotiWithActionableUser";
 
 type Props = {
   noti: FriendReqNotification & ActionableUser;
 };
 const FriendReqNoti: React.FC<Props> = ({ noti }) => {
-  // TODO: I think backed is handling this logic, might as well remove this
-  const userId = useUserId();
-  let role: "reciver" | "requester" | undefined;
-  if (noti.reciverId === userId) {
-    role = "reciver";
-  } else if (noti.requesterId === userId) {
-    role = "requester";
-  } else {
-    throw new Error("Current user is not enither requester nor reciver");
-  }
-
   if (!noti.actionableUser) {
     console.error("actionable user missing for friendReq noti", noti);
     return;
   }
 
-  if (role === "requester")
+  // TODO: seperate componet
+  if (false === "requester")
     return (
       <div
         className={`flex items-center justify-between gap-2 border-b border-zinc-400/50 px-6 py-5`}
@@ -60,13 +49,13 @@ const FriendReqNoti: React.FC<Props> = ({ noti }) => {
         </div>
       </div>
       <div>
-        {noti.status === "PENDING" && (
+        {noti.metadata.reqStatus === "PENDING" && (
           <Link to={`/user/${noti.actionableUser.id}`}>
             <ButtonPop>View</ButtonPop>
           </Link>
         )}
 
-        {noti.status === "ACCEPTED" && (
+        {noti.metadata.reqStatus === "ACCEPTED" && (
           <ButtonLowPriority disabled={true}>Accepted</ButtonLowPriority>
         )}
       </div>

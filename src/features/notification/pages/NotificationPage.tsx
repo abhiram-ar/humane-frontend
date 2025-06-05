@@ -1,44 +1,8 @@
-import { useAppSelector } from "@/features/userAuth/hooks/store.hooks";
-import { useEffect } from "react";
-import { io, Socket } from "socket.io-client";
-import { ClientToServerEvents, ServerToClientEvents } from "../Types/SocketIOConfig.types";
 import FriendReqNoti from "../Components/FriendReqNoti";
 import { FriendReqNotification } from "../Types/FriendReqNoti";
 
 const NotificationPage = () => {
-  const token = useAppSelector((state) => state.userAuth.token);
-
-  useEffect(() => {
-    const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io("http://localhost", {
-      path: "/api/v1/notification/socket.io",
-      auth: { token },
-    });
-
-    socket.on("connect", () => {
-      console.log(socket.id);
-    });
-
-    socket.on("connect_error", (err) => {
-      console.log(err);
-    });
-
-    socket.on("test", (msg) => {
-      console.log(msg);
-    });
-
-    socket.on("push-noti", (noti) => {
-      console.log(noti);
-    });
-
-    socket.on("remove-noti", (noti) => {
-      console.log(noti);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [token]);
-
+ 
   const tempNotis: FriendReqNotification[] = Array(20)
     .fill(0)
     .map(() => ({

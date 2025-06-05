@@ -1,7 +1,6 @@
 import ProfilePicSmall from "./ProfilePicSmall";
 import { Link } from "react-router";
 import ButtonPop from "@/components/ButtonPop";
-import prof from "@/assets/testProfile.png";
 import { FriendReqNotification } from "../Types/FriendReqNoti";
 import ButtonLowPriority from "@/components/ButtonLowPriority";
 import useUserId from "@/features/profile/hooks/useUserId";
@@ -33,10 +32,10 @@ const FriendReqNoti: React.FC<Props> = ({ noti }) => {
         className={`flex items-center justify-between gap-2 border-b border-zinc-400/50 px-6 py-5`}
       >
         <div className="flex items-center gap-3">
-          <ProfilePicSmall avatarURL={prof} />
+          <ProfilePicSmall avatarURL={noti.actionableUser.avatarURL} />
           <div className="text-white">
             <Link to="" className="text-green-subtle hover:underline">
-              Abhiram AR
+              {`${noti.actionableUser.firstName} ${noti.actionableUser.lastName || ""}`}
             </Link>{" "}
             Accepted your request
           </div>
@@ -61,7 +60,11 @@ const FriendReqNoti: React.FC<Props> = ({ noti }) => {
         </div>
       </div>
       <div>
-        {noti.status === "PENDING" && <ButtonPop>View</ButtonPop>}
+        {noti.status === "PENDING" && (
+          <Link to={`/user/${noti.actionableUser.id}`}>
+            <ButtonPop>View</ButtonPop>
+          </Link>
+        )}
 
         {noti.status === "ACCEPTED" && (
           <ButtonLowPriority disabled={true}>Accepted</ButtonLowPriority>

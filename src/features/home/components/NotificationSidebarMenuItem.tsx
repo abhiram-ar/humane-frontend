@@ -9,7 +9,12 @@ import { io, Socket } from "socket.io-client";
 import { useQuery } from "@tanstack/react-query";
 import { CombinedNotificationWithActionableUser } from "@/features/notification/Types/CombinedNotiWithActionableUser";
 import { api } from "@/lib/axios";
-import { setNotificationList } from "@/features/notification/redux/notificationSlice";
+import {
+  addNotification,
+  removeNotification,
+  setNotificationList,
+  updateNotification,
+} from "@/features/notification/redux/notificationSlice";
 
 type GetRecentNotificationResponse = {
   success: boolean;
@@ -51,11 +56,16 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
     });
 
     socket.on("push-noti", (noti) => {
-      console.log(noti);
+      dispatch(addNotification(noti));
     });
 
     socket.on("remove-noti", (noti) => {
-      console.log(noti);
+      dispatch(removeNotification(noti));
+    });
+
+    socket.on("update-noti", (noti) => {
+      console.log("upadted", noti);
+      dispatch(updateNotification(noti));
     });
 
     return () => {

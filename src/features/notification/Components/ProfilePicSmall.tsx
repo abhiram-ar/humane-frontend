@@ -1,7 +1,7 @@
 import { User } from "lucide-react";
 import React, { useState } from "react";
 
-const ProfilePicSmall: React.FC<{ avatarURL?: string }> = ({ avatarURL }) => {
+const ProfilePicSmall: React.FC<{ avatarURL?: string | null }> = ({ avatarURL }) => {
   const [isProfilePicLoading, setProfilePicLoading] = useState(true);
   return (
     <div>

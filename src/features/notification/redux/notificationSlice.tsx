@@ -1,33 +1,36 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { CombinedNotification } from "../Types/CombinedNoti";
+import { CombinedNotificationWithActionableUser } from "../Types/CombinedNotiWithActionableUser";
 
 export interface INotificationState {
-  noti: CombinedNotification[];
+  recentNoti: CombinedNotificationWithActionableUser[];
 }
 
 const initialState: INotificationState = {
-  noti: [],
+  recentNoti: [],
 };
 
 const notificationSlice = createSlice({
   name: "notifications",
   initialState,
   reducers: {
-    setNotificationList: (state, action: PayloadAction<CombinedNotification[]>) => {
-      state.noti = action.payload;
+    setNotificationList: (
+      state,
+      action: PayloadAction<CombinedNotificationWithActionableUser[]>,
+    ) => {
+      state.recentNoti = action.payload;
     },
 
-    add: (state, action: PayloadAction<CombinedNotification>) => {
-      state.noti.unshift(action.payload);
+    add: (state, action: PayloadAction<CombinedNotificationWithActionableUser>) => {
+      state.recentNoti.unshift(action.payload);
     },
 
-    removeNotification: (state, action: PayloadAction<CombinedNotification>) => {
-      state.noti = state.noti.filter((noti) => noti.id !== action.payload.id);
+    removeNotification: (state, action: PayloadAction<CombinedNotificationWithActionableUser>) => {
+      state.recentNoti = state.recentNoti.filter((noti) => noti.id !== action.payload.id);
     },
 
-    markAsRead: (state, action: PayloadAction<CombinedNotification>) => {
-      const idx = state.noti.findIndex((noti) => noti.id === action.payload.id);
-      state.noti[idx].isRead = true;
+    markAsRead: (state, action: PayloadAction<CombinedNotificationWithActionableUser>) => {
+      const idx = state.recentNoti.findIndex((noti) => noti.id === action.payload.id);
+      state.recentNoti[idx].isRead = true;
     },
   },
 });

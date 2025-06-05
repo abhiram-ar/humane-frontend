@@ -5,11 +5,13 @@ import prof from "@/assets/testProfile.png";
 import { FriendReqNotification } from "../Types/FriendReqNoti";
 import ButtonLowPriority from "@/components/ButtonLowPriority";
 import useUserId from "@/features/profile/hooks/useUserId";
+import { ActionableUser } from "../Types/CombinedNotiWithActionableUser";
 
 type Props = {
-  noti: FriendReqNotification;
+  noti: FriendReqNotification & ActionableUser;
 };
 const FriendReqNoti: React.FC<Props> = ({ noti }) => {
+  // TODO: I think backed is handling this logic, might as well remove this
   const userId = useUserId();
   let role: "reciver" | "requester" | undefined;
   if (noti.reciverId === userId) {
@@ -17,33 +19,43 @@ const FriendReqNoti: React.FC<Props> = ({ noti }) => {
   } else if (noti.requesterId === userId) {
     role = "requester";
   } else {
-   //  throw new Error("Current user is not enither requester nor reciver");
+    throw new Error("Current user is not enither requester nor reciver");
+  }
+
+  if (!noti.actionableUser) {
+    console.error("actionable user missing for friendReq noti", noti);
+    return;
   }
 
   if (role === "requester")
-    <div
-      className={`flex items-center justify-between gap-2 border-b border-zinc-400/50 px-6 py-5`}
-    >
-      <div className="flex items-center gap-3">
-        <ProfilePicSmall avatarURL={prof} />
-        <div className="text-white">
-          <Link to="" className="text-green-subtle hover:underline">
-            Abhiram AR
-          </Link>{" "}
-          Accepted your request
+    return (
+      <div
+        className={`flex items-center justify-between gap-2 border-b border-zinc-400/50 px-6 py-5`}
+      >
+        <div className="flex items-center gap-3">
+          <ProfilePicSmall avatarURL={prof} />
+          <div className="text-white">
+            <Link to="" className="text-green-subtle hover:underline">
+              Abhiram AR
+            </Link>{" "}
+            Accepted your request
+          </div>
         </div>
       </div>
-    </div>;
+    );
 
   return (
     <div
       className={`flex items-center justify-between gap-2 border-b border-zinc-400/50 px-6 py-5`}
     >
       <div className="flex items-center gap-3">
-        <ProfilePicSmall avatarURL={prof} />
+        <ProfilePicSmall avatarURL={noti.actionableUser.avatarURL} />
         <div className="text-white">
-          <Link to="" className="text-green-subtle hover:underline">
-            Abhiram AR
+          <Link
+            to={`/user/${noti.actionableUser.id}`}
+            className="text-green-subtle hover:underline"
+          >
+            {`${noti.actionableUser.firstName} ${noti.actionableUser.lastName || ""}`}
           </Link>{" "}
           Send you a friend request
         </div>

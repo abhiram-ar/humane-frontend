@@ -17,6 +17,7 @@ import {
 } from "@/features/notification/redux/notificationSlice";
 import { NavLink } from "react-router";
 
+// TODO: refacor
 type GetRecentNotificationResponse = {
   success: boolean;
   message: string;

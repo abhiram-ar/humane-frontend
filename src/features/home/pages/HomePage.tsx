@@ -1,17 +1,14 @@
-import Post from "../components/Post";
+import PostList from "../components/PostList";
 
 const HomePage = () => {
   return (
-    <div className="flex border-zinc-400/50 xl:border-s">
+    <div className="flex min-h-screen border-zinc-400/50 xl:border-s">
       <div className="relative mx-auto w-200 border-x border-zinc-400/50">
-        <div className="text-pop-green bg-grey-dark-bg/50 sticky top-0 z-20 p-8 text-center text-xl backdrop-blur-2xl">
+        <div className="text-pop-green bg-grey-dark-bg/50 sticky top-0 z-20 border-b border-zinc-400/50 py-5 text-center text-xl backdrop-blur-lg">
           #Feed
         </div>
 
-        <div className="h-500 border border-red-300">
-
-          <Post />
-        </div>
+        <PostList />
       </div>
 
       {/* dummy for centering */}

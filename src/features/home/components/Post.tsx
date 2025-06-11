@@ -6,6 +6,7 @@ import { formatDistance } from "date-fns";
 import AddComment from "./AddComment";
 import { HydratedPost } from "../types/GetPostsReponse";
 
+// TODO: split props into post and author and remove uncessay fields
 type Props = { postDetails: HydratedPost };
 const Post: React.FC<Props> = ({ postDetails }) => {
   const timeAgoString = formatDistance(new Date(postDetails.createdAt), new Date(), {
@@ -23,7 +24,13 @@ const Post: React.FC<Props> = ({ postDetails }) => {
           <Link to="#" className="font-semibold hover:underline">
             {`${postDetails.author?.firstName || "unknown"} ${postDetails.author?.lastName || ""}`}
           </Link>
-          <Dot /> {timeAgoString}
+          <span className="flex text-zinc-400">
+            <Dot />
+            {postDetails.visibility === "friends" && "Friends only"}
+            {postDetails.visibility === "public" && "Public"}
+            <Dot />
+            {timeAgoString}
+          </span>
         </div>
 
         {/* post content*/}

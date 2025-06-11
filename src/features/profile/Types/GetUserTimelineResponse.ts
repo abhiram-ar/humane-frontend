@@ -1,8 +1,7 @@
 import { BasicUserDetails } from "@/features/notification/Types/CombinedNotiWithActionableUser";
 import { ModerationStatus, PostVisibility } from "humane-common";
 
-export type HydratedPost = {
-  author: BasicUserDetails | undefined;
+export type FullPost = {
   id: string;
   createdAt: Date;
   updatedAt: Date;
@@ -13,13 +12,15 @@ export type HydratedPost = {
   moderationMetadata?: unknown;
   posterURL: string | null;
 };
-export type GetPostResponse = {
+
+export type GetUserPostTimelineResponse = {
   message: string;
   data: {
-    posts: (HydratedPost | null)[];
+    posts: FullPost[];
     pagination: {
       from: string | null;
       hasMore: boolean;
     };
+    targetUserDetails: BasicUserDetails;
   };
 };

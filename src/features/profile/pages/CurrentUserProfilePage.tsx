@@ -7,6 +7,7 @@ import CoverPhotoConfig from "../components/extended/CoverPhotoConfig";
 import useUserId from "../hooks/useUserId";
 import PendingFriendRequests from "../components/extended/PendingFriends.trigger";
 import Friends from "../components/extended/Friends.trigger";
+import UserPostList from "../components/extended/UserPostList";
 
 const CurrentUserProfilePage = () => {
   const { data } = useQuery({
@@ -23,7 +24,7 @@ const CurrentUserProfilePage = () => {
   console.log(data);
 
   return (
-    <div className="relative h-screen border-x border-zinc-400/50 xl:me-90">
+    <div className="relative min-h-screen border-x border-zinc-400/50 xl:me-90">
       <CoverPhotoConfig />
 
       <div className="px-10">
@@ -81,6 +82,11 @@ const CurrentUserProfilePage = () => {
             )}
           </div>
         </div>
+      </div>
+
+      {/* posts */}
+      <div className="border-t border-zinc-400/50 mt-5">
+        {userId && <UserPostList userId={userId} />}
       </div>
     </div>
   );

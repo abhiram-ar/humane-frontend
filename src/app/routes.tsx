@@ -21,6 +21,7 @@ import CurrentUserProfilePage from "@/features/profile/pages/CurrentUserProfileP
 import SearchPage from "@/features/search/pages/SearchPage";
 import PubliicUserProfile from "@/features/profile/pages/PublicUserProfile";
 import NotificationPage from "@/features/notification/pages/NotificationPage";
+import HomePage from "@/features/home/pages/HomePage";
 
 export const router = createBrowserRouter([
   {
@@ -32,7 +33,7 @@ export const router = createBrowserRouter([
         hydrateFallbackElement: <HumaeLoader />,
         Component: HomeLayout,
         children: [
-          { index: true, Component: PageNotFoundPage }, // feed page
+          { index: true, Component: HomePage }, // feed page
           {
             path: "search",
             Component: SearchPage,

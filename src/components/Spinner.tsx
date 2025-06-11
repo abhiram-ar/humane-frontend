@@ -1,10 +1,11 @@
 import { Loader } from "lucide-react";
 import React, { ComponentPropsWithRef } from "react";
-type Props = ComponentPropsWithRef<"div">;
-const Spinner: React.FC<Props> = (props) => {
+type Props = ComponentPropsWithRef<"div"> & { spinnerColor?: "black" | "pop-green/75" };
+
+const Spinner: React.FC<Props> = ({ spinnerColor = "pop-green/75", ...props }) => {
   return (
     <div className="flex justify-center" {...props}>
-      <Loader className="text-pop-green/75 animate-spin" />
+      <Loader className={`text-${spinnerColor} animate-spin`} />
     </div>
   );
 };

@@ -6,17 +6,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import CreatePostForm, { CreatePostFields } from "./CreatePostForm";
+import CreatePostForm from "./CreatePostForm";
 import { api } from "@/lib/axios";
 import { useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import useUserId from "@/features/profile/hooks/useUserId";
 import axios from "axios";
-
-type GetPostPresingedURL = {
-  message: string;
-  data: { preSignedURL: string; key: string };
-};
+import { getPostMediaPresignedURL } from "../services/GetPostMediaPresingedURL";
+import { CreatePostFields } from "../types/CreatePostFields";
 
 const CreatePostButton = () => {
   const closeDialogRef = useRef<HTMLButtonElement | null>(null);
@@ -24,21 +21,17 @@ const CreatePostButton = () => {
   const userId = useUserId();
 
   const handleCreatePost = async (data: CreatePostFields) => {
-    // presigned upload
-    console.log(data);
     const { poster, ...postData } = data;
 
     let posterKey: string | undefined;
 
     if (poster && (poster as FileList)?.[0]) {
       const file = (poster as FileList)[0];
-      const res = await api.post<GetPostPresingedURL>("/api/v1/post/pre-signed-url/posterKey", {
-        fileName: file.name,
-        fileType: file.type,
-      });
 
-      posterKey = res.data.data.key;
-      await axios.put(res.data.data.preSignedURL, file);
+      const result = await getPostMediaPresignedURL(file);
+
+      posterKey = result.key;
+      await axios.put(result.preSignedURL, file);
     }
 
     await api.post("/api/v1/post/", { ...postData, posterKey });

@@ -31,9 +31,6 @@ const UserPostList: React.FC<Props> = ({ userId }) => {
     getNextPageParam: (lastPage) => (lastPage.pagination.hasMore ? lastPage.pagination.from : null),
   });
 
-  const auth = data?.pages[0].posts.map((post) => post.id);
-  console.log("aut", auth);
-
   return (
     <div>
       {data &&

@@ -57,10 +57,7 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
 
   const submitHandler: SubmitHandler<CreatePostFields> = async (data) => {
     try {
-      console.log(data);
-      // sigendupload
-
-      // await handleCreatePost(data);
+      await handleCreatePost(data);
     } catch (error) {
       if (error instanceof AxiosError && error.response?.data?.errors) {
         const serializedErrors = error.response.data.errors as ServerErrors;
@@ -110,6 +107,7 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
           />
         </div>
 
+        {/* react hook form has a ref on input for we want to avoid over riding it */}
         <div ref={fileInputContainerRef}>
           <input
             type="file"
@@ -126,8 +124,8 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
 
         {posterPreview && (
           <div className="relative">
-            <div className="absolute top-1 right-1 cursor-pointer rounded-full bg-zinc-300 p-0.5 text-red-500">
-              <X onClick={() => handleRemovePoster()} />
+            <div className="absolute top-1 right-1 cursor-pointer rounded-full bg-zinc-300 p-0.5 text-red-500 hover:bg-red-500 hover:text-zinc-300">
+              <X size={20} onClick={() => handleRemovePoster()} />
             </div>
 
             <PosterImage className="max-h-100" url={posterPreview} />

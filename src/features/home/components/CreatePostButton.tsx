@@ -9,17 +9,21 @@ import {
 import CreatePostForm, { CreatePostFields } from "./CreatePostForm";
 import { api } from "@/lib/axios";
 import { useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import useUserId from "@/features/profile/hooks/useUserId";
 
 const CreatePostButton = () => {
   const closeDialogRef = useRef<HTMLButtonElement | null>(null);
+  const queryClinet = useQueryClient();
+  const userId = useUserId();
 
   const handleCreatePost = async (data: CreatePostFields) => {
     await api.post("/api/v1/post/", data);
     if (closeDialogRef.current) {
       closeDialogRef.current.click();
-
-      //dont catch the error it will be handled my calling component
     }
+    setTimeout(() => queryClinet.refetchQueries({ queryKey: ["timeline", userId] }), 2000);
+    //dont catch the error it will be handled my calling component
   };
 
   return (

@@ -16,7 +16,10 @@ const PosterImage: React.FC<ComponentPropsWithRef<"div"> & { url: string }> = ({
   };
 
   return (
-    <div className={`aspect-auto overflow-clip rounded-xl ${className}`} {...props}>
+    <div
+      className={`aspect-auto overflow-clip rounded-xl w-fit ${orientation === "potrait" ? "max-h-120 " : ""} ${className}`}
+      {...props}
+    >
       <img
         onLoad={handleOnload}
         className={`aspect-auto h-full w-full object-cover ${orientation === "potrait" ? "max-h-120" : ""}`}

@@ -5,6 +5,7 @@ import { Link } from "react-router";
 import { formatDistance } from "date-fns";
 import AddComment from "./AddComment";
 import { HydratedPost } from "../types/GetPostsReponse";
+import PosterImage from "./PosterImage";
 
 // TODO: split props into post and author and remove uncessay fields
 type Props = { postDetails: HydratedPost };
@@ -35,6 +36,8 @@ const Post: React.FC<Props> = ({ postDetails }) => {
 
         {/* post content*/}
         <p>{postDetails.content}</p>
+
+        {postDetails.posterURL && <PosterImage className="mt-2" url={postDetails.posterURL} />}
 
         {/* comment */}
         <div className="mt-3 flex items-center gap-3">

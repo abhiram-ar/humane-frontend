@@ -11,6 +11,12 @@ import { api } from "@/lib/axios";
 import { useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import useUserId from "@/features/profile/hooks/useUserId";
+import axios from "axios";
+
+type GetPostPresingedURL = {
+  message: string;
+  data: { preSignedURL: string; key: string };
+};
 
 const CreatePostButton = () => {
   const closeDialogRef = useRef<HTMLButtonElement | null>(null);
@@ -18,7 +24,24 @@ const CreatePostButton = () => {
   const userId = useUserId();
 
   const handleCreatePost = async (data: CreatePostFields) => {
-    await api.post("/api/v1/post/", data);
+    // presigned upload
+    console.log(data);
+    const { poster, ...postData } = data;
+
+    let posterKey: string | undefined;
+
+    if (poster && (poster as FileList)?.[0]) {
+      const file = (poster as FileList)[0];
+      const res = await api.post<GetPostPresingedURL>("/api/v1/post/pre-signed-url/posterKey", {
+        fileName: file.name,
+        fileType: file.type,
+      });
+
+      posterKey = res.data.data.key;
+      await axios.put(res.data.data.preSignedURL, file);
+    }
+
+    await api.post("/api/v1/post/", { ...postData, posterKey });
     if (closeDialogRef.current) {
       closeDialogRef.current.click();
     }

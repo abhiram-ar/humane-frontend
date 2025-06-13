@@ -9,7 +9,6 @@ const PostAddComment: React.FC<{ postId: string }> = ({ postId }) => {
   return (
     <div className="text bg-grey-light/20 flex w-full gap-2 p-4">
       <ProfilePicSmall avatarURL={data?.avatarURL} />
-
       <PostAddCommentForm postId={postId} />
     </div>
   );

@@ -6,7 +6,7 @@ const PosterImage: React.FC<ComponentPropsWithRef<"div"> & { url: string }> = ({
   className,
   ...props
 }) => {
-  const [orientation, SetOrientation] = useState<"landscape" | "potrait" | "unknown">("potrait");
+  const [orientation, SetOrientation] = useState<"landscape" | "potrait">("potrait");
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
@@ -21,6 +21,8 @@ const PosterImage: React.FC<ComponentPropsWithRef<"div"> & { url: string }> = ({
   };
 
   return (
+    // width and height of the parent container will be zero, when image starts loading it will get max with and height
+    // shimmer will only be visible when the image starts loading ie,
     <div
       className={`relative aspect-auto overflow-clip rounded-xl ${orientation === "potrait" ? "max-h-110 w-fit" : ""} ${className} ${isError ? "h-110 w-full" : ""}`}
       {...props}

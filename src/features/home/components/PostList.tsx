@@ -32,8 +32,8 @@ const PostList = () => {
           .filter((post) => (post === null ? false : true))
           .map((post) =>
             post ? (
-              <div className="w-full border-b border-zinc-400/50">
-                <Post key={post?.id} postDetails={post} />
+              <div key={post.id} className="w-full border-b border-zinc-400/50">
+                <Post postDetails={post} />
               </div>
             ) : null,
           )}

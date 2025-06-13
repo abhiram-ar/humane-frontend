@@ -45,7 +45,7 @@ const Post: React.FC<Props> = ({ postDetails }) => {
             <MessageSquare className="mt-1" />
             <p>{26}</p>
           </div>
-          <AddComment />
+          <AddComment postId={postDetails.id} />
         </div>
       </div>
     </div>

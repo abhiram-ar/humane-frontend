@@ -4,34 +4,25 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/Dropdown";
-import { api } from "@/lib/axios";
-import { InfiniteData, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Ellipsis, Link, Trash } from "lucide-react";
+import { Ellipsis, Link } from "lucide-react";
 import toast from "react-hot-toast";
-import useUserId from "../../hooks/useUserId";
-import { ModerationStatus, PostVisibility } from "humane-common";
-import { GetUserPostTimelineResponse } from "../../Types/GetUserTimelineResponse";
-
-type DeletePostResponse = {
-  message: "post deleted";
-  data: {
-    post: {
-      id: string;
-      createdAt: string;
-      updatedAt: string;
-      authorId: string;
-      content: string;
-      visibility: (typeof PostVisibility)[keyof typeof PostVisibility];
-      posterKey: string | null;
-      moderationStatus: (typeof ModerationStatus)[keyof typeof ModerationStatus];
-      moderationMetadata: unknown | null;
-    };
-  };
-};
+import useDeleteUserPost from "../../hooks/useDeleteUserPost";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Trash } from "lucide-react";
+import { useState } from "react";
 
 const UserPostActions: React.FC<{ postId: string }> = ({ postId }) => {
-  const userId = useUserId();
-  const queryClient = useQueryClient();
+  const { mutate: deletePost } = useDeleteUserPost(postId);
+  const [isDeleteAlertOpen, setDeleteAlertOpen] = useState(false);
 
   const handleCopyClipboard = async () => {
     try {
@@ -44,42 +35,6 @@ const UserPostActions: React.FC<{ postId: string }> = ({ postId }) => {
       console.log("error while writing clipboard", error);
     }
   };
-
-  type InfiniteTimelineData =
-    | InfiniteData<GetUserPostTimelineResponse["data"], unknown>
-    | undefined;
-
-  const { mutate: deletePost } = useMutation({
-    mutationKey: ["user-post", postId],
-    mutationFn: async () => {
-      const res = await api.delete<DeletePostResponse>(`/api/v1/post/${postId}`);
-      return res.data.data;
-    },
-    onSuccess: (responseData) => {
-      queryClient.setQueryData(["timeline", userId], (oldData: InfiniteTimelineData) => {
-        if (!oldData) return oldData;
-        //   return page.
-
-        const newPagesArray = oldData.pages
-          ? oldData.pages.map((page) => ({
-              ...page,
-              posts: page.posts
-                .map((post) => post)
-                .filter(
-                  (post) => post.id !== responseData.post.id,
-                ) as GetUserPostTimelineResponse["data"]["posts"],
-            }))
-          : oldData.pages;
-
-        const update: InfiniteTimelineData = {
-          pageParams: oldData.pageParams,
-          pages: newPagesArray,
-        };
-
-        return update;
-      });
-    },
-  });
 
   return (
     <div>
@@ -94,8 +49,8 @@ const UserPostActions: React.FC<{ postId: string }> = ({ postId }) => {
           align="end"
           className="bg-grey-light border border-zinc-400/50 p-0 text-white"
         >
-          <DropdownMenuItem className="cursor-pointer" onClick={() => deletePost()}>
-            <Trash />
+          <DropdownMenuItem className="cursor-pointer" onClick={() => setDeleteAlertOpen(true)}>
+            <Trash size={20} />
             Delete Post
           </DropdownMenuItem>
           <DropdownMenuItem className="cursor-pointer" onClick={handleCopyClipboard}>
@@ -105,6 +60,29 @@ const UserPostActions: React.FC<{ postId: string }> = ({ postId }) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {/* rendering dialog modal inside dropdown is not possible, since when dropdown menu unmount, alert is forced to unmount */}
+      <>
+        <AlertDialog open={isDeleteAlertOpen} onOpenChange={setDeleteAlertOpen}>
+          <AlertDialogContent className="border-grey-dark-bg text-almost-white bg-[#272727]">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure you want to delete this post?</AlertDialogTitle>
+              <AlertDialogDescription>You cannot undo this action.</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="cursor-pointer rounded-2xl border-0 text-black hover:bg-white/80">
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => deletePost()}
+                className="bg-red-blood cursor-pointer rounded-2xl ease-out hover:bg-red-800"
+              >
+                Remove
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </>
     </div>
   );
 };

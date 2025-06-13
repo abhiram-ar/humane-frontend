@@ -106,12 +106,14 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
         </div>
 
         {posterPreview && (
-          <div className="relative">
-            <div className="absolute top-1 right-1 cursor-pointer rounded-full bg-zinc-300 p-0.5 text-red-500 hover:bg-red-500 hover:text-zinc-300">
-              <X size={20} onClick={() => handleRemovePoster()} />
-            </div>
+          <div className="flex w-full">
+            <div className="relative w-fit">
+              <div className="bg-offwhite hover:text-offwhite absolute top-1 right-1 z-10 cursor-pointer rounded-full border border-zinc-800/50 p-0.5 text-red-500 hover:bg-red-500">
+                <X size={20} onClick={() => handleRemovePoster()} />
+              </div>
 
-            <PosterImage className="max-h-100" url={posterPreview} />
+              <PosterImage className="max-h-100" url={posterPreview} />
+            </div>
           </div>
         )}
 

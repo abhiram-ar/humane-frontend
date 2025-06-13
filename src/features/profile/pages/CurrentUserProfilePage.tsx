@@ -1,27 +1,21 @@
 import { Calendar } from "lucide-react";
 import EditProfileButton from "../components/extended/EditProfileButton";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUserProfile } from "../services/fetchUserProfile.service";
 import ProfilePicConfig from "../components/extended/ProfilePicConfig";
 import CoverPhotoConfig from "../components/extended/CoverPhotoConfig";
 import useUserId from "../hooks/useUserId";
 import PendingFriendRequests from "../components/extended/PendingFriends.trigger";
 import Friends from "../components/extended/Friends.trigger";
 import ProfilePostList from "../components/extended/ProfilePostList";
+import useCurrentUserProfile from "../hooks/useCurrentUserProfile";
 
 const CurrentUserProfilePage = () => {
-  const { data } = useQuery({
-    queryKey: ["user-profile"],
-    queryFn: fetchUserProfile,
-  });
+  const { data } = useCurrentUserProfile();
 
   const userId = useUserId();
 
   if (!data) {
     return <div>loading</div>;
   }
-
-  console.log(data);
 
   return (
     <div className="relative min-h-screen border-x border-zinc-400/50 xl:me-90">
@@ -85,7 +79,7 @@ const CurrentUserProfilePage = () => {
       </div>
 
       {/* posts */}
-      <div className="border-t border-zinc-400/50 mt-5">
+      <div className="mt-5 border-t border-zinc-400/50">
         {userId && <ProfilePostList userId={userId} />}
       </div>
     </div>

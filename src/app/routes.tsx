@@ -22,6 +22,7 @@ import SearchPage from "@/features/search/pages/SearchPage";
 import PubliicUserProfile from "@/features/profile/pages/PublicUserProfile";
 import NotificationPage from "@/features/notification/pages/NotificationPage";
 import HomePage from "@/features/home/pages/HomePage";
+import PostPage from "@/features/home/pages/PostPage";
 
 export const router = createBrowserRouter([
   {
@@ -61,6 +62,16 @@ export const router = createBrowserRouter([
               {
                 path: ":id",
                 Component: PubliicUserProfile,
+              },
+            ],
+          },
+          {
+            path: "post",
+            children: [
+              { index: true, Component: PageNotFoundPage },
+              {
+                path: ":postId",
+                Component: PostPage,
               },
             ],
           },

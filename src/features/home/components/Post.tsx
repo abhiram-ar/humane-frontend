@@ -1,30 +1,34 @@
 import ProfilePicSmall from "@/features/notification/Components/ProfilePicSmall";
 import React from "react";
-import { Dot, MessageSquare } from "lucide-react";
-import { Link } from "react-router";
+import { Dot } from "lucide-react";
+import { useNavigate } from "react-router";
 import { formatDistance } from "date-fns";
-import AddComment from "./AddComment";
 import { HydratedPost } from "../types/GetPostsReponse";
 import PosterImage from "./PosterImage";
 
 // TODO: split props into post and author and remove uncessay fields
 type Props = { postDetails: HydratedPost };
+
 const Post: React.FC<Props> = ({ postDetails }) => {
+  const navigate = useNavigate();
   const timeAgoString = formatDistance(new Date(postDetails.createdAt), new Date(), {
     addSuffix: true, // Add "ago" or "from now"
   });
 
   return (
-    <div className="flex gap-3 p-4 text-white">
-      <div>
+    <div className="flex gap-3 px-4 pt-4 text-white">
+      <div className="cursor-pointer" onClick={() => navigate(`/user/${postDetails.authorId}`)}>
         <ProfilePicSmall avatarURL={postDetails.author?.avatarURL} />
       </div>
       <div className="w-full">
         {/* post meta */}
         <div className="flex">
-          <Link to="#" className="font-semibold hover:underline">
+          <div
+            onClick={() => navigate(`/user/${postDetails.authorId}`)}
+            className="cursor-pointer font-semibold hover:underline"
+          >
             {`${postDetails.author?.firstName || "unknown"} ${postDetails.author?.lastName || ""}`}
-          </Link>
+          </div>
           <span className="flex text-zinc-400">
             <Dot />
             {postDetails.visibility === "friends" && "Friends only"}
@@ -38,15 +42,6 @@ const Post: React.FC<Props> = ({ postDetails }) => {
         <p>{postDetails.content}</p>
 
         {postDetails.posterURL && <PosterImage className="mt-2" url={postDetails.posterURL} />}
-
-        {/* comment */}
-        <div className="mt-3 flex items-center gap-3">
-          <div className="flex w-fit items-center gap-1">
-            <MessageSquare className="mt-1" />
-            <p>{26}</p>
-          </div>
-          <AddComment postId={postDetails.id} />
-        </div>
       </div>
     </div>
   );

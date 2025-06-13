@@ -2,6 +2,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import Post from "./Post";
 import { api } from "@/lib/axios";
 import { GetPostResponse } from "../types/GetPostsReponse";
+import FeedAddComment from "./FeedAddComment";
 
 const PostList = () => {
   const { data } = useInfiniteQuery({
@@ -34,6 +35,7 @@ const PostList = () => {
             post ? (
               <div key={post.id} className="w-full border-b border-zinc-400/50">
                 <Post postDetails={post} />
+                <FeedAddComment postId={post.id} />
               </div>
             ) : null,
           )}

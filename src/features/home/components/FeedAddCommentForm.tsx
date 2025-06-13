@@ -3,7 +3,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import useAddCommentMutation from "../hooks/useAddCommentMutation";
 import { commentFields, commentSchema } from "../types/createCommentFields";
 
-const AddComment: React.FC<{ postId: string }> = ({ postId }) => {
+const FeedAddCommentForm: React.FC<{ postId: string }> = ({ postId }) => {
   const { mutateAsync } = useAddCommentMutation();
 
   const {
@@ -43,4 +43,4 @@ const AddComment: React.FC<{ postId: string }> = ({ postId }) => {
   );
 };
 
-export default AddComment;
+export default FeedAddCommentForm;

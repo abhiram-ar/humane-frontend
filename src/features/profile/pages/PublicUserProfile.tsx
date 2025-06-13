@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import RelationshipActions from "../components/extended/RelationshipActions";
 import UserMutualFriends from "../components/extended/UserMutualFriends.trigger";
 import Friends from "../components/extended/Friends.trigger";
-import UserPostList from "../components/extended/UserPostList";
+import ProfilePostList from "../components/extended/ProfilePostList";
 
 const PubliicUserProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -85,7 +85,7 @@ const PubliicUserProfile = () => {
       </div>
 
       <div className="mt-5 border-t border-zinc-400/50">
-        {user && <UserPostList userId={user.id} />}
+        {user && <ProfilePostList userId={user.id} />}
       </div>
     </div>
   );

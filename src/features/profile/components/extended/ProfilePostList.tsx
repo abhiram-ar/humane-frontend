@@ -3,11 +3,14 @@ import React from "react";
 import { GetUserPostTimelineResponse } from "../../Types/GetUserTimelineResponse";
 import { api } from "@/lib/axios";
 import Post from "@/features/home/components/Post";
+import UserPostActions from "./UserPostActions";
+import useUserId from "../../hooks/useUserId";
 
 type Props = {
   userId: string;
 };
-const UserPostList: React.FC<Props> = ({ userId }) => {
+const ProfilePostList: React.FC<Props> = ({ userId }) => {
+  const authenticatedUserId = useUserId();
   const { data } = useInfiniteQuery({
     queryKey: ["timeline", userId],
     queryFn: async (data) => {
@@ -38,7 +41,10 @@ const UserPostList: React.FC<Props> = ({ userId }) => {
           .flatMap((page) => [...page.posts])
           .map((post) =>
             post ? (
-              <div key={post.id} className="w-full border-b border-zinc-400/50 px-5">
+              <div key={post.id} className="relative w-full border-b border-zinc-400/50 px-5">
+                <div className="absolute top-2 right-2">
+                  {authenticatedUserId === userId && <UserPostActions postId={post.id} />}
+                </div>
                 <Post
                   postDetails={{
                     ...post,
@@ -52,4 +58,4 @@ const UserPostList: React.FC<Props> = ({ userId }) => {
   );
 };
 
-export default UserPostList;
+export default ProfilePostList;

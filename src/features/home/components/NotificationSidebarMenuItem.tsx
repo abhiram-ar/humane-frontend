@@ -77,7 +77,7 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
     return () => {
       socket.disconnect();
     };
-  }, [token]);
+  }, [dispatch, token]);
 
   const { data } = useQuery({
     queryKey: ["notifications"],

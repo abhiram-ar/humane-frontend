@@ -1,30 +1,20 @@
-import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
-import { logout } from "@/features/userAuth/redux/userAuthSlice";
-import { api } from "@/lib/axios";
-import { useNavigate } from "react-router";
+import useRestoreScrollPosition from "@/hooks/useRestoreScrollPosition";
+import PostList from "../components/PostList";
 
 const HomePage = () => {
-  const token = useAppSelector((state) => state.userAuth.token);
-  const navigate = useNavigate();
-  const dispath = useAppDispatch();
-
-  const handleLogut = async () => {
-    try {
-      await api.post("/api/v1/user/auth/logout");
-      dispath(logout());
-      navigate("/auth/login", { replace: true });
-    } catch (error) {
-      console.error("error while logging out", error);
-    }
-  };
-
+  useRestoreScrollPosition();
   return (
-    <div>
-        <p className="text-white">User Protected route</p>
-      <p>user token: {token}</p>
-      <button onClick={handleLogut} className="border-2 bg-green-100 p-2 px-5 hover:bg-green-300">
-        logut
-      </button>
+    <div className="flex min-h-screen border-zinc-400/50 xl:border-s">
+      <div className="relative mx-auto w-200 border-x border-zinc-400/50">
+        <div className="text-pop-green bg-grey-dark-bg/50 sticky top-0 z-20 border-b border-zinc-400/50 py-5 text-center text-xl backdrop-blur-lg">
+          #Feed
+        </div>
+
+        <PostList />
+      </div>
+
+      {/* dummy for centering */}
+      <div className="xl:w-90"></div>
     </div>
   );
 };

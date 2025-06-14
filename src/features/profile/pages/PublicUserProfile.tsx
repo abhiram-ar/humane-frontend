@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import RelationshipActions from "../components/extended/RelationshipActions";
 import UserMutualFriends from "../components/extended/UserMutualFriends.trigger";
 import Friends from "../components/extended/Friends.trigger";
+import ProfilePostList from "../components/extended/ProfilePostList";
 
 const PubliicUserProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,7 +20,7 @@ const PubliicUserProfile = () => {
   if (isError) return <PageNotFound message="Something went wrong" />;
 
   return (
-    <div className="relative h-screen border-x border-zinc-400/50 xl:me-90">
+    <div className="relative min-h-screen border-x border-zinc-400/50 xl:me-90">
       <CoverPhoto url={user?.coverPhotoURL} />
 
       <div className="px-10">
@@ -81,6 +82,10 @@ const PubliicUserProfile = () => {
             {user?.bio && <pre className="font-sans text-lg text-wrap text-white">{user.bio}</pre>}
           </div>
         </div>
+      </div>
+
+      <div className="mt-5 border-t border-zinc-400/50">
+        {user && <ProfilePostList userId={user.id} />}
       </div>
     </div>
   );

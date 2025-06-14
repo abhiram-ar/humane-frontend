@@ -1,18 +1,17 @@
 import { Calendar } from "lucide-react";
 import EditProfileButton from "../components/extended/EditProfileButton";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUserProfile } from "../services/fetchUserProfile.service";
 import ProfilePicConfig from "../components/extended/ProfilePicConfig";
 import CoverPhotoConfig from "../components/extended/CoverPhotoConfig";
 import useUserId from "../hooks/useUserId";
 import PendingFriendRequests from "../components/extended/PendingFriends.trigger";
 import Friends from "../components/extended/Friends.trigger";
+import ProfilePostList from "../components/extended/ProfilePostList";
+import useCurrentUserProfile from "../hooks/useCurrentUserProfile";
+import useRestoreScrollPosition from "@/hooks/useRestoreScrollPosition";
 
 const CurrentUserProfilePage = () => {
-  const { data } = useQuery({
-    queryKey: ["user-profile"],
-    queryFn: fetchUserProfile,
-  });
+  const { data } = useCurrentUserProfile();
+  useRestoreScrollPosition();
 
   const userId = useUserId();
 
@@ -20,10 +19,8 @@ const CurrentUserProfilePage = () => {
     return <div>loading</div>;
   }
 
-  console.log(data);
-
   return (
-    <div className="relative h-screen border-x border-zinc-400/50 xl:me-90">
+    <div className="relative min-h-screen border-x border-zinc-400/50 xl:me-90">
       <CoverPhotoConfig />
 
       <div className="px-10">
@@ -81,6 +78,11 @@ const CurrentUserProfilePage = () => {
             )}
           </div>
         </div>
+      </div>
+
+      {/* posts */}
+      <div className="mt-5 border-t border-zinc-400/50">
+        {userId && <ProfilePostList userId={userId} />}
       </div>
     </div>
   );

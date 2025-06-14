@@ -1,10 +1,8 @@
-import { useScrollContext } from "@/app/providers/ScrollRestoreationProvider";
+import useRestoreScrollPosition from "@/hooks/useRestoreScrollPosition";
 import PostList from "../components/PostList";
 
 const HomePage = () => {
-  const { ref } = useScrollContext();
-  console.log("sc", ref);
-
+  useRestoreScrollPosition();
   return (
     <div className="flex min-h-screen border-zinc-400/50 xl:border-s">
       <div className="relative mx-auto w-200 border-x border-zinc-400/50">

@@ -7,9 +7,11 @@ import PendingFriendRequests from "../components/extended/PendingFriends.trigger
 import Friends from "../components/extended/Friends.trigger";
 import ProfilePostList from "../components/extended/ProfilePostList";
 import useCurrentUserProfile from "../hooks/useCurrentUserProfile";
+import useRestoreScrollPosition from "@/hooks/useRestoreScrollPosition";
 
 const CurrentUserProfilePage = () => {
   const { data } = useCurrentUserProfile();
+  useRestoreScrollPosition();
 
   const userId = useUserId();
 

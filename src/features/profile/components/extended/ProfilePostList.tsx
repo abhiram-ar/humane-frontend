@@ -48,7 +48,12 @@ const ProfilePostList: React.FC<Props> = ({ userId }) => {
                     author: { ...data.pages[0].targetUserDetails },
                   }}
                 />
-                <FeedAddComment postId={post.id} />
+                <FeedAddComment
+                  post={{
+                    ...post,
+                    author: { ...data.pages[0].targetUserDetails },
+                  }}
+                />
               </div>
             ) : null,
           )}

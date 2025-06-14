@@ -3,7 +3,7 @@ import React from "react";
 import useCurrentUserProfile from "@/features/profile/hooks/useCurrentUserProfile";
 import PostAddCommentForm from "./PostAddCommentForm";
 
-const PostAddComment: React.FC<{ postId: string }> = ({ postId }) => {
+const PostAddComment: React.FC<{ postId?: string }> = ({ postId }) => {
   const { data } = useCurrentUserProfile();
 
   return (

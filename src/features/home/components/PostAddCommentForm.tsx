@@ -5,7 +5,7 @@ import { commentFields, commentSchema } from "../types/createCommentFields";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ButtonPop from "@/components/ButtonPop";
 
-const PostAddCommentForm: React.FC<{ postId: string }> = ({ postId }) => {
+const PostAddCommentForm: React.FC<{ postId?: string }> = ({ postId }) => {
   const { mutateAsync } = useAddCommentMutation();
 
   const {
@@ -16,7 +16,7 @@ const PostAddCommentForm: React.FC<{ postId: string }> = ({ postId }) => {
   } = useForm({ resolver: zodResolver(commentSchema) });
 
   const submitHandler: SubmitHandler<commentFields> = async (data) => {
-    await mutateAsync({ content: data.content, postId: postId });
+    await mutateAsync({ content: data.content, postId: postId as string });
     reset();
     // TODO: mutate the curresponsing post comments count in timeline
   };
@@ -29,7 +29,8 @@ const PostAddCommentForm: React.FC<{ postId: string }> = ({ postId }) => {
         type="text "
         {...register("content")}
         placeholder="write a comment"
-        className={`w-full rounded-xl border-none px-4 py-1 font-semibold text-white outline-none placeholder:font-normal`}
+        disabled={!postId}
+        className={`w-full rounded-xl border-none px-4 py-1 font-semibold text-white outline-none placeholder:font-normal disabled:cursor-not-allowed`}
       />
       {/* <ButtonPop className="h-fit ">Comment</ButtonPop> */}
       <ButtonPop disabled={!isValid || isSubmitting}>Comment</ButtonPop>

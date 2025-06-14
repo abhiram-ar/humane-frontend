@@ -34,7 +34,7 @@ const FeedAddCommentForm: React.FC<{ postId: string }> = ({ postId }) => {
         {/* <ButtonPop className="h-fit ">Comment</ButtonPop> */}
         <button
           disabled={!isValid || isSubmitting}
-          className={`text-pop-green h-fit cursor-pointer ${!isValid ? "opacity-0" : "opacity-100"}`}
+          className={`h-fit cursor-pointer disabled:cursor-not-allowed disabled:text-zinc-400 ${!isValid ? "opacity-0" : "text-pop-green opacity-100"} `}
         >
           Comment
         </button>

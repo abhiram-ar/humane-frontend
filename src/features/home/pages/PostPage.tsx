@@ -1,28 +1,35 @@
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import Post from "../components/Post";
 import PostAddComment from "../components/PostAddComment";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/axios";
+import { API_ROUTES } from "@/lib/API_ROUTES";
+import { HydratedPost } from "../types/GetPostsReponse";
 
-const post = {
-  id: "684b003fc4110a959ca5027c",
-  authorId: "5315c3dd-a5bc-4754-9ce7-817018f97f7d",
-  content: "Hello world",
-  visibility: "friends",
-  moderationStatus: "pending",
-  moderationMetadata: null,
-  createdAt: "2025-06-12T16:28:47.439Z",
-  updatedAt: "2025-06-12T16:28:47.439Z",
-  posterURL:
-    "https://d4pllizvq43wd.cloudfront.net/5315c3dd-a5bc-4754-9ce7-817018f97f7d/1749745727114-Son Goku.jpeg",
-  author: {
-    id: "5315c3dd-a5bc-4754-9ce7-817018f97f7d",
-    firstName: "abhi",
-    lastName: "real",
-    avatarURL: "https://d4pllizvq43wd.cloudfront.net/profile-pic/1747811634505-nbkrr.png",
-  },
+type GetFullPostDetails = {
+  message: string;
+  data: {
+    post: HydratedPost;
+  };
 };
+
 const PostPage = () => {
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const { postId } = useParams<{ postId: string }>();
+
+  const { data } = useQuery({
+    queryKey: ["post", postId],
+    queryFn: async () => {
+      const res = await api.get<GetFullPostDetails>(`${API_ROUTES.QUERY_SERVICE}/post/${postId}`);
+      return res.data.data;
+    },
+    initialData: { post: state.navigatedPostData as HydratedPost },
+  });
+
+  console.log(data);
+
   return (
     <div className="flex min-h-screen border-zinc-400/50 xl:border-s">
       <div className="relative mx-auto w-200 border-x border-zinc-400/50">
@@ -41,11 +48,11 @@ const PostPage = () => {
         </div>
 
         <div className="border-b border-b-zinc-400/50 pb-4">
-          <Post postDetails={post} />
+          {data && <Post postDetails={data.post} />}
         </div>
 
         <div className="flex">
-          <PostAddComment postId={post.id} />
+          <PostAddComment postId={data.post.id} />
         </div>
       </div>
 

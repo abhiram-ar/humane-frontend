@@ -35,7 +35,7 @@ const PostList = () => {
             post ? (
               <div key={post.id} className="w-full border-b border-zinc-400/50">
                 <Post postDetails={post} />
-                <FeedAddComment postId={post.id} />
+                <FeedAddComment post={post} />
               </div>
             ) : null,
           )}

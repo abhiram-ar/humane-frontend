@@ -2,33 +2,18 @@ import { ArrowLeft } from "lucide-react";
 import { useLocation, useNavigate, useParams } from "react-router";
 import Post from "../components/Post";
 import PostAddComment from "../components/PostAddComment";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/axios";
-import { API_ROUTES } from "@/lib/API_ROUTES";
-import { HydratedPost } from "../types/GetPostsReponse";
-
-type GetFullPostDetails = {
-  message: string;
-  data: {
-    post: HydratedPost;
-  };
-};
+import useFullPostDetailsQuery from "../hooks/useFullPostDetailsQuery";
+import PageNotFoundPage from "@/layout/PageNotFoundPage";
+import Spinner from "@/components/Spinner";
 
 const PostPage = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const { postId } = useParams<{ postId: string }>();
 
-  const { data } = useQuery({
-    queryKey: ["post", postId],
-    queryFn: async () => {
-      const res = await api.get<GetFullPostDetails>(`${API_ROUTES.QUERY_SERVICE}/post/${postId}`);
-      return res.data.data;
-    },
-    initialData: { post: state.navigatedPostData as HydratedPost },
-  });
+  const { data, isError } = useFullPostDetailsQuery(postId as string, state?.navigatedPostData);
 
-  console.log(data);
+  if (isError) return <PageNotFoundPage message="Post does not exist" />;
 
   return (
     <div className="flex min-h-screen border-zinc-400/50 xl:border-s">
@@ -47,13 +32,21 @@ const PostPage = () => {
           </div>
         </div>
 
-        <div className="border-b border-b-zinc-400/50 pb-4">
-          {data && <Post postDetails={data.post} />}
-        </div>
+        {data ? (
+          <>
+            <div className="border-b border-b-zinc-400/50 pb-4">
+              <Post postDetails={data.post} />
+            </div>
 
-        <div className="flex">
-          <PostAddComment postId={data.post.id} />
-        </div>
+            <div className="flex">
+              <PostAddComment postId={data?.post.id} />
+            </div>
+          </>
+        ) : (
+          <div className="mt-5">
+            <Spinner />
+          </div>
+        )}
       </div>
 
       {/* dummy for centering */}

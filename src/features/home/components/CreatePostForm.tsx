@@ -1,5 +1,5 @@
 import ButtonPop from "@/components/ButtonPop";
-import Spinner from "@/components/Spinner";
+import { SpinnerBlack } from "@/components/Spinner";
 import {
   Select,
   SelectContent,
@@ -162,11 +162,7 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
             className="h-fit w-25 py-1.25 disabled:bg-zinc-400"
             disabled={(errors && Object.keys(errors).length > 0) || isSubmitting}
           >
-            {!isSubmitting ? (
-              <span>Post</span>
-            ) : (
-              <Spinner spinnerColor="black" className="flex h-8 justify-center" />
-            )}
+            {!isSubmitting ? <span>Post</span> : <SpinnerBlack className="flex justify-center" />}
           </ButtonPop>
         </div>
       </form>

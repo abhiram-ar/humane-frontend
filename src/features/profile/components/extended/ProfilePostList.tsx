@@ -1,26 +1,30 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { GetUserPostTimelineResponse } from "../../Types/GetUserTimelineResponse";
 import { api } from "@/lib/axios";
 import Post from "@/features/home/components/Post";
 import UserPostActions from "./UserPostActions";
 import useUserId from "../../hooks/useUserId";
+import FeedAddComment from "@/features/home/components/FeedAddComment";
+import Spinner from "@/components/Spinner";
 
 type Props = {
   userId: string;
 };
 const ProfilePostList: React.FC<Props> = ({ userId }) => {
   const authenticatedUserId = useUserId();
-  const { data } = useInfiniteQuery({
+  const observerRef = useRef<HTMLDivElement | null>(null);
+
+  const { data, hasNextPage, fetchNextPage, isFetching, isLoading } = useInfiniteQuery({
     queryKey: ["timeline", userId],
     queryFn: async (data) => {
       const param =
         data.pageParam === "init"
           ? {
-              limit: 10,
+              limit: 2,
             }
           : {
-              limit: 10,
+              limit: 2,
               from: data.pageParam,
             };
 
@@ -33,6 +37,21 @@ const ProfilePostList: React.FC<Props> = ({ userId }) => {
     initialPageParam: "init",
     getNextPageParam: (lastPage) => (lastPage.pagination.hasMore ? lastPage.pagination.from : null),
   });
+
+  useEffect(() => {
+    if (!observerRef.current || !hasNextPage) {
+      return;
+    }
+    const observer = new IntersectionObserver((entry) => {
+      // make sure we dont fetch the page when a request is in flight
+      if (entry[0].isIntersecting && hasNextPage && !isFetching) {
+        fetchNextPage();
+      }
+    });
+    observer.observe(observerRef.current);
+
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetching]);
 
   return (
     <div>
@@ -51,9 +70,22 @@ const ProfilePostList: React.FC<Props> = ({ userId }) => {
                     author: { ...data.pages[0].targetUserDetails },
                   }}
                 />
+                <FeedAddComment postId={post.id} />
               </div>
             ) : null,
           )}
+
+      <div>
+        <div ref={observerRef} />
+
+        <div className="py-5">
+          {(isFetching || isLoading) && <Spinner />}
+
+          {data && !hasNextPage && !isFetching && (
+            <p className="text-center text-sm text-zinc-400">No more Posts</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

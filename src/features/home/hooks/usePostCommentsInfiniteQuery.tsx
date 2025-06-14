@@ -10,7 +10,7 @@ const usePostCommentsInfiniteQuery = (postId: string) => {
       const params: { from?: string; limit: number } =
         pageParam === "init"
           ? {
-              limit: 6,
+              limit: 10,
             }
           : {
               limit: 6,

@@ -7,7 +7,7 @@ const PosterImage: React.FC<ComponentPropsWithRef<"div"> & { url: string }> = ({
   ...props
 }) => {
   const [orientation, SetOrientation] = useState<"landscape" | "potrait">("potrait");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -24,6 +24,8 @@ const PosterImage: React.FC<ComponentPropsWithRef<"div"> & { url: string }> = ({
   useEffect(() => {
     if (imageRef.current && imageRef.current.complete) {
       setIsLoading(false);
+    } else {
+      setIsLoading(true);
     }
   }, [imageRef, url]);
 

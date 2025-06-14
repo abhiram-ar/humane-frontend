@@ -1,8 +1,17 @@
 import { User } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 const ProfilePicSmall: React.FC<{ avatarURL?: string | null }> = ({ avatarURL }) => {
   const [isProfilePicLoading, setProfilePicLoading] = useState(true);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    if (imgRef.current && imgRef.current.complete) {
+      // image is already cached and loaded
+      setProfilePicLoading(false);
+    }
+  }, [avatarURL]);
+
   return (
     <div>
       {avatarURL ? (
@@ -11,8 +20,11 @@ const ProfilePicSmall: React.FC<{ avatarURL?: string | null }> = ({ avatarURL })
             <div className="absolute inset-0 animate-pulse bg-zinc-400"></div>
           )}
           <img
+            ref={imgRef}
             src={avatarURL}
-            className={`h-full w-full object-cover transition-all duration-100 ease-in ${isProfilePicLoading ? "scale-102 opacity-0" : "scale-100 opacity-100"} `}
+            className={`h-full w-full object-cover transition-all duration-100 ease-in ${
+              isProfilePicLoading ? "scale-102 opacity-0" : "scale-100 opacity-100"
+            }`}
             alt="profilepic"
             onLoad={() => setProfilePicLoading(false)}
           />

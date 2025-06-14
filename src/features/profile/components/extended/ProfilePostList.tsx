@@ -1,12 +1,10 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
 import React, { useEffect, useRef } from "react";
-import { GetUserPostTimelineResponse } from "../../Types/GetUserTimelineResponse";
-import { api } from "@/lib/axios";
 import Post from "@/features/home/components/Post";
 import UserPostActions from "./UserPostActions";
 import useUserId from "../../hooks/useUserId";
 import FeedAddComment from "@/features/home/components/FeedAddComment";
 import Spinner from "@/components/Spinner";
+import useProfilePostTimeline from "../../hooks/userProfilePostTimeline";
 
 type Props = {
   userId: string;
@@ -15,28 +13,8 @@ const ProfilePostList: React.FC<Props> = ({ userId }) => {
   const authenticatedUserId = useUserId();
   const observerRef = useRef<HTMLDivElement | null>(null);
 
-  const { data, hasNextPage, fetchNextPage, isFetching, isLoading } = useInfiniteQuery({
-    queryKey: ["timeline", userId],
-    queryFn: async (data) => {
-      const param =
-        data.pageParam === "init"
-          ? {
-              limit: 2,
-            }
-          : {
-              limit: 2,
-              from: data.pageParam,
-            };
-
-      const res = await api.get<GetUserPostTimelineResponse>(
-        `/api/v1/query/post/timeline/${userId}`,
-        { params: param },
-      );
-      return res.data.data;
-    },
-    initialPageParam: "init",
-    getNextPageParam: (lastPage) => (lastPage.pagination.hasMore ? lastPage.pagination.from : null),
-  });
+  const { data, hasNextPage, fetchNextPage, isFetching, isLoading } =
+    useProfilePostTimeline(userId);
 
   useEffect(() => {
     if (!observerRef.current || !hasNextPage) {

@@ -4,9 +4,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { commentFields, commentSchema } from "../types/createCommentFields";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ButtonPop from "@/components/ButtonPop";
+import { useQueryClient } from "@tanstack/react-query";
+import { AuthorHydratedComment } from "../types/GetPostComments.types";
+import { produce } from "immer";
+import useCurrentUserProfile from "@/features/profile/hooks/useCurrentUserProfile";
+import { BasicUserDetails } from "@/features/notification/Types/CombinedNotiWithActionableUser";
+import useUserId from "@/features/profile/hooks/useUserId";
+import { InfintiteCommentsData } from "../types/InfiniteCommentData";
 
 const PostAddCommentForm: React.FC<{ postId?: string }> = ({ postId }) => {
   const { mutateAsync } = useAddCommentMutation();
+  const queryClinet = useQueryClient();
+  const { data: currentUser } = useCurrentUserProfile();
+  const userId = useUserId();
 
   const {
     register,
@@ -16,9 +26,37 @@ const PostAddCommentForm: React.FC<{ postId?: string }> = ({ postId }) => {
   } = useForm({ resolver: zodResolver(commentSchema) });
 
   const submitHandler: SubmitHandler<commentFields> = async (data) => {
-    await mutateAsync({ content: data.content, postId: postId as string });
+    await mutateAsync(
+      { content: data.content, postId: postId as string },
+      {
+        onSuccess: (responseData) => {
+          queryClinet.setQueryData(
+            ["comments", responseData.postId],
+            (oldData: InfintiteCommentsData) => {
+              if (!oldData) return oldData;
+
+              const authorDetails: BasicUserDetails = {
+                id: userId as string,
+                firstName: currentUser?.firstName ?? "You",
+                avatarURL: currentUser?.avatarURL ?? null,
+              };
+
+              const newHydratedComm: AuthorHydratedComment = {
+                ...responseData,
+                author: { ...authorDetails },
+              };
+
+              const newPages = produce(oldData.pages, (draft) => {
+                draft[0].comments.unshift(newHydratedComm);
+              });
+
+              return { pageParams: oldData.pageParams, pages: newPages } as InfintiteCommentsData;
+            },
+          );
+        },
+      },
+    );
     reset();
-    // TODO: mutate the curresponsing post comments count in timeline
   };
   return (
     <form

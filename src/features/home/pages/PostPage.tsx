@@ -5,6 +5,7 @@ import PostAddComment from "../components/PostAddComment";
 import useFullPostDetailsQuery from "../hooks/useFullPostDetailsQuery";
 import PageNotFoundPage from "@/layout/PageNotFoundPage";
 import Spinner from "@/components/Spinner";
+import PostCommentsList from "../components/PostCommentsList";
 
 const PostPage = () => {
   const navigate = useNavigate();
@@ -38,8 +39,12 @@ const PostPage = () => {
               <Post postDetails={data.post} />
             </div>
 
-            <div className="flex">
+            <div className="border-b border-zinc-400/50">
+              {/* dont use postId from browser params as it can be invalid */}
               <PostAddComment postId={data?.post.id} />
+            </div>
+            <div>
+              <PostCommentsList postId={data?.post.id}/>
             </div>
           </>
         ) : (

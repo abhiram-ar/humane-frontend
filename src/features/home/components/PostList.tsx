@@ -1,32 +1,31 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
 import Post from "./Post";
-import { api } from "@/lib/axios";
-import { GetPostResponse } from "../types/GetPostsReponse";
 import FeedAddComment from "./FeedAddComment";
+import { useEffect, useRef } from "react";
+import Spinner from "@/components/Spinner";
+import useUserFeedInfiniteQuery from "../hooks/useUserFeedInfiniteQuery";
+import PostListShimmer from "./PostListShimmer";
 
 const PostList = () => {
-  const { data } = useInfiniteQuery({
-    queryKey: ["user", "feed"],
-    queryFn: async (data) => {
-      const param =
-        data.pageParam === "init"
-          ? {
-              limit: 10,
-            }
-          : {
-              limit: 10,
-              from: data.pageParam,
-            };
+  const observerRef = useRef<HTMLDivElement>(null);
+  const { data, isFetching, isLoading, hasNextPage, fetchNextPage } = useUserFeedInfiniteQuery();
+  useEffect(() => {
+    if (!observerRef.current || !hasNextPage) {
+      return;
+    }
+    const observer = new IntersectionObserver((entry) => {
+      // make sure we dont fetch the page when a request is in flight
+      if (entry[0].isIntersecting && hasNextPage && !isFetching) {
+        fetchNextPage();
+      }
+    });
+    observer.observe(observerRef.current);
 
-      const res = await api.get<GetPostResponse>("/api/v1/feed/", { params: param });
-      return res.data.data;
-    },
-    initialPageParam: "init",
-    getNextPageParam: (lastPage) => (lastPage.pagination.hasMore ? lastPage.pagination.from : null),
-  });
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetching]);
 
   return (
     <div>
+      {!data && <PostListShimmer size={6} />}
       {data &&
         data.pages
           .flatMap((page) => [...page.posts])
@@ -39,6 +38,18 @@ const PostList = () => {
               </div>
             ) : null,
           )}
+
+      <div>
+        <div ref={observerRef} />
+
+        <div className="py-5">
+          {(isFetching || isLoading) && <Spinner />}
+
+          {data && !hasNextPage && !isFetching && (
+            <p className="text-center text-sm text-zinc-400">No more Posts</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

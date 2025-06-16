@@ -26,7 +26,9 @@ const UserPostActions: React.FC<{ postId: string }> = ({ postId }) => {
 
   const handleCopyClipboard = async () => {
     try {
-      await navigator.clipboard.writeText("post link not implemented yet");
+      await navigator.clipboard.writeText(
+        `${import.meta.env.VITE_FRONTEND_BASE_URL}/post/${postId}`,
+      );
       toast.success("link copied", {
         position: "top-center",
         style: { backgroundColor: "#464646", color: "white" },

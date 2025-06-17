@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { ComponentPropsWithoutRef, useEffect, useRef } from "react";
 import Post from "@/features/home/components/Post";
 import UserPostActions from "./UserPostActions";
 import useUserId from "../../hooks/useUserId";
@@ -6,10 +6,10 @@ import FeedAddComment from "@/features/home/components/FeedAddComment";
 import Spinner from "@/components/Spinner";
 import useProfilePostTimeline from "../../hooks/userProfilePostTimeline";
 
-type Props = {
+type Props = ComponentPropsWithoutRef<"div"> & {
   userId: string;
 };
-const ProfilePostList: React.FC<Props> = ({ userId }) => {
+const ProfilePostList: React.FC<Props> = ({ userId, className }) => {
   const authenticatedUserId = useUserId();
   const observerRef = useRef<HTMLDivElement | null>(null);
 
@@ -38,7 +38,10 @@ const ProfilePostList: React.FC<Props> = ({ userId }) => {
           .flatMap((page) => [...page.posts])
           .map((post) =>
             post ? (
-              <div key={post.id} className="relative w-full border-b border-zinc-400/50 px-5">
+              <div
+                key={post.id}
+                className={`relative w-full border-b border-zinc-400/50 px-5 ${className}`}
+              >
                 <div className="absolute top-2 right-2">
                   {authenticatedUserId === userId && <UserPostActions postId={post.id} />}
                 </div>

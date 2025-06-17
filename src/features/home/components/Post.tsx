@@ -8,9 +8,9 @@ import PosterImage from "./PosterImage";
 import { useScrollContext } from "@/app/providers/ScrollRestoreationProvider";
 
 // TODO: split props into post and author and remove uncessay fields
-type Props = { postDetails: HydratedPost };
+type Props = { postDetails: HydratedPost; enablePosterLink?: boolean };
 
-const Post: React.FC<Props> = ({ postDetails }) => {
+const Post: React.FC<Props> = ({ postDetails, enablePosterLink = false }) => {
   const { setScroll } = useScrollContext();
   const location = useLocation();
   const navigate = useNavigate();
@@ -49,10 +49,12 @@ const Post: React.FC<Props> = ({ postDetails }) => {
 
         {postDetails.posterURL && (
           <div
-            className="cursor-pointer"
+            className={`${enablePosterLink ? "cursor-pointer" : ""}`}
             onClick={() => {
-              setScroll(location.pathname);
-              navigate(`/post/${postDetails.id}`, { state: { navigatedPostData: postDetails } });
+              if (enablePosterLink) {
+                setScroll(location.pathname);
+                navigate(`/post/${postDetails.id}`, { state: { navigatedPostData: postDetails } });
+              }
             }}
           >
             <PosterImage className="mt-2" url={postDetails.posterURL} />

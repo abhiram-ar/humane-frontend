@@ -33,7 +33,7 @@ const PostList = () => {
           .map((post) =>
             post ? (
               <div key={post.id} className="w-full border-b border-zinc-400/50">
-                <Post postDetails={post} />
+                <Post postDetails={post} enablePosterLink={true} />
                 <FeedAddComment post={post} />
               </div>
             ) : null,

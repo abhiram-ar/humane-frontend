@@ -38,7 +38,7 @@ const PosterImage: React.FC<ComponentPropsWithRef<"div"> & { url: string }> = ({
     // width and height of the parent container will be zero, when image starts loading it will get max with and height
     // shimmer will only be visible when the image starts loading ie,
     <div
-      className={`relative aspect-auto max-h-110 overflow-clip rounded-xl ${orientation === "potrait" ? "w-fit" : ""} ${className} ${isError || isLoading ? "h-110 w-full" : ""}`}
+      className={`relative aspect-auto max-h-110 overflow-clip rounded-xl ${orientation === "potrait" ? "max-h-120 w-fit" : ""} ${className} ${isError || isLoading ? "h-110 w-full" : ""}`}
       {...props}
     >
       {isLoading && url && (
@@ -57,7 +57,7 @@ const PosterImage: React.FC<ComponentPropsWithRef<"div"> & { url: string }> = ({
       <img
         ref={imageRef}
         onLoad={handleOnload}
-        className={`aspect-auto h-full w-full object-cover ${isLoading ? "scale-102 opacity-0" : "scale-100 opacity-100"} ${orientation === "potrait" ? "max-h-110" : ""}`}
+        className={`aspect-auto h-full w-full object-cover ${isLoading ? "scale-102 opacity-0" : "scale-100 opacity-100"} ${orientation === "potrait" ? "max-h-120" : ""}`}
         src={url}
         onError={() => {
           setIsLoading(false);

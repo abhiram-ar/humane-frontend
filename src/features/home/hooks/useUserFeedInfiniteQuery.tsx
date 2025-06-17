@@ -1,7 +1,7 @@
-import { api } from '@/lib/axios';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { GetPostResponse } from '../types/GetPostsReponse';
-import { API_ROUTES } from '@/lib/API_ROUTES';
+import { api } from "@/lib/axios";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { GetPostResponse } from "../types/GetPostsReponse";
+import { API_ROUTES } from "@/lib/API_ROUTES";
 
 const useUserFeedInfiniteQuery = () => {
   return useInfiniteQuery({
@@ -10,7 +10,7 @@ const useUserFeedInfiniteQuery = () => {
       const param =
         data.pageParam === "init"
           ? {
-              limit: 3,
+              limit: 5,
             }
           : {
               limit: 3,
@@ -23,7 +23,6 @@ const useUserFeedInfiniteQuery = () => {
     initialPageParam: "init",
     getNextPageParam: (lastPage) => (lastPage.pagination.hasMore ? lastPage.pagination.from : null),
   });
+};
 
-}
-
-export default useUserFeedInfiniteQuery
+export default useUserFeedInfiniteQuery;

@@ -1,15 +1,18 @@
 import ProfilePicSmall from "@/features/notification/Components/ProfilePicSmall";
 import React from "react";
 import { Dot } from "lucide-react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { formatDistance } from "date-fns";
 import { HydratedPost } from "../types/GetPostsReponse";
 import PosterImage from "./PosterImage";
+import { useScrollContext } from "@/app/providers/ScrollRestoreationProvider";
 
 // TODO: split props into post and author and remove uncessay fields
 type Props = { postDetails: HydratedPost };
 
 const Post: React.FC<Props> = ({ postDetails }) => {
+  const { setScroll } = useScrollContext();
+  const location = useLocation();
   const navigate = useNavigate();
   const timeAgoString = formatDistance(new Date(postDetails.createdAt), new Date(), {
     addSuffix: true, // Add "ago" or "from now"
@@ -24,7 +27,10 @@ const Post: React.FC<Props> = ({ postDetails }) => {
         {/* post meta */}
         <div className="flex">
           <div
-            onClick={() => navigate(`/user/${postDetails.authorId}`)}
+            onClick={() => {
+              setScroll(location.pathname);
+              navigate(`/user/${postDetails.authorId}`);
+            }}
             className="cursor-pointer font-semibold hover:underline"
           >
             {`${postDetails.author?.firstName || "unknown"} ${postDetails.author?.lastName || ""}`}
@@ -41,7 +47,17 @@ const Post: React.FC<Props> = ({ postDetails }) => {
         {/* post content*/}
         <p>{postDetails.content}</p>
 
-        {postDetails.posterURL && <PosterImage className="mt-2" url={postDetails.posterURL} />}
+        {postDetails.posterURL && (
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              setScroll(location.pathname);
+              navigate(`/post/${postDetails.id}`, { state: { navigatedPostData: postDetails } });
+            }}
+          >
+            <PosterImage className="mt-2" url={postDetails.posterURL} />
+          </div>
+        )}
       </div>
     </div>
   );

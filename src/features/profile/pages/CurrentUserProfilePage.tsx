@@ -21,10 +21,10 @@ const CurrentUserProfilePage = () => {
 
   return (
     <div className="flex min-h-screen">
-      <div className="relative w-full border-x border-b border-zinc-400/50">
+      <div className="relative w-full border-x border-zinc-400/50">
         <CoverPhotoConfig />
 
-        <div className="px-10">
+        <div className="px-10 pb-5 border-b border-zinc-400/50">
           <div className="relative flex h-fit w-full justify-between">
             <div className="relative bottom-25 -mb-25 h-fit">
               <ProfilePicConfig />
@@ -82,7 +82,7 @@ const CurrentUserProfilePage = () => {
         </div>
 
         {/* posts */}
-        <div className="text-pop-green bg-grey-dark-bg/50 sticky top-0 z-20 mt-5 border-b border-zinc-400/50 py-5 text-center text-xl backdrop-blur-lg">
+        <div className="text-pop-green bg-grey-dark-bg/50 sticky top-0 z-20 border-b border-zinc-400/50 py-5 text-center text-xl backdrop-blur-lg">
           #My posts
         </div>
 

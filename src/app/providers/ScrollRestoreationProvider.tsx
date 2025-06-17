@@ -10,7 +10,7 @@ const ScrollRestorationContext = createContext<ScrollRestorationContextType>({
   map: new Map(),
   ref: { current: null },
   setScroll: () => {
-    console.log("no scroll context");
+    console.error("no scroll context");
   },
 });
 

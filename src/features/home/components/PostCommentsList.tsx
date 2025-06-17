@@ -2,9 +2,12 @@ import React, { useEffect, useRef } from "react";
 import Comment from "./Comment";
 import Spinner from "@/components/Spinner";
 import usePostCommentsInfiniteQuery from "../hooks/usePostCommentsInfiniteQuery";
+import useUserId from "@/features/profile/hooks/useUserId";
+import UserCommentActions from "./UserCommentActions";
 
 const PostCommentsList: React.FC<{ postId: string }> = ({ postId }) => {
   const observerRef = useRef<HTMLDivElement | null>(null);
+  const authenticatedUserId = useUserId();
 
   const { data, isFetching, hasNextPage, fetchNextPage, isLoading } =
     usePostCommentsInfiniteQuery(postId);
@@ -24,6 +27,7 @@ const PostCommentsList: React.FC<{ postId: string }> = ({ postId }) => {
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetching]);
 
+
   return (
     <div>
       {data &&
@@ -31,7 +35,12 @@ const PostCommentsList: React.FC<{ postId: string }> = ({ postId }) => {
           .flatMap((page) => page.comments)
           .map((comment) => {
             return (
-              <div key={comment.id} className="border-b border-zinc-400/50 p-4">
+              <div key={comment.id} className="relative border-b border-zinc-400/50 p-4">
+                <div className="absolute top-2 right-2">
+                  {authenticatedUserId === comment.authorId && (
+                    <UserCommentActions postId={comment.postId} commentId={comment.id} />
+                  )}
+                </div>
                 <Comment comment={comment} />
               </div>
             );

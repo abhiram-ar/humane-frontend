@@ -16,7 +16,6 @@ const FeedAddComment: React.FC<{ post: HydratedPost }> = ({ post }) => {
           className="hover:bg-green-subtle flex w-fit cursor-pointer items-center gap-1 rounded-full px-2 py-1 hover:text-black"
           onClick={() => {
             setScroll(location.pathname);
-            // map.set(location.pathname, ref.current!.scrollTop);
             navigate(`/post/${post.id}`, { state: { navigatedPostData: post } });
           }}
         >

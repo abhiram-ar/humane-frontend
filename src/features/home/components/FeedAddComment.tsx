@@ -6,7 +6,7 @@ import { HydratedPost } from "../types/GetPostsReponse";
 import { useScrollContext } from "@/app/providers/ScrollRestoreationProvider";
 
 const FeedAddComment: React.FC<{ post: HydratedPost }> = ({ post }) => {
-  const { ref, map } = useScrollContext();
+  const { setScroll } = useScrollContext();
   const location = useLocation();
   const navigate = useNavigate();
   return (
@@ -15,7 +15,8 @@ const FeedAddComment: React.FC<{ post: HydratedPost }> = ({ post }) => {
         <div
           className="hover:bg-green-subtle flex w-fit cursor-pointer items-center gap-1 rounded-full px-2 py-1 hover:text-black"
           onClick={() => {
-            map.set(location.pathname, ref.current!.scrollTop);
+            setScroll(location.pathname);
+            // map.set(location.pathname, ref.current!.scrollTop);
             navigate(`/post/${post.id}`, { state: { navigatedPostData: post } });
           }}
         >

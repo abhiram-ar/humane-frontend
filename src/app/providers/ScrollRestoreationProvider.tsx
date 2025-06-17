@@ -3,11 +3,15 @@ import React, { createContext, ReactNode, useContext, useRef } from "react";
 type ScrollRestorationContextType = {
   map: Map<string, number>;
   ref: React.RefObject<HTMLDivElement | null>;
+  setScroll(path: string): void;
 };
 
 const ScrollRestorationContext = createContext<ScrollRestorationContextType>({
   map: new Map(),
   ref: { current: null },
+  setScroll: () => {
+    console.log("no scroll context");
+  },
 });
 
 export function ScrollRestorationProvider({ children }: { children: ReactNode }) {
@@ -15,8 +19,15 @@ export function ScrollRestorationProvider({ children }: { children: ReactNode })
   const positions = useRef(new Map());
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
+  const setScroll = (path: string) => {
+    if (!scrollContainerRef.current) return;
+    positions.current.set(path, scrollContainerRef.current.scrollTop);
+  };
+
   return (
-    <ScrollRestorationContext.Provider value={{ map: positions.current, ref: scrollContainerRef }}>
+    <ScrollRestorationContext.Provider
+      value={{ map: positions.current, ref: scrollContainerRef, setScroll }}
+    >
       {children}
     </ScrollRestorationContext.Provider>
   );

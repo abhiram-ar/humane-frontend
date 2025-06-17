@@ -9,6 +9,7 @@ const useRestoreScrollPosition = () => {
   useEffect(() => {
     if (!ref.current) return;
     if (map.has(location.pathname)) ref.current.scrollTo({ top: map.get(location.pathname) });
+    else ref.current.scrollTo({ top: 0 });
   }, [location.pathname, map, ref]);
   return;
 };

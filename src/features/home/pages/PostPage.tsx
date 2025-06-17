@@ -6,10 +6,15 @@ import useFullPostDetailsQuery from "../hooks/useFullPostDetailsQuery";
 import PageNotFoundPage from "@/layout/PageNotFoundPage";
 import Spinner from "@/components/Spinner";
 import PostCommentsList from "../components/PostCommentsList";
+import useRestoreScrollPosition from "@/hooks/useRestoreScrollPosition";
+import { useScrollContext } from "@/app/providers/ScrollRestoreationProvider";
 
 const PostPage = () => {
+  useRestoreScrollPosition();
+  const { setScroll } = useScrollContext();
+
   const navigate = useNavigate();
-  const { state } = useLocation();
+  const { state, pathname } = useLocation();
   const { postId } = useParams<{ postId: string }>();
 
   const { data, isError } = useFullPostDetailsQuery(postId as string, state?.navigatedPostData);
@@ -24,7 +29,10 @@ const PostPage = () => {
           <div className="item-center relative flex gap-2">
             <div
               className="absolute cursor-pointer rounded-full p-1 hover:bg-zinc-400/50"
-              onClick={() => navigate(-1)}
+              onClick={() => {
+                setScroll(pathname);
+                navigate(-1);
+              }}
             >
               <ArrowLeft className="" />
             </div>
@@ -44,7 +52,7 @@ const PostPage = () => {
               <PostAddComment postId={data?.post.id} />
             </div>
             <div>
-              <PostCommentsList postId={data?.post.id}/>
+              <PostCommentsList postId={data?.post.id} />
             </div>
           </>
         ) : (

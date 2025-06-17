@@ -11,29 +11,34 @@ const PosterImage: React.FC<ComponentPropsWithRef<"div"> & { url: string }> = ({
   const [isError, setIsError] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
 
-  const handleOnload: React.DOMAttributes<HTMLImageElement>["onLoad"] = (e) => {
-    const { naturalHeight, naturalWidth } = e.target as HTMLImageElement;
-    if (naturalHeight > naturalWidth) {
+  const handleComputeOrientation = (img: HTMLImageElement) => {
+    const { naturalHeight, naturalWidth } = img;
+    if (naturalHeight >= naturalWidth) {
       SetOrientation("potrait");
     } else {
       SetOrientation("landscape");
     }
-    setIsLoading(false);
   };
 
   useEffect(() => {
     if (imageRef.current && imageRef.current.complete) {
+      handleComputeOrientation(imageRef.current);
       setIsLoading(false);
     } else {
       setIsLoading(true);
     }
   }, [imageRef, url]);
 
+  const handleOnload: React.DOMAttributes<HTMLImageElement>["onLoad"] = (e) => {
+    handleComputeOrientation(e.target as HTMLImageElement);
+    setIsLoading(false);
+  };
+
   return (
     // width and height of the parent container will be zero, when image starts loading it will get max with and height
     // shimmer will only be visible when the image starts loading ie,
     <div
-      className={`relative aspect-auto overflow-clip rounded-xl ${orientation === "potrait" ? "max-h-110 w-fit" : ""} ${className} ${isError || isLoading ? "h-110 w-full" : ""}`}
+      className={`relative aspect-auto max-h-110 overflow-clip rounded-xl ${orientation === "potrait" ? "w-fit" : ""} ${className} ${isError || isLoading ? "h-110 w-full" : ""}`}
       {...props}
     >
       {isLoading && url && (

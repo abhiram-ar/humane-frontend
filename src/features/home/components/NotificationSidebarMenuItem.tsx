@@ -106,7 +106,8 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
   const veryRecentNotiId = useAppSelector((state) => {
     const size = state.notifications.recentNoti.length;
     if (size <= 0) return null;
-    return state.notifications.recentNoti[size - 1].id;
+    return state.notifications.recentNoti[0].id;
+
   });
 
   const handleMarkAsDone = () => {

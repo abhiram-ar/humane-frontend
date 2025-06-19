@@ -15,7 +15,7 @@ const FeedAddCommentForm: React.FC<{ postId: string }> = ({ postId }) => {
 
   const { incrementFeedPostCommentCount } = useIncrementFeedPostCommentCount();
 
-  // if the postIf from userHome timeline update that
+  // if the post is from user profile timeline update that
   const { incrementTimelinePostCommentCount } = useIncrementTimelinePostCommentCount(
     id ?? (authenticatedUser as string),
   );

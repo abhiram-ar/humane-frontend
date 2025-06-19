@@ -1,3 +1,4 @@
+import { API_ROUTES } from "@/lib/API_ROUTES";
 import { api } from "@/lib/axios";
 import { RelationshipStatus } from "@/types/RelationshipStatus";
 import {
@@ -35,9 +36,12 @@ const useRecivedFriendReqInfiniteQuery = () => {
         queryParams.lastId = pageParam?.lastId;
       }
 
-      const res = await api.get<GetFriendReqResponse>("/api/v1/user/social/friend-req", {
-        params: queryParams,
-      });
+      const res = await api.get<GetFriendReqResponse>(
+        `${API_ROUTES.USER_SERVICE}/social/friend-req`,
+        {
+          params: queryParams,
+        },
+      );
       return res.data.data;
     },
     initialPageParam: { lastId: "ini", createdAt: "ini" },

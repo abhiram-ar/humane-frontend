@@ -3,4 +3,5 @@ export const API_ROUTES = {
   FEED_SERVICE: "/api/v1/feed",
   POST_SERVICE: "/api/v1/post",
   NOTIFICATION_SERVICE: "/api/v1/notification",
+  USER_SERVICE: "/api/v1/user",
 } as const;

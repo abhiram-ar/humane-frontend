@@ -1,3 +1,4 @@
+import { API_ROUTES } from "@/lib/API_ROUTES";
 import { api } from "@/lib/axios";
 
 export type UpdateUserAvatarPhotoResponse = {
@@ -9,8 +10,11 @@ export type UpdateUserAvatarPhotoResponse = {
   };
 };
 export const updateUserAvatarPhoto = async (newKey: string) => {
-  const res = await api.patch<UpdateUserAvatarPhotoResponse>("/api/v1/user/profile/avatar", {
-    newAvatarKey: newKey,
-  });
+  const res = await api.patch<UpdateUserAvatarPhotoResponse>(
+    `${API_ROUTES.USER_SERVICE}/profile/avatar`,
+    {
+      newAvatarKey: newKey,
+    },
+  );
   return res.data;
 };

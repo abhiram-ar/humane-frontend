@@ -1,13 +1,11 @@
 import { useCallback, useEffect, useRef } from "react";
 import SearchUserBar from "../components/SearchUserBar";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { InfiniteScrollResponse } from "../Types/SearchResult";
-import { api } from "@/lib/axios";
 import UserListItem from "../components/UserListItem";
 import { Link } from "react-router";
 import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
 import { setSearchQuery } from "../redux/mainSearchSlice";
 import Spinner from "@/components/Spinner";
+import useUserSearchInfiniteQuery from "../hooks/useUserSearchInfiniteQuery";
 
 const SearchPage = () => {
   const query = useAppSelector((state) => state.mainSearch.query);
@@ -22,32 +20,8 @@ const SearchPage = () => {
 
   const observerRef = useRef<HTMLDivElement | null>(null);
 
-  const { isLoading, data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery({
-    queryKey: ["find-users", query],
-    queryFn: async ({ pageParam }) => {
-      const queryParams =
-        pageParam !== 0
-          ? {
-              searchQuery: query,
-              searchAfter: pageParam,
-              limit: 15,
-            }
-          : {
-              searchQuery: query,
-              limit: 15,
-            };
-
-      const res = await api.get<InfiniteScrollResponse>("/api/v1/query/public/user", {
-        params: queryParams,
-      });
-      return res.data.data;
-    },
-    initialPageParam: 0,
-    // note: in our api, if send the request after the last page, cusor will be null
-    // returing undefined makes the hasNestPage turn false
-    getNextPageParam: (lastPage) => (lastPage.scroll.hasMore ? lastPage.scroll.cursor : undefined),
-    enabled: query!.trim().length > 2, // dont want to fire a query if for short string
-  });
+  const { isLoading, data, fetchNextPage, hasNextPage, isFetching } =
+    useUserSearchInfiniteQuery(query);
 
   useEffect(() => {
     if (!observerRef.current || !hasNextPage) {

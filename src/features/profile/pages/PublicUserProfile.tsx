@@ -11,10 +11,10 @@ import Friends from "../components/extended/Friends.trigger";
 import ProfilePostList from "../components/extended/ProfilePostList";
 
 const PubliicUserProfile = () => {
-  const { id } = useParams<{ id: string }>();
-  const { isError, user, httpStatus } = usePublicUserProfileQuery(id);
+  const { userId } = useParams<{ userId: string }>();
+  const { isError, user, httpStatus } = usePublicUserProfileQuery(userId);
 
-  if (!id || (httpStatus && httpStatus === 404))
+  if (!userId || (httpStatus && httpStatus === 404))
     return <PageNotFound message="User not found ❌" />;
 
   if (isError) return <PageNotFound message="Something went wrong" />;
@@ -30,7 +30,7 @@ const PubliicUserProfile = () => {
           </div>
 
           <div className="py-5">
-            <RelationshipActions userId={id} />
+            <RelationshipActions userId={userId} />
           </div>
         </div>
 
@@ -74,8 +74,8 @@ const PubliicUserProfile = () => {
 
             {/* opposite side to profile pic  */}
             <div className="text-end">
-              <Friends userId={id} />
-              <UserMutualFriends userId={id} />
+              <Friends userId={userId} />
+              <UserMutualFriends userId={userId} />
             </div>
           </div>
           <div className="mt-3">

@@ -20,7 +20,7 @@ const FeedAddComment: React.FC<{ post: HydratedPost }> = ({ post }) => {
           }}
         >
           <MessageSquare size={20} className="mt-1" />
-          <p>{26}</p>
+          <p>{post.commentCount ?? ""}</p>
         </div>
         <FeedAddCommentForm postId={post.id} />
       </div>

@@ -14,4 +14,9 @@ export default defineConfig({
   // server: {
   //   allowedHosts: ["humanedevfe.abhiram-ar.com"],
   // },
+
+  // server: {
+  //   host: "0.0.0.0",
+  //   port: 5173,
+  // },
 });

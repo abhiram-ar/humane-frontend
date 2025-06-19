@@ -12,6 +12,7 @@ export type HydratedPost = {
   moderationStatus: (typeof ModerationStatus)[keyof typeof ModerationStatus];
   moderationMetadata?: unknown;
   posterURL: string | null;
+  commentCount: number | null;
 };
 export type GetPostResponse = {
   message: string;

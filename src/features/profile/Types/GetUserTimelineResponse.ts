@@ -11,6 +11,7 @@ export type FullPost = {
   moderationStatus: (typeof ModerationStatus)[keyof typeof ModerationStatus];
   moderationMetadata?: unknown;
   posterURL: string | null;
+  commentCount: number | null;
 };
 
 export type GetUserPostTimelineResponse = {

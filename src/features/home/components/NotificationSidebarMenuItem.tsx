@@ -16,6 +16,7 @@ import {
   updateNotification,
 } from "@/features/notification/redux/notificationSlice";
 import { NavLink } from "react-router";
+import { API_ROUTES } from "@/lib/API_ROUTES";
 
 // TODO: refacor
 type GetRecentNotificationResponse = {
@@ -82,9 +83,12 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
   const { data } = useQuery({
     queryKey: ["notifications"],
     queryFn: async () => {
-      const res = await api.get<GetRecentNotificationResponse>("/api/v1/notification/", {
-        params: { limit: 10 }, // add from
-      });
+      const res = await api.get<GetRecentNotificationResponse>(
+        `${API_ROUTES.NOTIFICATION_SERVICE}/`,
+        {
+          params: { limit: 10 }, // TODO: add from and convert to infinite query
+        },
+      );
       return res.data.data;
     },
   });
@@ -107,13 +111,12 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
     const size = state.notifications.recentNoti.length;
     if (size <= 0) return null;
     return state.notifications.recentNoti[0].id;
-
   });
 
   const handleMarkAsDone = () => {
     if (veryRecentNotiId) {
       api
-        .patch("/api/v1/notification/isRead", { fromId: veryRecentNotiId })
+        .patch(`${API_ROUTES.NOTIFICATION_SERVICE}/isRead`, { fromId: veryRecentNotiId })
         .catch((err) => console.log("error while marking notification as read", err));
     }
   };

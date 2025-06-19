@@ -10,9 +10,12 @@ export const adminLoginAuthChekerLoader = async () => {
   const token = store.getState().adminAuth.token;
   if (!token) {
     try {
-      const res = await axios.get("http://localhost/api/v1/global/auth/refresh", {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/v1/global/auth/refresh`,
+        {
+          withCredentials: true,
+        },
+      );
 
       if (res.data.data?.token) {
         const decoded: JWTAuthPayload = jwtDecode(res.data.data.token);

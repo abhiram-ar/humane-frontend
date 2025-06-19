@@ -1,4 +1,4 @@
-import ProfilePicSmall from "@/features/notification/Components/ProfilePicSmall";
+import ProfilePicSmall from "@/components/ProfilePicSmall";
 import React from "react";
 import { AuthorHydratedComment } from "../types/GetPostComments.types";
 import { Dot } from "lucide-react";

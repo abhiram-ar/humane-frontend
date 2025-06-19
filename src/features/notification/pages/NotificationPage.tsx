@@ -4,20 +4,6 @@ import { useEffect } from "react";
 import { markAllAsRead } from "../redux/notificationSlice";
 import FriendReqAcceptedNoti from "../Components/FriendReqAcceptedNoti";
 
-// const tempNotis: FriendReqNotification[] = Array(20)
-//   .fill(0)
-//   .map(() => ({
-//     type: "friend-req",
-//     id: "",
-//     isRead: Math.random() > 0.5 ? true : false,
-//     updatedAt: "",
-//     friendshipId: "",
-//     reciverId: "",
-//     requesterId: "",
-//     createdAt: "",
-//     status: Math.random() > 0.5 ? "ACCEPTED" : "PENDING",
-//   }));
-
 const NotificationPage = () => {
   const recentNoti = useAppSelector((state) => state.notifications.recentNoti);
   const dispath = useAppDispatch();

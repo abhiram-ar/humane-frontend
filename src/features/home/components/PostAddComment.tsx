@@ -1,4 +1,4 @@
-import ProfilePicSmall from "@/features/notification/Components/ProfilePicSmall";
+import ProfilePicSmall from "@/components/ProfilePicSmall";
 import React from "react";
 import useCurrentUserProfile from "@/features/profile/hooks/useCurrentUserProfile";
 import PostAddCommentForm from "./PostAddCommentForm";

@@ -10,14 +10,14 @@ import useUserId from "@/features/profile/hooks/useUserId";
 const FeedAddCommentForm: React.FC<{ postId: string }> = ({ postId }) => {
   const { mutateAsync } = useAddCommentMutation();
   const location = useLocation();
-  const { id } = useParams<{ id?: string }>();
-  const authenticatedUser = useUserId();
+  const { userId } = useParams<{ userId?: string }>();
+  const authenticatedUserId = useUserId();
 
   const { incrementFeedPostCommentCount } = useIncrementFeedPostCommentCount();
 
   // if the post is from user profile timeline update that
   const { incrementTimelinePostCommentCount } = useIncrementTimelinePostCommentCount(
-    id ?? (authenticatedUser as string),
+    userId ?? (authenticatedUserId as string),
   );
 
   const {

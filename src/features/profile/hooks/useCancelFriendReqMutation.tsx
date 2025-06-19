@@ -2,6 +2,7 @@ import { RelationshipStatus } from "@/types/RelationshipStatus";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { RelationshipStatusResponse } from "./useRelationshipStausQuery";
 import { api } from "@/lib/axios";
+import { API_ROUTES } from "@/lib/API_ROUTES";
 
 type CancelFriendRequesetResponse = {
   success: boolean;
@@ -17,9 +18,12 @@ const useCancelFriendReqMutation = () => {
   return useMutation({
     mutationKey: ["user-rel-status", "cancel-req"],
     mutationFn: async (recieverId: string) => {
-      const res = await api.delete<CancelFriendRequesetResponse>("/api/v1/user/social/friend-req", {
-        data: { recieverId },
-      });
+      const res = await api.delete<CancelFriendRequesetResponse>(
+        `${API_ROUTES.USER_SERVICE}/social/friend-req`,
+        {
+          data: { recieverId },
+        },
+      );
       return res.data.data;
     },
     onSuccess: (data) => {

@@ -1,3 +1,4 @@
+import { API_ROUTES } from "@/lib/API_ROUTES";
 import { api } from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
 
@@ -18,9 +19,12 @@ export type CreateCommentResponse = {
 const useAddCommentMutation = () => {
   return useMutation({
     mutationFn: async (data: { content: string; postId: string }) => {
-      const res = await api.post<CreateCommentResponse>(`/api/v1/post/${data.postId}/comment/`, {
-        content: data.content,
-      });
+      const res = await api.post<CreateCommentResponse>(
+        `${API_ROUTES.POST_SERVICE}/${data.postId}/comment/`,
+        {
+          content: data.content,
+        },
+      );
       return res.data.data.comment;
     },
   });

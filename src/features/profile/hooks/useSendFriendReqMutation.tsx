@@ -2,6 +2,7 @@ import { RelationshipStatus } from "@/types/RelationshipStatus";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { RelationshipStatusResponse } from "./useRelationshipStausQuery";
 import { api } from "@/lib/axios";
+import { API_ROUTES } from "@/lib/API_ROUTES";
 
 export type SendFriendRequesetResponse = {
   success: boolean;
@@ -18,9 +19,12 @@ const useSendFriendReqMutation = () => {
   return useMutation({
     mutationKey: ["user-rel-status", "send-req"],
     mutationFn: async (recieverId: string) => {
-      const res = await api.post<SendFriendRequesetResponse>("/api/v1/user/social/friend-req", {
-        recieverId,
-      });
+      const res = await api.post<SendFriendRequesetResponse>(
+        `${API_ROUTES.USER_SERVICE}/social/friend-req`,
+        {
+          recieverId,
+        },
+      );
       return res.data.data;
     },
     onSuccess: (data) => {

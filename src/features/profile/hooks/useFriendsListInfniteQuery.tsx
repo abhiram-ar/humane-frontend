@@ -1,3 +1,4 @@
+import { API_ROUTES } from "@/lib/API_ROUTES";
 import { api } from "@/lib/axios";
 import {
   UserListInfinityScollParams,
@@ -35,9 +36,12 @@ const useFriendsListInfniteQuery = (userId: string) => {
         queryParams.createdAt = pageParam?.createdAt;
         queryParams.lastId = pageParam?.lastId;
       }
-      const res = await api.get<GetFriendsListResponse>("/api/v1/user/social/friend", {
-        params: queryParams,
-      });
+      const res = await api.get<GetFriendsListResponse>(
+        `${API_ROUTES.USER_SERVICE}/social/friend`,
+        {
+          params: queryParams,
+        },
+      );
       return res.data.data;
     },
     initialPageParam: { lastId: "ini", createdAt: "ini" },

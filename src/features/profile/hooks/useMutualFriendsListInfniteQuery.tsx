@@ -1,3 +1,4 @@
+import { API_ROUTES } from "@/lib/API_ROUTES";
 import { api } from "@/lib/axios";
 import {
   UserListInfinityScollParams,
@@ -35,9 +36,12 @@ const useMutualFriendsListInfniteQuery = (userId: string) => {
         queryParams.createdAt = pageParam?.createdAt;
         queryParams.lastId = pageParam?.lastId;
       }
-      const res = await api.get<GetMutualFriendsListResponse>("/api/v1/user/social/friend/mutual", {
-        params: queryParams,
-      });
+      const res = await api.get<GetMutualFriendsListResponse>(
+        `${API_ROUTES.USER_SERVICE}/social/friend/mutual`,
+        {
+          params: queryParams,
+        },
+      );
       return res.data.data;
     },
     initialPageParam: { lastId: "ini", createdAt: "ini" },

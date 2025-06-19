@@ -10,9 +10,12 @@ export const isAuthenticatedLoader = async () => {
   const token = store.getState().userAuth.token;
   if (!token) {
     try {
-      const res = await axios.get("http://localhost/api/v1/global/auth/refresh", {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/api/v1/global/auth/refresh`,
+        {
+          withCredentials: true,
+        },
+      );
       if (res.data.data?.token) {
         const decoded: JWTAuthPayload = jwtDecode(res.data.data.token);
         if (decoded.type === "user") {

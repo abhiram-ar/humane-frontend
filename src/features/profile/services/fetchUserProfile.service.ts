@@ -1,5 +1,5 @@
+import { API_ROUTES } from "@/lib/API_ROUTES";
 import { api } from "@/lib/axios";
-
 
 export type FetchUserProfileResponse = {
   success: boolean;
@@ -17,6 +17,6 @@ export type FetchUserProfileResponse = {
   };
 };
 export const fetchUserProfile = async () => {
-  const res = await api.get<FetchUserProfileResponse>("/api/v1/user/profile/");
+  const res = await api.get<FetchUserProfileResponse>(`${API_ROUTES.USER_SERVICE}/profile/`);
   return res.data.data.profile;
 };

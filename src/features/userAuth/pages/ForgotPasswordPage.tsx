@@ -3,12 +3,13 @@ import ForgotPassword, { forgotPasswordFields } from "../components/ForgotPasswo
 import { api } from "@/lib/axios";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
+import { API_ROUTES } from "@/lib/API_ROUTES";
 
 const ForgotPasswordPage = () => {
   const handleForgotPassword = async (data: forgotPasswordFields) => {
     console.log(data);
     try {
-      const res = await api.post("api/v1/user/auth/forgot-password", data);
+      const res = await api.post(`${API_ROUTES.USER_SERVICE}/auth/forgot-password`, data);
       toast.success(res.data.message, { position: "top-right" });
     } catch (error) {
       if (error instanceof AxiosError && error.response?.data) {

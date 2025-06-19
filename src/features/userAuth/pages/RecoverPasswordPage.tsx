@@ -3,6 +3,7 @@ import { api } from "@/lib/axios";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
+import { API_ROUTES } from "@/lib/API_ROUTES";
 
 const RecoverPasswordPage = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const RecoverPasswordPage = () => {
     }
 
     try {
-      const res = await api.patch("/api/v1/user/auth/reset-password", {
+      const res = await api.patch(`${API_ROUTES.USER_SERVICE}/auth/reset-password`, {
         recoveryToken,
         newPassword: data.password,
       });

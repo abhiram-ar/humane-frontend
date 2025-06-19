@@ -3,6 +3,7 @@ import useUserId from "./useUserId";
 import { GetUserPostTimelineResponse } from "../Types/GetUserTimelineResponse";
 import { api } from "@/lib/axios";
 import { ModerationStatus, PostVisibility } from "humane-common";
+import { API_ROUTES } from "@/lib/API_ROUTES";
 
 type DeletePostResponse = {
   message: "post deleted";
@@ -31,7 +32,7 @@ const useDeleteUserPost = (postId: string) => {
   return useMutation({
     mutationKey: ["user-post", postId],
     mutationFn: async () => {
-      const res = await api.delete<DeletePostResponse>(`/api/v1/post/${postId}`);
+      const res = await api.delete<DeletePostResponse>(`${API_ROUTES.POST_SERVICE}/${postId}`);
       return res.data.data;
     },
     onSuccess: (responseData) => {

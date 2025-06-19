@@ -1,6 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { GetUserPostTimelineResponse } from "../Types/GetUserTimelineResponse";
 import { api } from "@/lib/axios";
+import { API_ROUTES } from "@/lib/API_ROUTES";
 
 const useProfilePostTimeline = (userId: string) => {
   return useInfiniteQuery({
@@ -17,7 +18,7 @@ const useProfilePostTimeline = (userId: string) => {
             };
 
       const res = await api.get<GetUserPostTimelineResponse>(
-        `/api/v1/query/post/timeline/${userId}`,
+        `${API_ROUTES.QUERY_SERVICE}/post/timeline/${userId}`,
         { params: param },
       );
       return res.data.data;

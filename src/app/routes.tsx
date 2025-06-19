@@ -60,7 +60,7 @@ export const router = createBrowserRouter([
             children: [
               { index: true, Component: PageNotFoundPage },
               {
-                path: ":id",
+                path: ":userId",
                 Component: PubliicUserProfile,
               },
             ],

@@ -6,6 +6,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import { ServerErrors } from "@/types/serverErrors";
+import { API_ROUTES } from "@/lib/API_ROUTES";
 
 const SignupPage = () => {
   const [user, setUser] = useState<SignupUser | null>(null);
@@ -14,7 +15,7 @@ const SignupPage = () => {
   console.log(user, activationToken);
 
   const handleSignup = async (data: SignupUser) => {
-    const res = await api.post("/api/v1/user/auth/signup", data);
+    const res = await api.post(`${API_ROUTES.USER_SERVICE}/auth/signup`, data);
     setUser(data);
     setActivationToken(res.data.data?.token);
 

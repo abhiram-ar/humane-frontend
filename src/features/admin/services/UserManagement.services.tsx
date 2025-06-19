@@ -1,3 +1,4 @@
+import { API_ROUTES } from "@/lib/API_ROUTES";
 import { UserListResponse, UserToggleBlockResponse } from "../types/userManagement.types";
 import { adminApi } from "@/lib/axios.adminInstance";
 
@@ -16,7 +17,7 @@ export const updateUserBlockStatus = async ({
   userId: string;
 }) => {
   const res = await adminApi.patch<UserToggleBlockResponse>(
-    "/api/v1/admin/manage/user/block-status",
+    `${API_ROUTES.ADMIN_ROUTE}/manage/user/block-status`,
     {
       newBlockStatus,
       userId,

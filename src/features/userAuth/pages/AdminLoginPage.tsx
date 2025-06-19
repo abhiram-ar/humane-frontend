@@ -4,6 +4,7 @@ import { api } from "@/lib/axios";
 import { AxiosError } from "axios";
 import { useAppDispatch } from "../hooks/store.hooks";
 import { setAdminCredentials } from "../../admin/redux/adminAuthSlice";
+import { API_ROUTES } from "@/lib/API_ROUTES";
 
 const AdminLoginPage = () => {
   const dispath = useAppDispatch();
@@ -11,7 +12,7 @@ const AdminLoginPage = () => {
 
   const handleLogin = async (data: { email: string; password: string }) => {
     try {
-      const res = await api.post("/api/v1/admin/auth/login", data);
+      const res = await api.post(`${API_ROUTES.ADMIN_ROUTE}/auth/login`, data);
 
       const token = res.data.data.accessToken;
       console.log(token);

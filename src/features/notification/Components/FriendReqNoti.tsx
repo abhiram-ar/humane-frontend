@@ -1,4 +1,4 @@
-import ProfilePicSmall from "./ProfilePicSmall";
+import ProfilePicSmall from "../../../components/ProfilePicSmall";
 import { Link } from "react-router";
 import ButtonPop from "@/components/ButtonPop";
 import { FriendReqNotification } from "../Types/FriendReqNoti";

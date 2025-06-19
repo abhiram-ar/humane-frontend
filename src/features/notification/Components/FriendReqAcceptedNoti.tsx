@@ -1,4 +1,4 @@
-import ProfilePicSmall from "./ProfilePicSmall";
+import ProfilePicSmall from "../../../components/ProfilePicSmall";
 import { Link } from "react-router";
 import { ActionableUser } from "../Types/CombinedNotiWithActionableUser";
 import { FriendReqAcceptedNotification } from "../Types/FriendReqAcceptedNoti";

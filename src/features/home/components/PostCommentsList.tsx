@@ -4,6 +4,7 @@ import Spinner from "@/components/Spinner";
 import usePostCommentsInfiniteQuery from "../hooks/usePostCommentsInfiniteQuery";
 import useUserId from "@/features/profile/hooks/useUserId";
 import UserCommentActions from "./UserCommentActions";
+import CommentLike from "./CommentLike";
 
 const PostCommentsList: React.FC<{ postId: string }> = ({ postId }) => {
   const observerRef = useRef<HTMLDivElement | null>(null);
@@ -27,7 +28,6 @@ const PostCommentsList: React.FC<{ postId: string }> = ({ postId }) => {
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetching]);
 
-
   return (
     <div>
       {data &&
@@ -41,7 +41,15 @@ const PostCommentsList: React.FC<{ postId: string }> = ({ postId }) => {
                     <UserCommentActions postId={comment.postId} commentId={comment.id} />
                   )}
                 </div>
-                <Comment comment={comment} />
+                <div className="flex items-end justify-between">
+                  <Comment comment={comment} />
+                  <div className="me-8">
+                    <CommentLike
+                      likeCount={comment.likeCount}
+                      hasPostAuthorLiked={comment.hasLikedByUser}
+                    />
+                  </div>
+                </div>
               </div>
             );
           })}

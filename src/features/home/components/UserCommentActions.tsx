@@ -32,7 +32,7 @@ const UserCommentActions: React.FC<{ commentId: string; postId: string }> = ({
       <DropdownMenu>
         <DropdownMenuTrigger
           asChild
-          className="hover:bg-grey-light text-offwhite cursor-pointer rounded-md p-1"
+          className="hover:bg-grey-light text-zinc-400/50 hover:text-offwhite cursor-pointer rounded-md p-1"
         >
           <Ellipsis />
         </DropdownMenuTrigger>

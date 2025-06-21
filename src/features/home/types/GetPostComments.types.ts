@@ -9,9 +9,17 @@ export type RawComment = {
   updatedAt: string;
 };
 
+export type CommentMetadata = {
+  likedByPostAuthor: boolean;
+  likeCount: number;
+  hasLikedByUser?: boolean;
+};
+
 export type AuthorHydratedComment = RawComment & {
   author: BasicUserDetails | undefined;
 };
+
+export type AuthorAndMetadataHydratedComment = AuthorHydratedComment & Partial<CommentMetadata>;
 
 export type CommentsPagination = {
   from: string;
@@ -21,7 +29,7 @@ export type CommentsPagination = {
 export type GetCommentsResponse = {
   message: string;
   data: {
-    comments: AuthorHydratedComment[];
+    comments: AuthorAndMetadataHydratedComment[];
     pagination: CommentsPagination;
   };
 };

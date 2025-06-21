@@ -17,7 +17,7 @@ const usePostCommentsInfiniteQuery = (postId: string) => {
               from: pageParam,
             };
       const res = await api.get<GetCommentsResponse>(
-        `${API_ROUTES.QUERY_SERVICE}/comment/${postId}`,
+        `${API_ROUTES.QUERY_SERVICE}/post/${postId}/comment`,
         { params },
       );
       return res.data.data;

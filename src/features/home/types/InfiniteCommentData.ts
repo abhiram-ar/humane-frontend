@@ -1,10 +1,10 @@
 import { InfiniteData } from "@tanstack/react-query";
-import { AuthorHydratedComment, CommentsPagination } from "./GetPostComments.types";
+import { AuthorAndMetadataHydratedComment, CommentsPagination } from "./GetPostComments.types";
 
 export type InfintiteCommentsData =
   | InfiniteData<
       {
-        comments: AuthorHydratedComment[];
+        comments: AuthorAndMetadataHydratedComment[];
         pagination: CommentsPagination;
       },
       unknown

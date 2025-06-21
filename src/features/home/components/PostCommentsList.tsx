@@ -45,6 +45,7 @@ const PostCommentsList: React.FC<{ postId: string }> = ({ postId }) => {
                   <Comment comment={comment} />
                   <div className="me-8">
                     <CommentLike
+                      postId={postId}
                       commentId={comment.id}
                       likeCount={comment.likeCount}
                       hasLikedByUser={comment.hasLikedByUser}

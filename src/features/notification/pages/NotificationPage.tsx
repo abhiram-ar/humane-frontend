@@ -3,6 +3,7 @@ import FriendReqNoti from "../Components/FriendReqNoti";
 import { useEffect } from "react";
 import { markAllAsRead } from "../redux/notificationSlice";
 import FriendReqAcceptedNoti from "../Components/FriendReqAcceptedNoti";
+import PostGotNoti from "../Components/PostGotCommentNoti";
 
 const NotificationPage = () => {
   const recentNoti = useAppSelector((state) => state.notifications.recentNoti);
@@ -23,6 +24,8 @@ const NotificationPage = () => {
           if (noti.type === "friend-req") return <FriendReqNoti key={noti.id} noti={noti} />;
           else if (noti.type === "friend-req.accepted")
             return <FriendReqAcceptedNoti key={noti.id} noti={noti} />;
+          else if (noti.type === "post-got-comment")
+            return <PostGotNoti key={noti.id} noti={noti} />;
         })}
       </div>
     </div>

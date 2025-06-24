@@ -1,5 +1,10 @@
-import { FRIEND_REQ_ACCEPTED_NOTIFICATION_TYPE, FriendReqAcceptedNotification } from "./FriendReqAcceptedNoti";
-import { FRIEND_REQ_NOTIFICATION_TYPE, FriendReqNotification } from "./FriendReqNoti";
+import { FriendReqAcceptedNotification } from "./FriendReqAcceptedNoti";
+import { FriendReqNotification } from "./FriendReqNoti";
+import { PostGotCommentNotification } from "./PostGotCommnetNotification";
 
-export type CombinedNotificationType = typeof FRIEND_REQ_NOTIFICATION_TYPE | typeof FRIEND_REQ_ACCEPTED_NOTIFICATION_TYPE
-export type CombinedNotification = FriendReqNotification | FriendReqAcceptedNotification
+export type CombinedNotification =
+  | FriendReqNotification
+  | FriendReqAcceptedNotification
+  | PostGotCommentNotification;
+
+export type CombinedNotificationType = CombinedNotification["type"];

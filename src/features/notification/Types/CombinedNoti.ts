@@ -1,3 +1,4 @@
+import { CommentLikesNotification } from "./CommentLikesNotification";
 import { FriendReqAcceptedNotification } from "./FriendReqAcceptedNoti";
 import { FriendReqNotification } from "./FriendReqNoti";
 import { PostGotCommentNotification } from "./PostGotCommnetNotification";
@@ -5,6 +6,7 @@ import { PostGotCommentNotification } from "./PostGotCommnetNotification";
 export type CombinedNotification =
   | FriendReqNotification
   | FriendReqAcceptedNotification
-  | PostGotCommentNotification;
+  | PostGotCommentNotification
+  | CommentLikesNotification;
 
 export type CombinedNotificationType = CombinedNotification["type"];

@@ -62,7 +62,7 @@ const Post: React.FC<Props> = ({ postDetails, enablePosterLink = false }) => {
               <PosterImage className="mt-2" url={postDetails.attachmentURL} />
             )}
             {postDetails.attachmentType?.toLowerCase().startsWith("video") && (
-              <div className="mt-2">
+              <div className="mt-2" onClick={(e) => e.stopPropagation()}>
                 <VideoPlayer
                   src={postDetails.attachmentURL}
                   autoplay={true}

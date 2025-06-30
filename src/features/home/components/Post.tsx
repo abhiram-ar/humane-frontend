@@ -6,6 +6,7 @@ import { formatDistance } from "date-fns";
 import { HydratedPost } from "../types/GetPostsReponse";
 import PosterImage from "./PosterImage";
 import { useScrollContext } from "@/app/providers/ScrollRestoreationProvider";
+import VideoPlayer from "@/components/videoPlayer/VideoPlayer";
 
 // TODO: split props into post and author and remove uncessay fields
 type Props = { postDetails: HydratedPost; enablePosterLink?: boolean };
@@ -57,7 +58,18 @@ const Post: React.FC<Props> = ({ postDetails, enablePosterLink = false }) => {
               }
             }}
           >
-            <PosterImage className="mt-2" url={postDetails.attachmentURL} />
+            {postDetails.attachmentType?.toLowerCase().startsWith("image") && (
+              <PosterImage className="mt-2" url={postDetails.attachmentURL} />
+            )}
+            {postDetails.attachmentType?.toLowerCase().startsWith("video") && (
+              <div className="mt-2">
+                <VideoPlayer
+                  src={postDetails.attachmentURL}
+                  autoplay={true}
+                  mimeType={postDetails.attachmentType}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -17,13 +17,17 @@ import React, { useRef, useState } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import PosterImage from "./PosterImage";
 import { CreatePostFields, createPostSchema } from "../types/CreatePostFields";
+import VideoPlayer from "@/components/videoPlayer/VideoPlayer";
 
 type Props = {
   handleCreatePost(data: CreatePostFields): Promise<void>;
 };
 
 const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
-  const [posterPreview, setPosterPreview] = useState<string | null>(null);
+  const [posterPreview, setPosterPreview] = useState<{
+    type: string;
+    url: string;
+  } | null>(null);
   const fileInputContainerRef = useRef<HTMLDivElement | null>(null);
 
   const {
@@ -57,7 +61,7 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
     console.log(e);
     const file = e.target.files?.[0];
     if (file) {
-      setPosterPreview(URL.createObjectURL(file));
+      setPosterPreview({ type: file.type, url: URL.createObjectURL(file) });
     } else {
       setPosterPreview(null);
     }
@@ -96,7 +100,7 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
             type="file"
             className="hidden"
             {...register("poster")}
-            accept="image/*"
+            accept="image/*,video/*"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               register("poster").onChange(e);
               register("poster");
@@ -105,14 +109,26 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
           />
         </div>
 
-        {posterPreview && (
+        {posterPreview && posterPreview.type.toLowerCase().startsWith("image") && (
           <div className="flex w-full">
             <div className="relative w-fit">
               <div className="bg-offwhite hover:text-offwhite absolute top-1 right-1 z-10 cursor-pointer rounded-full border border-zinc-800/50 p-0.5 text-red-500 hover:bg-red-500">
                 <X size={20} onClick={() => handleRemovePoster()} />
               </div>
 
-              <PosterImage className="max-h-100" url={posterPreview} />
+              <PosterImage className="max-h-100" url={posterPreview.url} />
+            </div>
+          </div>
+        )}
+
+        {posterPreview && posterPreview.type.toLowerCase().startsWith("video") && (
+          <div className="flex w-full">
+            <div className="relative w-fit">
+              <div className="bg-offwhite hover:text-offwhite absolute top-1 right-1 z-50 cursor-pointer rounded-full border border-zinc-800/50 p-0.5 text-red-500 hover:bg-red-500">
+                <X size={20} onClick={() => handleRemovePoster()} />
+              </div>
+
+              <VideoPlayer src={posterPreview.url} autoplay={false} mimeType={posterPreview.type} />
             </div>
           </div>
         )}
@@ -126,7 +142,7 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
               className="bg-grey-light/50 flex w-fit cursor-pointer items-center justify-center gap-2 rounded-full border border-zinc-400/20 px-5 py-1 text-white"
             >
               <ImagePlus size={20} />
-              <p>Add Photo</p>
+              <p>Add Photo / Video</p>
             </div>
           )}
 

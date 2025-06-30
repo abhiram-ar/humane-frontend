@@ -14,7 +14,6 @@ import useUserId from "@/features/profile/hooks/useUserId";
 import axios from "axios";
 import { getPostMediaPresignedURL } from "../services/GetPostMediaPresingedURL";
 import { CreatePostFields } from "../types/CreatePostFields";
-import { PostAttachmentType } from "humane-common";
 
 const CreatePostButton = () => {
   const closeDialogRef = useRef<HTMLButtonElement | null>(null);
@@ -25,16 +24,13 @@ const CreatePostButton = () => {
     const { poster, ...postData } = data;
 
     let attachmentKey: string | undefined;
-    let attachmentType: (typeof PostAttachmentType)[keyof typeof PostAttachmentType] | undefined =
-      undefined;
+    let attachmentType: string | undefined = undefined;
 
     if (poster && (poster as FileList)?.[0]) {
       const file = (poster as FileList)[0];
-      console.log(file);
+      attachmentType = file.type;
 
       const result = await getPostMediaPresignedURL(file);
-      attachmentType = file.type.toLowerCase().startsWith("image") ? "image" : undefined;
-      attachmentType = file.type.toLowerCase().startsWith("video") ? "video" : undefined;
 
       attachmentKey = result.key;
       await axios.put(result.preSignedURL, file);

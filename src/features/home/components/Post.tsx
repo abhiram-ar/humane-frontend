@@ -47,7 +47,7 @@ const Post: React.FC<Props> = ({ postDetails, enablePosterLink = false }) => {
         {/* post content*/}
         <p>{postDetails.content}</p>
 
-        {postDetails.posterURL && (
+        {postDetails.attachmentURL && (
           <div
             className={`${enablePosterLink ? "cursor-pointer" : ""}`}
             onClick={() => {
@@ -57,7 +57,7 @@ const Post: React.FC<Props> = ({ postDetails, enablePosterLink = false }) => {
               }
             }}
           >
-            <PosterImage className="mt-2" url={postDetails.posterURL} />
+            <PosterImage className="mt-2" url={postDetails.attachmentURL} />
           </div>
         )}
       </div>

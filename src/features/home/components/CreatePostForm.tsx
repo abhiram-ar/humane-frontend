@@ -58,7 +58,6 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e);
     const file = e.target.files?.[0];
     if (file) {
       setPosterPreview({ type: file.type, url: URL.createObjectURL(file) });

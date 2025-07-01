@@ -1,7 +1,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dot } from "lucide-react";
 
-const PostShimmer = () => {
+const PostShimmer: React.FC<{ idx?: number }> = ({ idx }) => {
   return (
     <div className="flex gap-3 px-4 pt-4 text-transparent">
       <div className="cursor-pointer">
@@ -27,14 +27,15 @@ const PostShimmer = () => {
         <Skeleton className="mt-1 w-fit">
           Lorem, ipsum dolor sit amet consectetur adipisicing
         </Skeleton>
-        {Math.random() > 0.5 && (
+
+        {idx && idx % 2 > 0 && (
           <Skeleton className="mt-1 w-fit">
             Lorem, ipsum dolor sit amet consectetur adipisicing ANd thsi is
           </Skeleton>
         )}
 
         {/* img shimmer */}
-        {Math.random() > 0.8 && <Skeleton className="mt-3 h-120 w-full" />}
+        {idx && idx > 1 && <Skeleton className="mt-3 h-120 w-full" />}
       </div>
     </div>
   );

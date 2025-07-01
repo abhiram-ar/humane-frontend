@@ -1,6 +1,6 @@
 import Post from "./Post";
 import FeedAddComment from "./FeedAddComment";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Spinner from "@/components/Spinner";
 import useUserFeedInfiniteQuery from "../hooks/useUserFeedInfiniteQuery";
 import PostListShimmer from "./PostListShimmer";
@@ -8,6 +8,8 @@ import PostListShimmer from "./PostListShimmer";
 const PostList = () => {
   const observerRef = useRef<HTMLDivElement>(null);
   const { data, isFetching, isLoading, hasNextPage, fetchNextPage } = useUserFeedInfiniteQuery();
+  const [showShimmer, setShowShimmer] = useState<boolean>(!data);
+
   useEffect(() => {
     if (!observerRef.current || !hasNextPage) {
       return;
@@ -23,9 +25,19 @@ const PostList = () => {
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetching]);
 
+  useEffect(() => {
+    if (isLoading) setTimeout(() => setShowShimmer(false), 1000);
+  }, [isLoading]);
+
   return (
-    <div>
-      {!data && <PostListShimmer size={6} />}
+    <div className="relative">
+      {showShimmer && (
+        <div
+          className={`bg-grey-dark-bg absolute inset-0 z-20 transition-opacity delay-200 duration-300 ease-in ${isLoading ? "opacity-100" : "opacity-0"} `}
+        >
+          <PostListShimmer size={6} />
+        </div>
+      )}
       {data &&
         data.pages
           .flatMap((page) => [...page.posts])

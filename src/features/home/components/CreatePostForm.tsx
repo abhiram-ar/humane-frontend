@@ -125,6 +125,11 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
             </div>
           </div>
         )}
+        {errors.poster && posterPreview && (
+          <p className="text-center font-normal text-red-500">
+            ({errors.poster.message?.toString()})
+          </p>
+        )}
 
         <div className="mt-5 -mb-5 flex items-center justify-end gap-3">
           {!posterPreview && (

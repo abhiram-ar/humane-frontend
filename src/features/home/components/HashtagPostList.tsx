@@ -36,7 +36,7 @@ const HashtagPostList: React.FC<{ hashtag: string }> = ({ hashtag }) => {
     <div className="relative">
       {showShimmer && (
         <div
-          className={`bg-grey-dark-bg absolute inset-0 z-20 transition-opacity delay-200 duration-300 ${isLoading ? "opacity-100" : "opacity-0"} `}
+          className={`bg-grey-dark-bg absolute inset-0 z-20 transition-opacity delay-200 duration-300 ease-in ${isLoading ? "opacity-100" : "opacity-0"} `}
         >
           <PostListShimmer size={6} />
         </div>

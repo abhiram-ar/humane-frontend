@@ -85,7 +85,7 @@ const Post: React.FC<Props> = ({ postDetails, enablePosterLink = false }) => {
               <div className="mt-2" onClick={(e) => e.stopPropagation()}>
                 <VideoPlayer
                   src={postDetails.attachmentURL}
-                  autoplay={true}
+                  autoplay={false}
                   mimeType={postDetails.attachmentType}
                 />
               </div>

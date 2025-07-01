@@ -23,18 +23,20 @@ const CreatePostButton = () => {
   const handleCreatePost = async (data: CreatePostFields) => {
     const { poster, ...postData } = data;
 
-    let posterKey: string | undefined;
+    let attachmentKey: string | undefined;
+    let attachmentType: string | undefined = undefined;
 
     if (poster && (poster as FileList)?.[0]) {
       const file = (poster as FileList)[0];
+      attachmentType = file.type;
 
       const result = await getPostMediaPresignedURL(file);
 
-      posterKey = result.key;
+      attachmentKey = result.key;
       await axios.put(result.preSignedURL, file);
     }
 
-    await api.post("/api/v1/post/", { ...postData, posterKey });
+    await api.post("/api/v1/post/", { ...postData, attachmentKey, attachmentType });
     if (closeDialogRef.current) {
       closeDialogRef.current.click();
     }

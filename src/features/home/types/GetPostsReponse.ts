@@ -1,19 +1,30 @@
 import { BasicUserDetails } from "@/features/notification/Types/CombinedNotiWithActionableUser";
-import { ModerationStatus, PostVisibility } from "humane-common";
+import { ModerationStatus, PostAttachmentStatus, PostVisibility } from "humane-common";
 
 export type HydratedPost = {
   author: BasicUserDetails | undefined;
+
   id: string;
-  createdAt: Date;
-  updatedAt: Date;
   authorId: string;
   content: string;
   visibility: (typeof PostVisibility)[keyof typeof PostVisibility];
-  moderationStatus: (typeof ModerationStatus)[keyof typeof ModerationStatus];
+  hashtags: string[];
+
+  attachmentType?: string;
+  rawAttachmentKey?: string | null;
+  attachmentStatus?: (typeof PostAttachmentStatus)[keyof typeof PostAttachmentStatus];
+  attachmentURL?: string | null;
+
+  moderationStatus: (typeof ModerationStatus)[keyof typeof ModerationStatus] | undefined; //TOTO: remove undfiend when mooderation service is implmented
   moderationMetadata?: unknown;
-  posterURL: string | null;
+
+  createdAt: Date;
+  updatedAt: Date;
+
+  // additionally added
   commentCount: number | null;
 };
+
 export type GetPostResponse = {
   message: string;
   data: {

@@ -5,4 +5,5 @@ export const API_ROUTES = {
   NOTIFICATION_SERVICE: "/api/v1/notification",
   USER_SERVICE: "/api/v1/user",
   ADMIN_ROUTE: "/api/v1/admin",
+  WRITER_ROUTE: "/api/v1/writer",
 } as const;

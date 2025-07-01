@@ -1,0 +1,1 @@
+export type HashtagWithCount = { name: string; count: number };

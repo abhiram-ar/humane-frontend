@@ -18,19 +18,8 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import PosterImage from "./PosterImage";
 import { CreatePostFields, createPostSchema } from "../types/CreatePostFields";
 import VideoPlayer from "@/components/videoPlayer/VideoPlayer";
-import { api } from "@/lib/axios";
-import { API_ROUTES } from "@/lib/API_ROUTES";
 import { useQuery } from "@tanstack/react-query";
-
-// const suggestions = ["hello", "world", "now"];
-
-type HashtagWithCount = { name: string; count: number };
-
-type HashTagSearchResponse = {
-  data: {
-    hashtags: HashtagWithCount[];
-  };
-};
+import { fetchSuggestions } from "../services/HashtagPrefixSearch";
 
 type Props = {
   handleCreatePost(data: CreatePostFields): Promise<void>;
@@ -89,16 +78,9 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
     setValue("poster", null);
   };
 
-  const fetchSuggestions = async () => {
-    const res = await api.get<HashTagSearchResponse>(`${API_ROUTES.WRITER_ROUTE}/hashtag`, {
-      params: { query: searchTag, limit: 5 },
-    });
-    return res.data.data.hashtags;
-  };
-
   const { data: suggestions, isFetching } = useQuery({
     queryKey: [searchTag],
-    queryFn: fetchSuggestions,
+    queryFn: () => fetchSuggestions(searchTag),
     enabled: searchTag.length > 1,
   });
 

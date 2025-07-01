@@ -11,7 +11,7 @@ const PostShimmer = () => {
         {/* post meta */}
         <div className="flex">
           <Skeleton className="cursor-pointer font-semibold hover:underline">No name user</Skeleton>
-          <span className="flex animate-pulse text-zinc-400">
+          <span className="flex animate-pulse text-zinc-500">
             <Dot />
             <Skeleton className="text-transparent">Public</Skeleton>
             <Dot />

@@ -1,5 +1,5 @@
 import ButtonPop from "@/components/ButtonPop";
-import { SpinnerBlack } from "@/components/Spinner";
+import Spinner, { SpinnerBlack } from "@/components/Spinner";
 import {
   Select,
   SelectContent,
@@ -18,13 +18,23 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import PosterImage from "./PosterImage";
 import { CreatePostFields, createPostSchema } from "../types/CreatePostFields";
 import VideoPlayer from "@/components/videoPlayer/VideoPlayer";
+import { api } from "@/lib/axios";
+import { API_ROUTES } from "@/lib/API_ROUTES";
+import { useQuery } from "@tanstack/react-query";
 
-const suggestions = ["hello", "world", "now"];
+// const suggestions = ["hello", "world", "now"];
+
+type HashtagWithCount = { name: string; count: number };
+
+type HashTagSearchResponse = {
+  data: {
+    hashtags: HashtagWithCount[];
+  };
+};
 
 type Props = {
   handleCreatePost(data: CreatePostFields): Promise<void>;
 };
-
 const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
   const [posterPreview, setPosterPreview] = useState<{
     type: string;
@@ -35,6 +45,7 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
   const mirrorRef = useRef<HTMLDivElement | null>(null);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchTag, setSearchTag] = useState("");
 
   const {
     control,
@@ -77,6 +88,19 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
     setPosterPreview(null);
     setValue("poster", null);
   };
+
+  const fetchSuggestions = async () => {
+    const res = await api.get<HashTagSearchResponse>(`${API_ROUTES.WRITER_ROUTE}/hashtag`, {
+      params: { query: searchTag, limit: 5 },
+    });
+    return res.data.data.hashtags;
+  };
+
+  const { data: suggestions, isFetching } = useQuery({
+    queryKey: [searchTag],
+    queryFn: fetchSuggestions,
+    enabled: searchTag.length > 1,
+  });
 
   const syncMirror = () => {
     if (!contentTextInputRef.current || !mirrorRef.current) return;
@@ -126,7 +150,7 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
     }, 0);
   };
 
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleTextChange = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const content = e.target.value;
     const cursorPos = e.target.selectionStart;
     syncMirror();
@@ -137,12 +161,15 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
 
     if (match) {
       const currentTag = match[1];
-      // setSearchTag(currentTag);
-      // fetchSuggestions(currentTag);
-      setShowSuggestions(true);
+      setSearchTag(currentTag);
+      if (currentTag.length > 1) {
+        setShowSuggestions(true);
+      } else {
+        setShowSuggestions(false);
+      }
     } else {
       setShowSuggestions(false);
-      // setSearchTag('');
+      setSearchTag("");
     }
 
     // Update form state
@@ -189,18 +216,30 @@ const CreatePostForm: React.FC<Props> = ({ handleCreatePost }) => {
           {/* Suggestion Dropdown */}
           {showSuggestions && (
             <div
-              className="bg-grey absolute z-10 rounded-md p-1 shadow-md"
+              className="bg-grey absolute z-10 min-w-10 rounded-md shadow-md"
               style={{ top: dropdownPos.top, left: dropdownPos.left }}
             >
-              {suggestions.map((tag) => (
-                <div
-                  key={tag}
-                  className="cursor-pointer rounded-md px-2 py-1 hover:bg-gray-400/50"
-                  onClick={() => insertHashtag(tag)}
+              {isFetching && <Spinner />}
+              {suggestions &&
+                suggestions.length > 0 &&
+                suggestions.map((tag) => (
+                  <div
+                    key={tag.name}
+                    className="cursor-pointer rounded-md px-2 py-1 hover:bg-gray-400/50"
+                    onClick={() => insertHashtag(tag.name)}
+                  >
+                    #{tag.name}
+                  </div>
+                ))}
+
+              {suggestions && suggestions.length === 0 && (
+                <p
+                  className="cursor-pointer rounded-md p-2 text-sm hover:bg-gray-400/50"
+                  onClick={() => insertHashtag(searchTag)}
                 >
-                  #{tag}
-                </div>
-              ))}
+                  Add hashtag
+                </p>
+              )}
             </div>
           )}
         </div>

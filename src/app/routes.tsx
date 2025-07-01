@@ -23,6 +23,7 @@ import PubliicUserProfile from "@/features/profile/pages/PublicUserProfile";
 import NotificationPage from "@/features/notification/pages/NotificationPage";
 import HomePage from "@/features/home/pages/HomePage";
 import PostPage from "@/features/home/pages/PostPage";
+import HashtagPage from "@/features/home/pages/HashtagPage";
 
 export const router = createBrowserRouter([
   {
@@ -72,6 +73,16 @@ export const router = createBrowserRouter([
               {
                 path: ":postId",
                 Component: PostPage,
+              },
+              {
+                path: "hashtag",
+                children: [
+                  { index: true, Component: PageNotFoundPage },
+                  {
+                    path: ":hashtag",
+                    Component: HashtagPage,
+                  },
+                ],
               },
             ],
           },

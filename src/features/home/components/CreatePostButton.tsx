@@ -14,11 +14,14 @@ import useUserId from "@/features/profile/hooks/useUserId";
 import axios from "axios";
 import { getPostMediaPresignedURL } from "../services/GetPostMediaPresingedURL";
 import { CreatePostFields } from "../types/CreatePostFields";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { Plus } from "lucide-react";
 
 const CreatePostButton = () => {
   const closeDialogRef = useRef<HTMLButtonElement | null>(null);
   const queryClinet = useQueryClient();
   const userId = useUserId();
+  const isMobile = useIsMobile();
 
   const handleCreatePost = async (data: CreatePostFields) => {
     const { poster, ...postData } = data;
@@ -48,8 +51,10 @@ const CreatePostButton = () => {
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <button className="bg-pop-green/95 hover:bg-pop-green shadow-pop-green/20 hover:ring-pop-green/50 cursor-pointer rounded-4xl px-10 py-3 text-xl font-semibold text-black shadow-none transition-all duration-300 ease-out hover:scale-102 hover:ring-2">
-            POST
+          <button
+            className={`bg-pop-green/95 hover:bg-pop-green shadow-pop-green/20 hover:ring-pop-green/50 cursor-pointer rounded-4xl ${isMobile ? "h-fit p-3" : "px-10 py-3"} text-xl font-semibold text-black shadow-none transition-all duration-300 ease-out hover:scale-102 hover:ring-2`}
+          >
+            {isMobile ? <Plus /> : "POST"}
           </button>
         </DialogTrigger>
         <DialogContent className="border-grey-dark-bg bg-[#272727]" aria-describedby="edit profile">

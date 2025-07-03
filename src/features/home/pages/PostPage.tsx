@@ -52,7 +52,7 @@ const PostPage = () => {
               <PostAddComment postId={data?.post.id} />
             </div>
             <div>
-              <PostCommentsList postId={data?.post.id} />
+              <PostCommentsList postId={data?.post.id} postAuthorId={data.post.authorId} />
             </div>
           </>
         ) : (

@@ -1,4 +1,4 @@
-import { LogOut, User } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useState } from "react";
 import {
   AlertDialog,
@@ -19,10 +19,10 @@ import useCurrentUserProfile from "../../hooks/useCurrentUserProfile";
 import usePublicHumaneScoreQuery from "../../../../hooks/usePublicUserHumaneScoreQuery";
 import useUserId from "../../../../hooks/useUserId";
 import HumaneScoreNumberFlow from "@/components/HumaneScoreNumberFlow";
+import ProfilePicSmall from "@/components/ProfilePicSmall";
 
 const UserLogout = () => {
   const [showLogo, setShowlogo] = useState(false);
-  const [isProfilePicLoading, setProfilePicLoading] = useState(true);
   const userId = useUserId();
   const { data: humaneScoreData } = usePublicHumaneScoreQuery(userId);
   const { data } = useCurrentUserProfile();
@@ -55,33 +55,22 @@ const UserLogout = () => {
           <div
             className={`flex transform items-center gap-3 transition-all duration-300 ${showLogo ? "translate-x-0 scale-90" : "-translate-x-8"}`}
           >
-            {data?.avatarURL ? (
-              <div className="border-grey-light relative h-10 w-10 overflow-clip rounded-full">
-                {isProfilePicLoading && (
-                  <div className="absolute inset-0 animate-pulse bg-zinc-400"></div>
-                )}
-                <img
-                  src={data?.avatarURL}
-                  className={`h-full w-full object-cover transition-all duration-100 ease-in ${isProfilePicLoading ? "scale-102 opacity-0" : "scale-100 opacity-100"} `}
-                  alt="profilepic"
-                  onLoad={() => setProfilePicLoading(false)}
+            <ProfilePicSmall avatarURL={data?.avatarURL} />
+
+            {data && (
+              <div className="text-left">
+                <h2
+                  className={`transition-all duration-300 ${showLogo ? "text-white" : "text-zinc-300"}`}
+                >
+                  {data.firstName} {data.lastName || ""}
+                </h2>
+
+                <HumaneScoreNumberFlow
+                  score={humaneScoreData?.score || 0}
+                  className="gap-1 text-sm"
                 />
               </div>
-            ) : (
-              <div className="border-grey-light text-offwhite relative flex h-10 w-10 items-center justify-center overflow-clip rounded-full border bg-zinc-600/50">
-                <User />
-              </div>
             )}
-            <div className="text-left">
-              <h2
-                className={`transition-all duration-300 ${showLogo ? "text-white" : "text-zinc-300"}`}
-              >
-                {data?.firstName} {data?.lastName || ""}
-              </h2>
-              {humaneScoreData && (
-                <HumaneScoreNumberFlow score={humaneScoreData.score} className="gap-1 text-sm" />
-              )}
-            </div>
           </div>
         </div>
       </AlertDialogTrigger>

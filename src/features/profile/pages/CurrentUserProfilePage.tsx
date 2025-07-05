@@ -55,7 +55,7 @@ const CurrentUserProfilePage = () => {
                   Humane score:
                   <HumaneScoreNumberFlow
                     score={humaneScore?.score || 0}
-                    className="ms-0.5 h-7 gap-0.5 text-lg flex-row-reverse" 
+                    className="ms-0.5 h-7 gap-0.5 text-lg"
                   />
                 </div>
 

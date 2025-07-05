@@ -9,6 +9,7 @@ import RelationshipActions from "../components/extended/RelationshipActions";
 import UserMutualFriends from "../components/extended/UserMutualFriends.trigger";
 import Friends from "../components/extended/Friends.trigger";
 import ProfilePostList from "../components/extended/ProfilePostList";
+import HumaneScoreNumberFlow from "@/components/HumaneScoreNumberFlow";
 
 const PubliicUserProfile = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -44,7 +45,14 @@ const PubliicUserProfile = () => {
                   <h3
                     className={`text-2xl font-bold`}
                   >{`${user.firstName} ${user.lastName || ""}`}</h3>
-                  <h5 className="text-pop-green">Humane score: {user.humaneScore}</h5>
+
+                  <div className="text-pop-green flex items-center">
+                    Humane score:
+                    <HumaneScoreNumberFlow
+                      score={user.humaneScore || 0}
+                      className="ms-0.5 h-7 gap-0.5 text-lg"
+                    />
+                  </div>
 
                   <div className="mt-3 flex gap-5">
                     {/* TODO: date */}

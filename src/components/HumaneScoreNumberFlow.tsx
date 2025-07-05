@@ -13,10 +13,7 @@ const HumaneScoreNumberFlow: React.FC<Props> = ({
   ...props
 }) => {
   return (
-    <div
-      className={`flex w-fit items-center justify-center ${className} h-5 `}
-      {...props}
-    >
+    <div className={`flex w-fit items-center justify-center ${className} h-5`} {...props}>
       {showIcon && (
         <img
           className="-ms-1 -me-1 aspect-square h-full w-fit object-scale-down"

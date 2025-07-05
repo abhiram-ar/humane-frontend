@@ -10,6 +10,7 @@ import useCurrentUserProfile from "../hooks/useCurrentUserProfile";
 import useRestoreScrollPosition from "@/hooks/useRestoreScrollPosition";
 import useAccurateHumaneScoreQuery from "../hooks/useAccurateHumaneScoreQuery";
 import Spinner from "@/components/Spinner";
+import HumaneScoreNumberFlow from "@/components/HumaneScoreNumberFlow";
 
 const CurrentUserProfilePage = () => {
   const { data: profileData } = useCurrentUserProfile();
@@ -50,7 +51,13 @@ const CurrentUserProfilePage = () => {
                   {profileData?.firstName} {profileData?.lastName}
                 </h3>
 
-                <h5 className="text-pop-green">Humane score: {humaneScore?.score || 0}</h5>
+                <div className="text-pop-green flex items-center">
+                  Humane score:
+                  <HumaneScoreNumberFlow
+                    score={humaneScore?.score || 0}
+                    className="ms-0.5 h-7 gap-0.5 text-lg flex-row-reverse" 
+                  />
+                </div>
 
                 <div className="mt-3 flex gap-5">
                   {/* Todo: date */}

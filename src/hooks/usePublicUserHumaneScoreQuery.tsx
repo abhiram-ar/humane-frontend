@@ -11,6 +11,12 @@ export type GetPublicUserHumaneScore = {
 
 const usePublicHumaneScoreQuery = (userId?: string) => {
   return useQuery({
+    // ⚠️ Same query key for  accuratehumaneScoreQuery
+    // if the return type of these query is difference there will be collision/unexpected errors
+
+    // why are we doing this then,
+    // if there is any inconsistancy b/w inconsistacny in accurateHumaneScore and public huamneScore
+    // this merger of query key will do the reconsilation in the frontend
     queryKey: ["total-humane-score", userId],
     queryFn: async () => {
       const res = await api.get<GetPublicUserHumaneScore>(

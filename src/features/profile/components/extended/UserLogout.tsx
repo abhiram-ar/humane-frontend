@@ -18,18 +18,17 @@ import { api } from "@/lib/axios";
 import useCurrentUserProfile from "../../hooks/useCurrentUserProfile";
 import usePublicHumaneScoreQuery from "../../../../hooks/usePublicUserHumaneScoreQuery";
 import useUserId from "../../../../hooks/useUserId";
-import humaneMinimalIcon from "@/assets/humaneMinimalLogo.ico";
+import HumaneScoreNumberFlow from "@/components/HumaneScoreNumberFlow";
 
 const UserLogout = () => {
   const [showLogo, setShowlogo] = useState(false);
   const [isProfilePicLoading, setProfilePicLoading] = useState(true);
   const userId = useUserId();
   const { data: humaneScoreData } = usePublicHumaneScoreQuery(userId);
+  const { data } = useCurrentUserProfile();
 
   const navigate = useNavigate();
   const dispath = useAppDispatch();
-
-  const { data } = useCurrentUserProfile();
 
   const handleLogut = async () => {
     try {
@@ -80,10 +79,7 @@ const UserLogout = () => {
                 {data?.firstName} {data?.lastName || ""}
               </h2>
               {humaneScoreData && (
-                <h5 className="text-pop-green flex gap-0.5 text-sm">
-                  <img className="-ms-1 size-5" src={humaneMinimalIcon} alt="icon" />
-                  <span>{humaneScoreData?.score}</span>
-                </h5>
+                <HumaneScoreNumberFlow score={humaneScoreData.score} className="gap-1 text-sm" />
               )}
             </div>
           </div>

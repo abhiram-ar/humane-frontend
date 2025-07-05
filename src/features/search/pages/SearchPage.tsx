@@ -40,7 +40,7 @@ const SearchPage = () => {
 
   console.log("hasnext", hasNextPage, data);
   return (
-    <div className="min-h-full w-120 border-x border-zinc-400/50">
+    <div className="min-h-full border-x border-zinc-400/50 lg:w-120">
       <div className="sticky top-0 z-20">
         <SearchUserBar query={query} setQuery={setQuery} />
       </div>

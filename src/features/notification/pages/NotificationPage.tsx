@@ -15,7 +15,7 @@ const NotificationPage = () => {
   }, [dispath]);
 
   return (
-    <div className="min-h-full w-120 border-x border-zinc-400/50">
+    <div className="min-h-full border-x border-zinc-400/50 lg:w-120">
       <h2 className="text-almost-white border-b border-zinc-400/50 px-5 py-10 text-xl font-semibold">
         Notifications
       </h2>

@@ -5,11 +5,10 @@ import UserLogout from "@/features/profile/components/extended/UserLogout";
 import SidebarMenuItem from "./SidebarMenuItem";
 import NotificationSidebarMenuItem from "./NotificationSidebarMenuItem";
 
-
 const Sidebar = () => {
   return (
-    <div className="bg-grey fixed flex h-screen w-90 flex-col justify-between text-white">
-      <div className="text-pop-green px-12 pt-3 text-2xl font-bold">
+    <div className="bg-grey fixed flex h-screen w-60 flex-col justify-between text-white lg:w-90">
+      <div className="text-pop-green px-8 pt-3 text-2xl font-bold lg:px-12">
         <img src={humanelogo} alt="" />
       </div>
 

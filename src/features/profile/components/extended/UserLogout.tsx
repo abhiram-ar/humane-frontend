@@ -46,7 +46,7 @@ const UserLogout = () => {
         <div
           onMouseEnter={() => setShowlogo(true)}
           onMouseLeave={() => setShowlogo(false)}
-          className="relative -ms-3 flex cursor-pointer items-center gap-3 rounded-e-2xl px-10 py-3 text-xl transition-all duration-500 ease-out hover:scale-[1.02] hover:bg-zinc-700/50"
+          className="relative -ms-3 flex cursor-pointer items-center gap-3 rounded-e-2xl py-3 ps-10 text-xl transition-all duration-500 ease-out hover:scale-[1.02] hover:bg-zinc-700/50"
         >
           <LogOut
             className={`rotate-180 transform transition-all duration-300 ${showLogo ? "translate-x-0 opacity-100" : "-translate-x-2 opacity-0"}`}
@@ -62,7 +62,7 @@ const UserLogout = () => {
                 <h2
                   className={`transition-all duration-300 ${showLogo ? "text-white" : "text-zinc-300"}`}
                 >
-                  {data.firstName} {data.lastName || ""}
+                  {data.firstName}
                 </h2>
 
                 <HumaneScoreNumberFlow

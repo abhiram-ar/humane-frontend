@@ -12,7 +12,7 @@ const HomeLayout = () => {
       {!isMobile && <Sidebar />}
       <div
         ref={ref}
-        className={`bg-grey-dark-bg h-screen min-h-screen overflow-y-scroll ${!isMobile && "ml-90"}`}
+        className={`bg-grey-dark-bg h-screen min-h-screen overflow-y-scroll ${!isMobile && "ms-60 lg:ml-90"}`}
       >
         <Outlet />
       </div>

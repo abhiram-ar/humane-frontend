@@ -8,15 +8,18 @@ import Friends from "../components/extended/Friends.trigger";
 import ProfilePostList from "../components/extended/ProfilePostList";
 import useCurrentUserProfile from "../hooks/useCurrentUserProfile";
 import useRestoreScrollPosition from "@/hooks/useRestoreScrollPosition";
+import useGetAccurateHumaneScore from "../hooks/useGetAccurateHumaneScore";
+import Spinner from "@/components/Spinner";
 
 const CurrentUserProfilePage = () => {
-  const { data } = useCurrentUserProfile();
+  const { data: profileData } = useCurrentUserProfile();
   useRestoreScrollPosition();
-
   const userId = useUserId();
 
-  if (!data) {
-    return <div>loading</div>;
+  const { data: humaneScore } = useGetAccurateHumaneScore(userId);
+
+  if (!profileData) {
+    return <Spinner />;
   }
 
   return (
@@ -32,7 +35,11 @@ const CurrentUserProfilePage = () => {
 
             <div className="p-5">
               <EditProfileButton
-                nameAndBio={{ firstName: data.firstName, lastName: data.lastName, bio: data.bio }}
+                nameAndBio={{
+                  firstName: profileData.firstName,
+                  lastName: profileData.lastName,
+                  bio: profileData.bio,
+                }}
               />
             </div>
           </div>
@@ -41,9 +48,10 @@ const CurrentUserProfilePage = () => {
             <div className="flex justify-between text-lg text-white">
               <div>
                 <h3 className="text-2xl font-bold">
-                  {data?.firstName} {data?.lastName}
+                  {profileData?.firstName} {profileData?.lastName}
                 </h3>
-                <h5 className="text-pop-green">Humane score: {0}</h5>
+
+                <h5 className="text-pop-green">Humane score: {humaneScore?.data?.score || 0}</h5>
 
                 <div className="mt-3 flex gap-5">
                   {/* Todo: date */}
@@ -54,8 +62,8 @@ const CurrentUserProfilePage = () => {
                   <h5 className="flex items-center gap-2 text-zinc-400">
                     <Calendar size={20} />
                     Joined{" "}
-                    {data?.createdAt &&
-                      new Date(data.createdAt).toLocaleString("en-US", {
+                    {profileData?.createdAt &&
+                      new Date(profileData.createdAt).toLocaleString("en-US", {
                         month: "long",
                         year: "numeric",
                       })}{" "}
@@ -70,8 +78,8 @@ const CurrentUserProfilePage = () => {
               )}
             </div>
             <div className="mt-3">
-              {data.bio ? (
-                <pre className="font-sans text-lg text-wrap text-white">{data?.bio}</pre>
+              {profileData.bio ? (
+                <pre className="font-sans text-lg text-wrap text-white">{profileData?.bio}</pre>
               ) : (
                 <p className="text-green-subtle/50 quote font-normal italic">
                   (Let the world know who you are — add a short bio to your profile.)

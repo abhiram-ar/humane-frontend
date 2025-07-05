@@ -13,13 +13,12 @@ import Spinner from "@/components/Spinner";
 
 const CurrentUserProfilePage = () => {
   const { data: profileData } = useCurrentUserProfile();
-  useRestoreScrollPosition();
   const userId = useUserId();
-
   const { data: humaneScore } = useGetAccurateHumaneScore(userId);
+  useRestoreScrollPosition();
 
   if (!profileData) {
-    return <Spinner />;
+    return <Spinner className="mt-5 flex justify-center" />;
   }
 
   return (

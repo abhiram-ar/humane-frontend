@@ -5,14 +5,6 @@ import UserLogout from "@/features/profile/components/extended/UserLogout";
 import SidebarMenuItem from "./SidebarMenuItem";
 import NotificationSidebarMenuItem from "./NotificationSidebarMenuItem";
 
-// const config: SidebarCongfig[] = [
-//   { name: "Home", icon: Home, path: "/" },
-//   { name: "Search", icon: User, path: "/search" },
-//   { name: "Messages", icon: MessageSquareText, path: "/message" },
-//   { name: "Notification", icon: Bell, path: "/notification" },
-//   { name: "Profile", icon: UserRound, path: "/profile" },
-//   { name: "Settings", icon: Settings, path: "/settings" },
-// ];
 
 const Sidebar = () => {
   return (

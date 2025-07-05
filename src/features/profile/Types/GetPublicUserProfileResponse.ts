@@ -6,6 +6,7 @@ export type PublicUserProfile = {
   createdAt: string;
   avatarURL?: string;
   coverPhotoURL?: string;
+  humaneScore: number;
 };
 
 export type GetPublicUserProfileResponse = {

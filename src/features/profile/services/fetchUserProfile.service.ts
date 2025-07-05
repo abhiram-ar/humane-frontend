@@ -12,7 +12,6 @@ export type FetchUserProfileResponse = {
       avatarURL?: string;
       coverPhotoURL?: string;
       createdAt: string;
-      humaneScore: number;
     };
   };
 };

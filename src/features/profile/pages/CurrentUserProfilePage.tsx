@@ -24,7 +24,7 @@ const CurrentUserProfilePage = () => {
       <div className="relative w-full border-x border-zinc-400/50">
         <CoverPhotoConfig />
 
-        <div className="px-10 pb-5 border-b border-zinc-400/50">
+        <div className="border-b border-zinc-400/50 px-10 pb-5">
           <div className="relative flex h-fit w-full justify-between">
             <div className="relative bottom-25 -mb-25 h-fit">
               <ProfilePicConfig />
@@ -43,7 +43,7 @@ const CurrentUserProfilePage = () => {
                 <h3 className="text-2xl font-bold">
                   {data?.firstName} {data?.lastName}
                 </h3>
-                <h5 className="text-pop-green">Humane score: {data?.humaneScore}</h5>
+                <h5 className="text-pop-green">Humane score: {0}</h5>
 
                 <div className="mt-3 flex gap-5">
                   {/* Todo: date */}

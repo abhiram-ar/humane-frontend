@@ -44,7 +44,7 @@ const PubliicUserProfile = () => {
                   <h3
                     className={`text-2xl font-bold`}
                   >{`${user.firstName} ${user.lastName || ""}`}</h3>
-                  <h5 className="text-pop-green">Humane score: {1000}</h5>
+                  <h5 className="text-pop-green">Humane score: {user.humaneScore}</h5>
 
                   <div className="mt-3 flex gap-5">
                     {/* TODO: date */}

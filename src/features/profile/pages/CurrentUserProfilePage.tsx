@@ -27,9 +27,9 @@ const CurrentUserProfilePage = () => {
       <div className="relative w-full border-x border-zinc-400/50">
         <CoverPhotoConfig />
 
-        <div className="border-zinc-400/50 px-10 pb-5">
+        <div className="border-zinc-400/50 px-5 md:px-10 pb-5">
           <div className="relative flex h-fit w-full justify-between">
-            <div className="relative bottom-25 -mb-25 h-fit">
+            <div className="relative bottom-15 -mb-10 h-fit lg:bottom-25 lg:-mb-25">
               <ProfilePicConfig />
             </div>
 
@@ -97,7 +97,7 @@ const CurrentUserProfilePage = () => {
 
         {/* posts */}
 
-        <div className="text-pop-green bg-grey-dark-bg/50 sticky left-0 -top-0.5 z-20 border-y border-zinc-400/50 py-5 text-center text-xl backdrop-blur-lg">
+        <div className="text-pop-green bg-grey-dark-bg/50 sticky -top-0.5 left-0 z-20 border-y border-zinc-400/50 py-5 text-center text-xl backdrop-blur-lg">
           #My posts
         </div>
 

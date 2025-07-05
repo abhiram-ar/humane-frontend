@@ -16,7 +16,7 @@ const ProfilePicConfig = () => {
       {data?.avatarURL ? (
         <>
           <ProfilePic url={data?.avatarURL} />
-          <div className="absolute z-20 inset-0 flex h-52 w-52 items-center justify-center rounded-full bg-zinc-900/50 opacity-0 transition-opacity duration-300 ease-out hover:opacity-100">
+          <div className="absolute inset-0 z-20 flex size-30 items-center justify-center rounded-full bg-zinc-900/50 opacity-0 transition-opacity duration-300 ease-out hover:opacity-100 lg:size-52">
             {/* view image remove and uplod config */}
             <div className="flex items-center justify-center gap-3 text-white">
               <RemoveProfilePicture />
@@ -26,7 +26,7 @@ const ProfilePicConfig = () => {
           </div>
         </>
       ) : (
-        <div className="border-grey-light flex h-52 w-52 items-center justify-center rounded-full border-3 bg-zinc-600">
+        <div className="border-grey-light flex size-30 items-center justify-center rounded-full border-3 bg-zinc-600 lg:size-52">
           <div className="text-center">
             <div className="text-pop-green scale-125">
               <UploadProfilePic />

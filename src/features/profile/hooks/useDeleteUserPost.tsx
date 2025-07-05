@@ -1,5 +1,5 @@
 import { InfiniteData, useMutation, useQueryClient } from "@tanstack/react-query";
-import useUserId from "./useUserId";
+import useUserId from "../../../hooks/useUserId";
 import { GetUserPostTimelineResponse } from "../Types/GetUserTimelineResponse";
 import { api } from "@/lib/axios";
 import { ModerationStatus, PostVisibility } from "humane-common";

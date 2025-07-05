@@ -2,19 +2,19 @@ import { Calendar } from "lucide-react";
 import EditProfileButton from "../components/extended/EditProfileButton";
 import ProfilePicConfig from "../components/extended/ProfilePicConfig";
 import CoverPhotoConfig from "../components/extended/CoverPhotoConfig";
-import useUserId from "../hooks/useUserId";
+import useUserId from "../../../hooks/useUserId";
 import PendingFriendRequests from "../components/extended/PendingFriends.trigger";
 import Friends from "../components/extended/Friends.trigger";
 import ProfilePostList from "../components/extended/ProfilePostList";
 import useCurrentUserProfile from "../hooks/useCurrentUserProfile";
 import useRestoreScrollPosition from "@/hooks/useRestoreScrollPosition";
-import useGetAccurateHumaneScore from "../hooks/useGetAccurateHumaneScore";
+import useAccurateHumaneScoreQuery from "../hooks/useAccurateHumaneScoreQuery";
 import Spinner from "@/components/Spinner";
 
 const CurrentUserProfilePage = () => {
   const { data: profileData } = useCurrentUserProfile();
   const userId = useUserId();
-  const { data: humaneScore } = useGetAccurateHumaneScore(userId);
+  const { data: humaneScore } = useAccurateHumaneScoreQuery(userId);
   useRestoreScrollPosition();
 
   if (!profileData) {
@@ -50,7 +50,7 @@ const CurrentUserProfilePage = () => {
                   {profileData?.firstName} {profileData?.lastName}
                 </h3>
 
-                <h5 className="text-pop-green">Humane score: {humaneScore?.data?.score || 0}</h5>
+                <h5 className="text-pop-green">Humane score: {humaneScore?.score || 0}</h5>
 
                 <div className="mt-3 flex gap-5">
                   {/* Todo: date */}

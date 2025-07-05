@@ -15,17 +15,21 @@ import { useNavigate } from "react-router";
 import { useAppDispatch } from "@/features/userAuth/hooks/store.hooks";
 import { logout } from "@/features/userAuth/redux/userAuthSlice";
 import { api } from "@/lib/axios";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUserProfile } from "../../services/fetchUserProfile.service";
+import useCurrentUserProfile from "../../hooks/useCurrentUserProfile";
+import usePublicHumaneScoreQuery from "../../../../hooks/usePublicUserHumaneScoreQuery";
+import useUserId from "../../../../hooks/useUserId";
+import humaneMinimalIcon from "@/assets/humaneMinimalLogo.ico";
 
 const UserLogout = () => {
   const [showLogo, setShowlogo] = useState(false);
   const [isProfilePicLoading, setProfilePicLoading] = useState(true);
+  const userId = useUserId();
+  const { data: humaneScoreData } = usePublicHumaneScoreQuery(userId);
 
   const navigate = useNavigate();
   const dispath = useAppDispatch();
 
-  const { data } = useQuery({ queryKey: ["user-profile"], queryFn: fetchUserProfile });
+  const { data } = useCurrentUserProfile();
 
   const handleLogut = async () => {
     try {
@@ -69,11 +73,19 @@ const UserLogout = () => {
                 <User />
               </div>
             )}
-            <h2
-              className={`transition-all duration-300 ${showLogo ? "text-white" : "text-zinc-300"}`}
-            >
-              {data?.firstName}
-            </h2>
+            <div className="text-left">
+              <h2
+                className={`transition-all duration-300 ${showLogo ? "text-white" : "text-zinc-300"}`}
+              >
+                {data?.firstName} {data?.lastName || ""}
+              </h2>
+              {humaneScoreData && (
+                <h5 className="text-pop-green flex gap-0.5 text-sm">
+                  <img className="-ms-1 size-5" src={humaneMinimalIcon} alt="icon" />
+                  <span>{humaneScoreData?.score}</span>
+                </h5>
+              )}
+            </div>
           </div>
         </div>
       </AlertDialogTrigger>

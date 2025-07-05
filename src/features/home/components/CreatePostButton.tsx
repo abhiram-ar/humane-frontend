@@ -10,7 +10,7 @@ import CreatePostForm from "./CreatePostForm";
 import { api } from "@/lib/axios";
 import { useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import useUserId from "@/features/profile/hooks/useUserId";
+import useUserId from "@/hooks/useUserId";
 import axios from "axios";
 import { getPostMediaPresignedURL } from "../services/GetPostMediaPresingedURL";
 import { CreatePostFields } from "../types/CreatePostFields";

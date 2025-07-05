@@ -1,7 +1,7 @@
 import { API_ROUTES } from "@/lib/API_ROUTES";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InfintiteCommentsData } from "../types/InfiniteCommentData";
-import useUserId from "@/features/profile/hooks/useUserId";
+import useUserId from "@/hooks/useUserId";
 import { api } from "@/lib/axios";
 import { produce } from "immer";
 

@@ -5,7 +5,7 @@ import { commentFields, commentSchema } from "../types/createCommentFields";
 import useIncrementFeedPostCommentCount from "../hooks/useIncrementFeedPostCommentCount";
 import { useLocation, useParams } from "react-router";
 import useIncrementTimelinePostCommentCount from "@/features/profile/hooks/useIncrementUserTimelinePostCommentCount";
-import useUserId from "@/features/profile/hooks/useUserId";
+import useUserId from "@/hooks/useUserId";
 
 const FeedAddCommentForm: React.FC<{ postId: string }> = ({ postId }) => {
   const { mutateAsync } = useAddCommentMutation();

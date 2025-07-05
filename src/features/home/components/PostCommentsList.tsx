@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import Comment from "./Comment";
 import Spinner from "@/components/Spinner";
 import usePostCommentsInfiniteQuery from "../hooks/usePostCommentsInfiniteQuery";
-import useUserId from "@/features/profile/hooks/useUserId";
+import useUserId from "@/hooks/useUserId";
 import UserCommentActions from "./UserCommentActions";
 import CommentLike from "./CommentLike";
 import CommentLikedByPostAuthorBubble from "./CommnetLikedByPostAurthorBubble";

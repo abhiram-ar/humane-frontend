@@ -9,7 +9,7 @@ import { AuthorHydratedComment } from "../types/GetPostComments.types";
 import { produce } from "immer";
 import useCurrentUserProfile from "@/features/profile/hooks/useCurrentUserProfile";
 import { BasicUserDetails } from "@/features/notification/Types/CombinedNotiWithActionableUser";
-import useUserId from "@/features/profile/hooks/useUserId";
+import useUserId from "@/hooks/useUserId";
 import { InfintiteCommentsData } from "../types/InfiniteCommentData";
 
 const PostAddCommentForm: React.FC<{ postId?: string }> = ({ postId }) => {

@@ -1,7 +1,7 @@
 import React, { ComponentPropsWithoutRef, useEffect, useRef } from "react";
 import Post from "@/features/home/components/Post";
 import UserPostActions from "./UserPostActions";
-import useUserId from "../../hooks/useUserId";
+import useUserId from "../../../../hooks/useUserId";
 import FeedAddComment from "@/features/home/components/FeedAddComment";
 import Spinner from "@/components/Spinner";
 import useProfilePostTimeline from "../../hooks/userProfilePostTimeline";

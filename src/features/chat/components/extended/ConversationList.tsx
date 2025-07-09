@@ -136,6 +136,7 @@ const ConversationList = () => {
             profileURL={user.profile}
             lastMessage={user.lastMessage}
             unreadCount={user.unreadCount}
+            type={"one-to-one"}
           />
         </div>
       ))}

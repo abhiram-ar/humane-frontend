@@ -24,6 +24,7 @@ import NotificationPage from "@/features/notification/pages/NotificationPage";
 import HomePage from "@/features/home/pages/HomePage";
 import PostPage from "@/features/home/pages/PostPage";
 import HashtagPage from "@/features/home/pages/HashtagPage";
+import ChatWithMessagesPage from "@/features/chat/page/ChatWithMessagesPage";
 
 export const router = createBrowserRouter([
   {
@@ -41,8 +42,8 @@ export const router = createBrowserRouter([
             Component: SearchPage,
           },
           {
-            path: "message",
-            Component: PageNotFoundPage,
+            path: "chat",
+            Component: ChatWithMessagesPage,
           },
           {
             path: "notification",

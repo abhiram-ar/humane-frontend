@@ -17,7 +17,7 @@ const Sidebar = () => {
           <div>
             <SidebarMenuItem name="Home" Icon={Home} path="/" />
             <SidebarMenuItem name="Search" Icon={User} path="/search" />
-            <SidebarMenuItem name="Messages" Icon={MessageSquareText} path="/message" />
+            <SidebarMenuItem name="Messages" Icon={MessageSquareText} path="/chat" />
             <NotificationSidebarMenuItem name="Notifications" Icon={Bell} path="/notification" />
             <SidebarMenuItem name="Profile" Icon={UserRound} path="/profile" />
             <SidebarMenuItem name="Settings" Icon={Settings} path="/settings" />

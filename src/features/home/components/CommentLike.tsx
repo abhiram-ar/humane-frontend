@@ -5,15 +5,34 @@ import useUnlikeCommentMutation from "../hooks/useUnlikeCommentMutation";
 
 type Props = {
   postId: string;
+  postAuthorId: string;
+  commentAuthorId: string;
   commentId: string;
   likeCount?: number;
   hasLikedByUser?: boolean;
   hasPostAuthorLiked?: boolean;
 };
 
-const CommentLike: React.FC<Props> = ({ likeCount, hasLikedByUser, commentId, postId }) => {
-  const { mutate: likeComment } = useLikeCommentMutation(postId, commentId);
-  const { mutate: unlikeComment } = useUnlikeCommentMutation(postId, commentId);
+const CommentLike: React.FC<Props> = ({
+  likeCount,
+  hasLikedByUser,
+  commentId,
+  postId,
+  postAuthorId,
+  commentAuthorId,
+}) => {
+  const { mutate: likeComment } = useLikeCommentMutation(
+    postId,
+    commentId,
+    commentAuthorId,
+    postAuthorId,
+  );
+  const { mutate: unlikeComment } = useUnlikeCommentMutation(
+    postId,
+    commentId,
+    commentAuthorId,
+    postAuthorId,
+  );
 
   return (
     <div className="flex flex-col items-center justify-center text-white">

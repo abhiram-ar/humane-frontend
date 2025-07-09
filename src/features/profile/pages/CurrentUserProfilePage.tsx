@@ -2,21 +2,24 @@ import { Calendar } from "lucide-react";
 import EditProfileButton from "../components/extended/EditProfileButton";
 import ProfilePicConfig from "../components/extended/ProfilePicConfig";
 import CoverPhotoConfig from "../components/extended/CoverPhotoConfig";
-import useUserId from "../hooks/useUserId";
+import useUserId from "../../../hooks/useUserId";
 import PendingFriendRequests from "../components/extended/PendingFriends.trigger";
 import Friends from "../components/extended/Friends.trigger";
 import ProfilePostList from "../components/extended/ProfilePostList";
 import useCurrentUserProfile from "../hooks/useCurrentUserProfile";
 import useRestoreScrollPosition from "@/hooks/useRestoreScrollPosition";
+import useAccurateHumaneScoreQuery from "../hooks/useAccurateHumaneScoreQuery";
+import Spinner from "@/components/Spinner";
+import HumaneScoreNumberFlow from "@/components/HumaneScoreNumberFlow";
 
 const CurrentUserProfilePage = () => {
-  const { data } = useCurrentUserProfile();
+  const { data: profileData } = useCurrentUserProfile();
+  const userId = useUserId();
+  const { data: humaneScore } = useAccurateHumaneScoreQuery(userId);
   useRestoreScrollPosition();
 
-  const userId = useUserId();
-
-  if (!data) {
-    return <div>loading</div>;
+  if (!profileData) {
+    return <Spinner className="mt-5 flex justify-center" />;
   }
 
   return (
@@ -24,15 +27,19 @@ const CurrentUserProfilePage = () => {
       <div className="relative w-full border-x border-zinc-400/50">
         <CoverPhotoConfig />
 
-        <div className="px-10 pb-5 border-b border-zinc-400/50">
+        <div className="border-zinc-400/50 px-5 md:px-10 pb-5">
           <div className="relative flex h-fit w-full justify-between">
-            <div className="relative bottom-25 -mb-25 h-fit">
+            <div className="relative bottom-15 -mb-10 h-fit lg:bottom-25 lg:-mb-25">
               <ProfilePicConfig />
             </div>
 
             <div className="p-5">
               <EditProfileButton
-                nameAndBio={{ firstName: data.firstName, lastName: data.lastName, bio: data.bio }}
+                nameAndBio={{
+                  firstName: profileData.firstName,
+                  lastName: profileData.lastName,
+                  bio: profileData.bio,
+                }}
               />
             </div>
           </div>
@@ -41,9 +48,16 @@ const CurrentUserProfilePage = () => {
             <div className="flex justify-between text-lg text-white">
               <div>
                 <h3 className="text-2xl font-bold">
-                  {data?.firstName} {data?.lastName}
+                  {profileData?.firstName} {profileData?.lastName}
                 </h3>
-                <h5 className="text-pop-green">Humane score: {data?.humaneScore}</h5>
+
+                <div className="text-pop-green flex items-center">
+                  Humane score:
+                  <HumaneScoreNumberFlow
+                    score={humaneScore?.score || 0}
+                    className="ms-0.5 h-7 gap-0.5 text-lg"
+                  />
+                </div>
 
                 <div className="mt-3 flex gap-5">
                   {/* Todo: date */}
@@ -54,8 +68,8 @@ const CurrentUserProfilePage = () => {
                   <h5 className="flex items-center gap-2 text-zinc-400">
                     <Calendar size={20} />
                     Joined{" "}
-                    {data?.createdAt &&
-                      new Date(data.createdAt).toLocaleString("en-US", {
+                    {profileData?.createdAt &&
+                      new Date(profileData.createdAt).toLocaleString("en-US", {
                         month: "long",
                         year: "numeric",
                       })}{" "}
@@ -70,8 +84,8 @@ const CurrentUserProfilePage = () => {
               )}
             </div>
             <div className="mt-3">
-              {data.bio ? (
-                <pre className="font-sans text-lg text-wrap text-white">{data?.bio}</pre>
+              {profileData.bio ? (
+                <pre className="font-sans text-lg text-wrap text-white">{profileData?.bio}</pre>
               ) : (
                 <p className="text-green-subtle/50 quote font-normal italic">
                   (Let the world know who you are — add a short bio to your profile.)
@@ -82,7 +96,8 @@ const CurrentUserProfilePage = () => {
         </div>
 
         {/* posts */}
-        <div className="text-pop-green bg-grey-dark-bg/50 sticky top-0 z-20 border-b border-zinc-400/50 py-5 text-center text-xl backdrop-blur-lg">
+
+        <div className="text-pop-green bg-grey-dark-bg/50 sticky -top-0.5 left-0 z-20 border-y border-zinc-400/50 py-5 text-center text-xl backdrop-blur-lg">
           #My posts
         </div>
 

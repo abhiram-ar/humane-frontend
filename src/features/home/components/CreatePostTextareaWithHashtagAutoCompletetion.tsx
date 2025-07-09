@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { UseFormRegister, UseFormSetValue } from "react-hook-form";
 import { fetchSuggestions } from "../services/HashtagPrefixSearch";
 import Spinner from "@/components/Spinner";
@@ -23,12 +23,24 @@ const CreatePostTextareaWithHashtagAutoCompletetion: React.FC<Props> = ({ regist
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchTag, setSearchTag] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
 
-  const { data: suggestions, isFetching } = useQuery({
+  const { data: suggestions, isLoading } = useQuery({
     queryKey: [searchTag],
     queryFn: () => fetchSuggestions(searchTag),
-    enabled: searchTag.length > 1,
+    enabled: searchTag.length > 1 && !isTyping,
   });
+
+  useEffect(() => {
+    setIsTyping(true);
+    const timer = setTimeout(() => {
+      setIsTyping(false);
+    }, 400);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [searchTag]);
 
   const syncMirror = () => {
     if (!contentTextInputRef.current || !mirrorRef.current) return;
@@ -135,16 +147,17 @@ const CreatePostTextareaWithHashtagAutoCompletetion: React.FC<Props> = ({ regist
           className="bg-grey absolute z-10 min-w-10 rounded-md shadow-md"
           style={{ top: dropdownPos.top, left: dropdownPos.left }}
         >
-          {isFetching && <Spinner />}
+          {isLoading && <Spinner />}
           {suggestions &&
             suggestions.length > 0 &&
             suggestions.map((tag) => (
               <div
                 key={tag.name}
-                className="cursor-pointer rounded-md px-2 py-1 hover:bg-gray-400/50"
+                className="flex cursor-pointer justify-between gap-2 rounded-md px-3 py-1 hover:bg-gray-400/50"
                 onClick={() => insertHashtag(tag.name)}
               >
-                #{tag.name}
+                <span>#{tag.name}</span>
+                <span className="text-zinc-400">{tag.count} posts</span>
               </div>
             ))}
 

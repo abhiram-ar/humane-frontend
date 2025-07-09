@@ -31,7 +31,7 @@ const Post: React.FC<Props> = ({ postDetails, enablePosterLink = false }) => {
         <Link
           key={`tag-${idx}`}
           to={`/post/hashtag/${tags[idx].slice(1).toLowerCase()}`}
-          className="text-pop-green/90 hover:underline"
+          className="text-white hover:text-pop-green hover:underline"
         >
           {tags[idx]}
         </Link>

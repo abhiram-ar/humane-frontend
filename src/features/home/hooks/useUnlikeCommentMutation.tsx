@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InfintiteCommentsData } from "../types/InfiniteCommentData";
-import useUserId from "@/features/profile/hooks/useUserId";
+import useUserId from "@/hooks/useUserId";
 import { API_ROUTES } from "@/lib/API_ROUTES";
 import { api } from "@/lib/axios";
 import { produce } from "immer";
@@ -15,7 +15,12 @@ export type UnlikeCommentResponse = {
   };
 };
 
-const useUnlikeCommentMutation = (postId: string, commentId: string) => {
+const useUnlikeCommentMutation = (
+  postId: string,
+  commentId: string,
+  commentAuthorId: string,
+  postAuthorId: string,
+) => {
   const queryClient = useQueryClient();
   const authenticatedUserId = useUserId();
   return useMutation({
@@ -40,6 +45,13 @@ const useUnlikeCommentMutation = (postId: string, commentId: string) => {
                     }
                     if (authenticatedUserId === responseData.like.authorId) {
                       comment.hasLikedByUser = false;
+                    }
+                    if (
+                      authenticatedUserId === postAuthorId &&
+                      postAuthorId === responseData.like.authorId &&
+                      commentAuthorId !== postAuthorId
+                    ) {
+                      comment.likedByPostAuthor = false;
                     }
                   }
                 }),

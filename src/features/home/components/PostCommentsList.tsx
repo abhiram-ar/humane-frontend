@@ -2,11 +2,15 @@ import React, { useEffect, useRef } from "react";
 import Comment from "./Comment";
 import Spinner from "@/components/Spinner";
 import usePostCommentsInfiniteQuery from "../hooks/usePostCommentsInfiniteQuery";
-import useUserId from "@/features/profile/hooks/useUserId";
+import useUserId from "@/hooks/useUserId";
 import UserCommentActions from "./UserCommentActions";
 import CommentLike from "./CommentLike";
+import CommentLikedByPostAuthorBubble from "./CommnetLikedByPostAurthorBubble";
 
-const PostCommentsList: React.FC<{ postId: string }> = ({ postId }) => {
+const PostCommentsList: React.FC<{ postId: string; postAuthorId: string }> = ({
+  postId,
+  postAuthorId,
+}) => {
   const observerRef = useRef<HTMLDivElement | null>(null);
   const authenticatedUserId = useUserId();
 
@@ -43,13 +47,22 @@ const PostCommentsList: React.FC<{ postId: string }> = ({ postId }) => {
                 </div>
                 <div className="flex items-end justify-between">
                   <Comment comment={comment} />
-                  <div className="me-8">
-                    <CommentLike
-                      postId={postId}
-                      commentId={comment.id}
-                      likeCount={comment.likeCount}
-                      hasLikedByUser={comment.hasLikedByUser}
-                    />
+                  <div className="relative me-8">
+                    {comment.likedByPostAuthor && (
+                      <div className="absolute -right-4 bottom-2 z-10">
+                        <CommentLikedByPostAuthorBubble postAuthorId={postAuthorId} />
+                      </div>
+                    )}
+                    <div className="relative z-10">
+                      <CommentLike
+                        postId={postId}
+                        postAuthorId={postAuthorId}
+                        commentAuthorId={comment.authorId}
+                        commentId={comment.id}
+                        likeCount={comment.likeCount}
+                        hasLikedByUser={comment.hasLikedByUser}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

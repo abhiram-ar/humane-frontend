@@ -1,7 +1,9 @@
 import { User } from "lucide-react";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, ComponentPropsWithoutRef } from "react";
 
-const ProfilePicSmall: React.FC<{ avatarURL?: string | null }> = ({ avatarURL }) => {
+const ProfilePicSmall: React.FC<
+  ComponentPropsWithoutRef<"div"> & { avatarURL?: string | null }
+> = ({ avatarURL, className, ...props }) => {
   const [isProfilePicLoading, setProfilePicLoading] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
@@ -17,7 +19,10 @@ const ProfilePicSmall: React.FC<{ avatarURL?: string | null }> = ({ avatarURL })
   return (
     <div>
       {avatarURL ? (
-        <div className="border-grey-light relative h-10 w-10 overflow-clip rounded-full">
+        <div
+          className={`border-grey-light relative h-10 w-10 overflow-clip rounded-full ${className}`}
+          {...props}
+        >
           {isProfilePicLoading && (
             <div className="absolute inset-0 z-10 animate-pulse bg-zinc-400"></div>
           )}

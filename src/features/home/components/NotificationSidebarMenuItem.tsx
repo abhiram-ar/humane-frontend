@@ -17,6 +17,7 @@ import {
 } from "@/features/notification/redux/notificationSlice";
 import { NavLink } from "react-router";
 import { API_ROUTES } from "@/lib/API_ROUTES";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 // TODO: refacor
 type GetRecentNotificationResponse = {
@@ -38,6 +39,7 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
 }) => {
   const token = useAppSelector((state) => state.userAuth.token);
   const dispatch = useAppDispatch();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (!token) return;
@@ -126,7 +128,7 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
       <NavLink
         to={path}
         className={({ isActive }) =>
-          `my-3 flex items-center gap-3 rounded-e-2xl px-10 py-3 text-xl transition-all duration-500 ease-out ${
+          `transition-all duration-500 ease-out ${!isMobile ? "my-3 flex items-center gap-3 rounded-e-2xl px-10 py-3 text-xl" : "flex items-center rounded-2xl px-5 py-3 text-xl"} ${
             isActive ? "bg-grey-light font-semibold" : "hover:bg-zinc-700/50"
           }`
         }
@@ -139,7 +141,7 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
           ) : null}
           <Icon />
         </div>
-        {name}
+        {!isMobile && name}
       </NavLink>
     </div>
   );

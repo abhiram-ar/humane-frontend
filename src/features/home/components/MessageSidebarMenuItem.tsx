@@ -2,6 +2,7 @@ import React, { ComponentProps } from "react";
 import SidebarMenuItem from "./SidebarMenuItem";
 import { NavLink } from "react-router";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useAppSelector } from "@/features/userAuth/hooks/store.hooks";
 
 const MessageSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuItem>> = ({
   Icon,
@@ -9,6 +10,7 @@ const MessageSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuItem>> =
   name,
 }) => {
   const isMobile = useIsMobile();
+  const unReadConversations = useAppSelector((state) => state.chat.unReadConvo);
 
   return (
     <div>
@@ -21,9 +23,9 @@ const MessageSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuItem>> =
         }
       >
         <div className="relative">
-          {1 > 0 ? (
+          {unReadConversations > 0 ? (
             <div className="bg-pop-green absolute -top-1.5 -left-1 rounded-full px-1.25 text-xs text-black">
-              {1}
+              {unReadConversations}
             </div>
           ) : null}
           <Icon />

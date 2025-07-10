@@ -1,4 +1,4 @@
-import { Message } from "react-hook-form";
+import { Message } from "@/features/chat/Types/Message";
 import { SendOneToOneMessageInputDTO } from "./CreateOneToOneMessage.dto";
 import { Socket } from "socket.io-client";
 

@@ -7,4 +7,5 @@ export const API_ROUTES = {
   ADMIN_ROUTE: "/api/v1/admin",
   WRITER_ROUTE: "/api/v1/writer",
   REWARD_ROUTE: "/api/v1/reward",
+  CHAT_ROUTE: "/api/v1/chat",
 } as const;

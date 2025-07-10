@@ -4,6 +4,7 @@ import globalAppReducer from "./appSlice";
 import adminAuthReducer from "@/features/admin/redux/adminAuthSlice";
 import mainSearchReducer from "@/features/search/redux/mainSearchSlice";
 import notificationReducer from "@/features/notification/redux/notificationSlice";
+import chatReducer from "@/features/chat/redux/chatSlice";
 export const store = configureStore({
   reducer: {
     userAuth: userAuthReducer,
@@ -11,6 +12,7 @@ export const store = configureStore({
     adminAuth: adminAuthReducer,
     mainSearch: mainSearchReducer,
     notifications: notificationReducer,
+    chat: chatReducer,
   },
   devTools: true,
 });

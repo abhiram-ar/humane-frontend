@@ -1,6 +1,15 @@
 import testProfile from "@/assets/testProfile.png";
 import { useNavigate } from "react-router";
 import ConversationListItem from "./ConversationListItem";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { api } from "@/lib/axios";
+import { ConversationWithLastMessage } from "../../Types/ConversationWithLastMessage";
+import { CurosrPagination } from "@/types/CursorPagination.type";
+import { API_ROUTES } from "@/lib/API_ROUTES";
+import { useEffect, useRef } from "react";
+import Spinner from "@/components/Spinner";
+import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
+import { addToConversationList } from "../../redux/chatSlice";
 
 const demoUsers: {
   id: number;
@@ -121,11 +130,62 @@ const demoUsers: {
   },
 ];
 
+type GetUserRecentConvoReponse = {
+  data: { pagination: CurosrPagination; conversations: ConversationWithLastMessage[] };
+};
+
 const ConversationList = () => {
   const navigate = useNavigate();
+  const observerRef = useRef<HTMLDivElement>(null);
+  const dispath = useAppDispatch();
+
+  const conversation = useAppSelector((state) => state.chat.recentConvo);
+
+  const { data, isLoading, hasNextPage, isFetching, fetchNextPage } = useInfiniteQuery({
+    queryKey: ["recent-converstions-list"],
+    queryFn: async ({ pageParam }) => {
+      const params =
+        pageParam === "ini"
+          ? {
+              limit: 10,
+            }
+          : {
+              limit: 5,
+              from: pageParam,
+            };
+
+      const res = await api.get<GetUserRecentConvoReponse>(`${API_ROUTES.CHAT_ROUTE}/recent`, {
+        params,
+      });
+      return res.data.data;
+    },
+    initialPageParam: "ini",
+    getNextPageParam: (lastPage) => (lastPage.pagination.hasMore ? lastPage.pagination.from : null),
+  });
+
+  useEffect(() => {
+    if (!observerRef.current || !hasNextPage) {
+      return;
+    }
+    const observer = new IntersectionObserver((entry) => {
+      // make sure we dont fetch the page when a request is in flight
+      if (entry[0].isIntersecting && hasNextPage && !isFetching) {
+        fetchNextPage();
+      }
+    });
+    observer.observe(observerRef.current);
+
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetching]);
+
+  useEffect(() => {
+    if (!data) return;
+    dispath(addToConversationList(data.pages.flatMap((page) => page.conversations)));
+  }, [data, dispath]);
+
   return (
     <div className="text-white">
-      {demoUsers.map((user) => (
+      {/* {demoUsers.map((user) => (
         <div
           key={user.id}
           onClick={() => navigate("/user/")}
@@ -139,7 +199,36 @@ const ConversationList = () => {
             type={"one-to-one"}
           />
         </div>
-      ))}
+      ))} */}
+
+      {conversation &&
+        conversation.map((convo) => (
+          <>
+            <div
+              key={convo.id}
+              onClick={() => navigate("/user/")}
+              className="border-b border-zinc-400/20 px-5 py-2"
+            >
+              <ConversationListItem
+                userName={convo.id}
+                profileURL={""}
+                lastMessage={convo.lastMessage}
+                unreadCount={convo.unreadCount}
+                type={"one-to-one"}
+              />
+            </div>
+          </>
+        ))}
+
+      <div ref={observerRef} />
+
+      <div className="pb-5">
+        {(isFetching || isLoading) && <Spinner />}
+
+        {data && !hasNextPage && !isFetching && (
+          <p className="text-center text-sm text-zinc-400">No more Chats</p>
+        )}
+      </div>
     </div>
   );
 };

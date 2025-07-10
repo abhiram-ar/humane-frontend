@@ -10,6 +10,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/reactQuery";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ScrollRestorationProvider } from "./app/providers/ScrollRestoreationProvider";
+import ChatSocketProvider from "./app/providers/ChatSocketProvider";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -18,7 +19,9 @@ createRoot(document.getElementById("root")!).render(
         <Toaster />
         <ReactQueryDevtools initialIsOpen={false} />
         <ScrollRestorationProvider>
-          <RouterProvider router={router} />
+          <ChatSocketProvider>
+            <RouterProvider router={router} />
+          </ChatSocketProvider>
         </ScrollRestorationProvider>
       </QueryClientProvider>
     </Provider>

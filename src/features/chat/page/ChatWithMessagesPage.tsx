@@ -1,4 +1,4 @@
-import Chat from "../components/extended/Chat";
+import { Outlet } from "react-router";
 import Conversations from "../components/extended/Conversations";
 
 const ChatWithMessagesPage = () => {
@@ -7,7 +7,7 @@ const ChatWithMessagesPage = () => {
       <div className="w-100 min-w-100">
         <Conversations />
       </div>
-      <Chat />
+      <Outlet />
     </div>
   );
 };

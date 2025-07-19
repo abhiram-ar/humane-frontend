@@ -11,6 +11,7 @@ import Spinner from "@/components/Spinner";
 import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
 import { addToConversationList } from "../../redux/chatSlice";
 import useConversaionListInifiteQuery from "../../hooks/useConversaionListInifiteQuery";
+import useFindOtherUserOfOnetoOneConvo from "../../hooks/useFindOtherUserOfOnetoOneConvo";
 
 const demoUsers: {
   id: number;
@@ -135,6 +136,7 @@ const ConversationList = () => {
   const navigate = useNavigate();
   const observerRef = useRef<HTMLDivElement>(null);
   const conversation = useAppSelector((state) => state.chat.recentConvo);
+  const findOtherUser = useFindOtherUserOfOnetoOneConvo();
 
   const { data, isLoading, hasNextPage, isFetching, fetchNextPage } =
     useConversaionListInifiteQuery();
@@ -153,6 +155,13 @@ const ConversationList = () => {
 
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetching]);
+
+  const handleConversationClick = (convo: ConversationWithLastMessage) => {
+    if (convo.type === "one-to-one") {
+      const otherUser = findOtherUser(convo.participants);
+      navigate(`/chat/user/${otherUser.userId}`);
+    }
+  };
 
   return (
     <div className="text-white">
@@ -177,7 +186,7 @@ const ConversationList = () => {
           <>
             <div
               key={convo.id}
-              onClick={() => navigate("/user/")}
+              onClick={() => handleConversationClick(convo)}
               className="border-b border-zinc-400/20 px-5 py-2"
             >
               <ConversationListItem

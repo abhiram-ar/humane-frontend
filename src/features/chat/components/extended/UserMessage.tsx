@@ -1,11 +1,13 @@
-import React from 'react'
+import React from "react";
 
-const UserMessage = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+type Props = {
+  message: string;
+  sendAt: string;
+  status: string;
+};
 
-export default UserMessage
+const UserMessage: React.FC<Props> = ({ message, sendAt, status }) => {
+  return <div className="min-h-10 min-w-10"></div>;
+};
+
+export default UserMessage;

@@ -87,7 +87,7 @@ const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
             </div>
 
             <PosterImage
-              className="size-50 max-h-50 border border-zinc-400/50 bg-zinc-400/10"
+              className="size-50 !max-h-50   border border-zinc-400/50 bg-zinc-400/10"
               url={attachmentURL}
             />
           </div>

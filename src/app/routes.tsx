@@ -25,6 +25,8 @@ import HomePage from "@/features/home/pages/HomePage";
 import PostPage from "@/features/home/pages/PostPage";
 import HashtagPage from "@/features/home/pages/HashtagPage";
 import ChatWithMessagesPage from "@/features/chat/page/ChatWithMessagesPage";
+import OneToOneChatPage from "@/features/chat/page/OneToOneChatPage";
+import NoConversationSelectedPage from "@/features/chat/page/NoConversationSelectedPage";
 
 export const router = createBrowserRouter([
   {
@@ -44,6 +46,19 @@ export const router = createBrowserRouter([
           {
             path: "chat",
             Component: ChatWithMessagesPage,
+            children: [
+              {
+                index: true,
+                Component: NoConversationSelectedPage,
+              },
+              {
+                path: "user",
+                children: [
+                  { index: true, Component: NoConversationSelectedPage },
+                  { path: ":userId", Component: OneToOneChatPage },
+                ],
+              },
+            ],
           },
           {
             path: "notification",

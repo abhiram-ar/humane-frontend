@@ -1,5 +1,5 @@
 import { useAppSelector } from "@/features/userAuth/hooks/store.hooks";
-import { createContext, ReactNode, useContext, useEffect, useRef } from "react";
+import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { TypedChatSocket } from "./Types/SocketIOConfig.types";
 
@@ -7,13 +7,13 @@ type ChatSocketContextType = {
   socket: TypedChatSocket | null;
 };
 
-const ChatSocketContext = createContext<ChatSocketContextType>({
+export const ChatSocketContext = createContext<ChatSocketContextType>({
   socket: null,
 });
 
 const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
   const token = useAppSelector((state) => state.userAuth.token);
-  const chatSocketRef = useRef<TypedChatSocket>(null);
+  const [chatSocket, setChatSocket] = useState<TypedChatSocket | null>(null);
 
   useEffect(() => {
     if (!token) return;
@@ -23,7 +23,7 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
       // auth: { token }, // prod
       query: { token }, // dev
     });
-    chatSocketRef.current = socket;
+    setChatSocket(socket);
 
     socket.on("test", (msg: unknown) => {
       console.log("chat-test-msg", msg);
@@ -31,12 +31,12 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
 
     return () => {
       socket.disconnect();
-      chatSocketRef.current = null;
+      setChatSocket(null);
     };
   }, [token]);
 
   return (
-    <ChatSocketContext.Provider value={{ socket: chatSocketRef.current }}>
+    <ChatSocketContext.Provider value={{ socket: chatSocket }}>
       {children}
     </ChatSocketContext.Provider>
   );

@@ -4,30 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CornerRightUp, Plus, Repeat2, X } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-const messageSchema = z.object({
-  message: z.string().trim().nonempty(),
-  attachment: z
-    .any()
-    .optional()
-    .refine(
-      (file) =>
-        !file ||
-        file.length === 0 ||
-        file[0]?.type?.startsWith("image/") ||
-        file[0]?.type?.startsWith("video/"),
-      "File must be an image or a video",
-    )
-    .refine(
-      (file) => !file || file.length === 0 || file[0]?.size <= 10 * 1024 * 1024,
-      "Max file size is 10MB",
-    ),
-});
-type MessageFields = z.infer<typeof messageSchema>;
+import { CreateMessageFields, createMessageSchema } from "../../Types/CreateMessageFields";
 
 type Props = {
-  handleOnSubmit: (data: MessageFields) => void;
+  handleOnSubmit: (data: CreateMessageFields) => void;
 };
 
 const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
@@ -40,7 +20,7 @@ const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
     clearErrors,
     formState: { errors },
     handleSubmit,
-  } = useForm({ resolver: zodResolver(messageSchema) });
+  } = useForm({ resolver: zodResolver(createMessageSchema) });
 
   const [attachment, setAttachment] = useState<globalThis.File | null>(getValues("attachment"));
   const [attachmentURL, setAttachmentURL] = useState<string | null>(
@@ -78,7 +58,7 @@ const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
   };
 
   return (
-    <div className="relative min-h-16 w-full rounded-t-3xl border border-zinc-400/50 p-2 backdrop-blur-sm">
+    <div className="relative min-h-16 w-full rounded-t-3xl border border-zinc-400/50 bg-zinc-600/50 p-2 backdrop-blur-sm focus-within:bg-zinc-600/90">
       {attachment && attachment.type.startsWith("image/") && attachmentURL && (
         <div className="flex w-full pb-2">
           <div className="relative w-fit">
@@ -87,7 +67,7 @@ const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
             </div>
 
             <PosterImage
-              className="size-50 !max-h-50   border border-zinc-400/50 bg-zinc-400/10"
+              className="size-50 !max-h-50 border border-zinc-400/50 bg-zinc-400/10"
               url={attachmentURL}
             />
           </div>
@@ -129,6 +109,7 @@ const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
             type="file"
             className="hidden"
             {...register("attachment")}
+            defaultValue={undefined}
             accept="image/*,video/*"
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               register("attachment").onChange(e);

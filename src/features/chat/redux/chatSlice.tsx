@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ConversationWithLastMessage } from "../Types/ConversationWithLastMessage";
+import { BasicUserDetails } from "@/features/notification/Types/CombinedNotiWithActionableUser";
 
 const conversationIdSet = new Set<string>();
 export interface IChatState {
-  recentConvo: ConversationWithLastMessage[];
+  recentConvo: (ConversationWithLastMessage & { otherUser?: BasicUserDetails })[];
   unReadConvo: number;
 }
 

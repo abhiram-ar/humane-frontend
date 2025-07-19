@@ -3,9 +3,13 @@ import { api } from "@/lib/axios";
 import { CurosrPagination } from "@/types/CursorPagination.type";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { ConversationWithLastMessage } from "../Types/ConversationWithLastMessage";
+import { BasicUserDetails } from "@/features/notification/Types/CombinedNotiWithActionableUser";
 
 export type GetUserRecentConvoReponse = {
-  data: { pagination: CurosrPagination; conversations: ConversationWithLastMessage[] };
+  data: {
+    pagination: CurosrPagination;
+    conversations: (ConversationWithLastMessage & { otherUser: BasicUserDetails })[];
+  };
 };
 
 const useConversaionListInifiteQuery = () => {

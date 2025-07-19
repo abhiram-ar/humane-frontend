@@ -78,7 +78,7 @@ const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
   };
 
   return (
-    <div className="relative min-h-16 w-full rounded-t-3xl border border-zinc-400/50 p-2">
+    <div className="relative min-h-16 w-full rounded-t-3xl border border-zinc-400/50 p-2 backdrop-blur-sm">
       {attachment && attachment.type.startsWith("image/") && attachmentURL && (
         <div className="flex w-full pb-2">
           <div className="relative w-fit">

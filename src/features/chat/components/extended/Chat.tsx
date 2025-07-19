@@ -1,5 +1,6 @@
 import ChatHeader from "./ChatHeader";
 import MessagesContainer from "./MessagesContainer";
+import SendMessageBar from "./SendMessageBar";
 
 const Chat = () => {
   return (
@@ -9,8 +10,11 @@ const Chat = () => {
       </div>
 
       <div>
-      
         <MessagesContainer />
+
+        <div className="absolute w-4/5 bottom-0 left-1/2 z-30 -translate-x-1/2 transform">
+          <SendMessageBar />
+        </div>
       </div>
     </div>
   );

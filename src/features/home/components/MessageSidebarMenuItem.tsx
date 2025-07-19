@@ -1,8 +1,10 @@
-import React, { ComponentProps } from "react";
+import React, { ComponentProps, useEffect } from "react";
 import SidebarMenuItem from "./SidebarMenuItem";
 import { NavLink } from "react-router";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { useAppSelector } from "@/features/userAuth/hooks/store.hooks";
+import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
+import useConversaionListInifiteQuery from "@/features/chat/hooks/useConversaionListInifiteQuery";
+import { addToConversationList } from "@/features/chat/redux/chatSlice";
 
 const MessageSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuItem>> = ({
   Icon,
@@ -11,6 +13,14 @@ const MessageSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuItem>> =
 }) => {
   const isMobile = useIsMobile();
   const unReadConversations = useAppSelector((state) => state.chat.unReadConvo);
+  const dispath = useAppDispatch();
+
+  const { data } = useConversaionListInifiteQuery();
+
+  useEffect(() => {
+    if (!data) return;
+    dispath(addToConversationList(data.pages.flatMap((page) => page.conversations)));
+  }, [data, dispath]);
 
   return (
     <div>

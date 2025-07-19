@@ -10,6 +10,7 @@ import { useEffect, useRef } from "react";
 import Spinner from "@/components/Spinner";
 import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
 import { addToConversationList } from "../../redux/chatSlice";
+import useConversaionListInifiteQuery from "../../hooks/useConversaionListInifiteQuery";
 
 const demoUsers: {
   id: number;
@@ -130,38 +131,13 @@ const demoUsers: {
   },
 ];
 
-type GetUserRecentConvoReponse = {
-  data: { pagination: CurosrPagination; conversations: ConversationWithLastMessage[] };
-};
-
 const ConversationList = () => {
   const navigate = useNavigate();
   const observerRef = useRef<HTMLDivElement>(null);
-  const dispath = useAppDispatch();
-
   const conversation = useAppSelector((state) => state.chat.recentConvo);
 
-  const { data, isLoading, hasNextPage, isFetching, fetchNextPage } = useInfiniteQuery({
-    queryKey: ["recent-converstions-list"],
-    queryFn: async ({ pageParam }) => {
-      const params =
-        pageParam === "ini"
-          ? {
-              limit: 10,
-            }
-          : {
-              limit: 5,
-              from: pageParam,
-            };
-
-      const res = await api.get<GetUserRecentConvoReponse>(`${API_ROUTES.CHAT_ROUTE}/recent`, {
-        params,
-      });
-      return res.data.data;
-    },
-    initialPageParam: "ini",
-    getNextPageParam: (lastPage) => (lastPage.pagination.hasMore ? lastPage.pagination.from : null),
-  });
+  const { data, isLoading, hasNextPage, isFetching, fetchNextPage } =
+    useConversaionListInifiteQuery();
 
   useEffect(() => {
     if (!observerRef.current || !hasNextPage) {
@@ -177,11 +153,6 @@ const ConversationList = () => {
 
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetching]);
-
-  useEffect(() => {
-    if (!data) return;
-    dispath(addToConversationList(data.pages.flatMap((page) => page.conversations)));
-  }, [data, dispath]);
 
   return (
     <div className="text-white">

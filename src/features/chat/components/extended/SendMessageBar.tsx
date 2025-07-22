@@ -18,6 +18,7 @@ const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
     getValues,
     setValue,
     clearErrors,
+    reset,
     formState: { errors },
     handleSubmit,
   } = useForm({ resolver: zodResolver(createMessageSchema) });
@@ -55,6 +56,15 @@ const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
     setAttachment(null);
     setValue("attachment", null);
     clearErrors("attachment");
+  };
+
+  const fullReset = () => {
+    reset();
+    setAttachment(null);
+    if (attachmentURL) {
+      URL.revokeObjectURL(attachmentURL);
+    }
+    setAttachment(null);
   };
 
   return (
@@ -96,7 +106,10 @@ const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
       )}
 
       <form
-        onSubmit={handleSubmit(handleOnSubmit)}
+        onSubmit={handleSubmit((data) => {
+          handleOnSubmit(data);
+          fullReset();
+        })}
         className="flex items-baseline justify-between gap-2"
       >
         <div
@@ -133,6 +146,12 @@ const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
               const target = e.target as HTMLTextAreaElement;
               target.style.height = "auto";
               target.style.height = `${target.scrollHeight}px`;
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                (e.target as HTMLTextAreaElement).form?.requestSubmit();
+              }
             }}
           />
         </div>

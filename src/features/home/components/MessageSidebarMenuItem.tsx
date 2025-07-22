@@ -12,7 +12,7 @@ const MessageSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuItem>> =
   name,
 }) => {
   const isMobile = useIsMobile();
-  const unReadConversations = useAppSelector((state) => state.chat.ghfgf);
+  const unReadConversations = useAppSelector((state) => state.chat.unReadConvo);
   const dispath = useAppDispatch();
 
   const { data } = useConversaionListInifiteQuery();

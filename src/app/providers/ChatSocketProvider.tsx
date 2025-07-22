@@ -1,7 +1,8 @@
-import { useAppSelector } from "@/features/userAuth/hooks/store.hooks";
-import { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { TypedChatSocket } from "./Types/SocketIOConfig.types";
+import { addMessageToChat } from "@/features/chat/redux/chatSlice";
 
 type ChatSocketContextType = {
   socket: TypedChatSocket | null;
@@ -14,6 +15,7 @@ export const ChatSocketContext = createContext<ChatSocketContextType>({
 const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
   const token = useAppSelector((state) => state.userAuth.token);
   const [chatSocket, setChatSocket] = useState<TypedChatSocket | null>(null);
+  const dispath = useAppDispatch();
 
   useEffect(() => {
     if (!token) return;
@@ -27,6 +29,10 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
 
     socket.on("test", (msg: unknown) => {
       console.log("chat-test-msg", msg);
+    });
+
+    socket.on("new-one-to-one-message", (msg) => {
+      dispath(addMessageToChat({ message: msg, otherUserId: msg.senderId }));
     });
 
     return () => {

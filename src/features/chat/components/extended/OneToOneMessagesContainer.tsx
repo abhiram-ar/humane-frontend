@@ -1,6 +1,6 @@
 import React from "react";
-import UserMessage from "./UserMessage";
-import OtherParticipantMessage from "./OtherParticipantMessage.tsx";
+import UserMessage from "./UserMessage.tsx";
+import OtherParticipantMessage from "./OtherParticipantMessage.tsx.tsx";
 import { useAppSelector } from "@/features/userAuth/hooks/store.hooks.ts";
 import useUserId from "@/hooks/useUserId.tsx";
 
@@ -16,7 +16,7 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId }) => {
           authenticatedUserId && authenticatedUserId === message.senderId ? (
             <UserMessage key={message.id} message={message} />
           ) : (
-            <OtherParticipantMessage key={message.id} message={message.message} />
+            <OtherParticipantMessage key={message.id} message={message} />
           ),
         )}
     </div>

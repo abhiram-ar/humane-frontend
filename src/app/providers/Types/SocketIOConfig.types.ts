@@ -4,7 +4,7 @@ import { Socket } from "socket.io-client";
 
 export interface ServerToClientChatEvents {
   test: (msg: unknown) => void;
-  "new-message": (message: Message) => void;
+  "new-one-to-one-message": (message: Required<Message>) => void;
   "remove-noti": (noti: unknown) => void;
   "update-noti": (noti: unknown) => void;
   withAck: (d: string, callback: (e: number) => void) => void;

@@ -1,6 +1,6 @@
 import { useChatSocketProvider } from "@/app/providers/ChatSocketProvider";
 import ChatHeader from "../components/extended/ChatHeader";
-import OneToOneMessagesContainer from "../components/extended/MessagesContainer";
+import OneToOneMessagesContainer from "../components/extended/OneToOneMessagesContainer";
 import SendMessageBar from "../components/extended/SendMessageBar";
 import { CreateMessageFields } from "../Types/CreateMessageFields";
 import { SendOneToOneMessageInputDTO } from "@/app/providers/Types/CreateOneToOneMessage.dto";

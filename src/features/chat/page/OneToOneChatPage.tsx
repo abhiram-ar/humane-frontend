@@ -1,6 +1,6 @@
 import { useChatSocketProvider } from "@/app/providers/ChatSocketProvider";
 import ChatHeader from "../components/extended/ChatHeader";
-import MessagesContainer from "../components/extended/MessagesContainer";
+import OneToOneMessagesContainer from "../components/extended/MessagesContainer";
 import SendMessageBar from "../components/extended/SendMessageBar";
 import { CreateMessageFields } from "../Types/CreateMessageFields";
 import { SendOneToOneMessageInputDTO } from "@/app/providers/Types/CreateOneToOneMessage.dto";
@@ -8,14 +8,18 @@ import { useParams } from "react-router";
 import ErrorPage from "@/layout/PageNotFoundPage";
 import { getPostMediaPresignedURL } from "@/features/home/services/GetPostMediaPresingedURL";
 import axios from "axios";
+import { useAppDispatch } from "@/features/userAuth/hooks/store.hooks";
+import { addMessageToChat, replaceOneToOneMessage } from "../redux/chatSlice";
+import { Message } from "../Types/Message";
+import useUserId from "@/hooks/useUserId";
 
 const OneToOneChatPage = () => {
   const { socket } = useChatSocketProvider();
-  const { userId } = useParams();
+  const { userId: otherUserId } = useParams();
+  const dispath = useAppDispatch();
+  const authenticatedUserId = useUserId();
 
-  console.log("cotet", socket);
-
-  if (!userId) return ErrorPage({ message: "User not found" });
+  if (!otherUserId || !authenticatedUserId) return ErrorPage({ message: "User not found" });
 
   const handleOnSubmit = async (data: CreateMessageFields) => {
     if (socket) {
@@ -34,12 +38,43 @@ const OneToOneChatPage = () => {
 
       const messageData: SendOneToOneMessageInputDTO = {
         message: data.message,
-        to: userId,
+        to: otherUserId,
         attachment,
       };
 
+      const tempMessage: Message = {
+        id: `temp-${Date.now}-${Math.random() * 100}`,
+        senderId: authenticatedUserId,
+        conversationId: "unknown",
+        message: messageData.message,
+        sendAt: new Date().toISOString(),
+        deletededFor: [],
+        attachment: messageData.attachment,
+        replyToMessageId: undefined,
+        sendStatus: "pending",
+      };
+
+      dispath(addMessageToChat({ otherUserId: messageData.to, message: tempMessage }));
+
       socket.emit("send-one-to-one-message", messageData, (ack) => {
         console.log("message recived", ack);
+        if (ack.success && ack.message) {
+          dispath(
+            replaceOneToOneMessage({
+              otherUserId: messageData.to,
+              newMessage: ack.message,
+              messageId: tempMessage.id,
+            }),
+          );
+        } else {
+          dispath(
+            replaceOneToOneMessage({
+              otherUserId: messageData.to,
+              messageId: tempMessage.id,
+              newMessage: { ...tempMessage, sendStatus: "error" },
+            }),
+          );
+        }
       });
     }
   };
@@ -51,7 +86,7 @@ const OneToOneChatPage = () => {
       </div>
 
       <div className="max-h-10/12 overflow-y-scroll">
-        <MessagesContainer />
+        <OneToOneMessagesContainer otherUserId={otherUserId} />
       </div>
       <div className="absolute bottom-0 left-1/2 z-30 w-4/5 -translate-x-1/2">
         <SendMessageBar handleOnSubmit={handleOnSubmit} />

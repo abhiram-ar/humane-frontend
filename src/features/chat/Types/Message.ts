@@ -6,9 +6,11 @@ export type Message = {
   message: string;
 
   sendAt: Date;
-  isReadBy: string[];
   deletededFor: string[];
 
   attachment: { attachmentType: string; attachmentKey: string } | undefined;
   replyToMessageId: string | undefined;
+
+  // only on client
+  sendStatus?: "error" | "pending"
 };

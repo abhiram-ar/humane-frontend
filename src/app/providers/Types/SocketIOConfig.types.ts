@@ -14,8 +14,12 @@ export interface ClientToServerChatEvents {
   hello: () => void;
   "send-one-to-one-message": (
     dto: SendOneToOneMessageInputDTO,
-    callback: (ack: boolean) => void,
+    callback: (data: { message: Required<Message> | undefined; success: boolean }) => void,
   ) => void;
+}
+
+export interface ClientToServerEvents {
+  hello: () => void;
 }
 
 export type TypedChatSocket = Socket<ServerToClientChatEvents, ClientToServerChatEvents>;

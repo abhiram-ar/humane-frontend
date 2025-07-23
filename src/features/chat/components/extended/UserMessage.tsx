@@ -24,7 +24,7 @@ const UserMessage: React.FC<Props> = ({ message }) => {
           message.attachment.attachmentURL && (
             <div className="flex w-full pb-2">
               <div className="relative min-w-30">
-                <ViewPicture src={message.attachment.attachmentURL} title={""}>
+                <ViewPicture src={message.attachment.attachmentURL} >
                   <PosterImage
                     className="!max-h-80  !w-full cursor-pointer border border-zinc-400/50 bg-zinc-400/10"
                     url={message.attachment.attachmentURL}

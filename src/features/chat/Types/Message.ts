@@ -8,9 +8,9 @@ export type Message = {
   sendAt: string;
   deletededFor: string[];
 
-  attachment: { attachmentType: string; attachmentKey: string } | undefined;
+  attachment: { attachmentType: string; attachmentURL: string | undefined } | undefined;
   replyToMessageId: string | undefined;
 
   // only on client
-  sendStatus?: "error" | "pending"
+  sendStatus?: "error" | "pending";
 };

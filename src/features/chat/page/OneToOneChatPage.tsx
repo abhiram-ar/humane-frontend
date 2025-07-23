@@ -27,6 +27,7 @@ const OneToOneChatPage = () => {
       let attachment: SendOneToOneMessageInputDTO["attachment"];
 
       const typedAttachement = data.attachment as FileList | undefined;
+      let tempURL: string | undefined;
 
       if (typedAttachement && typedAttachement.length > 0) {
         const file = typedAttachement[0];
@@ -34,6 +35,8 @@ const OneToOneChatPage = () => {
         const result = await getPostMediaPresignedURL(file);
         await axios.put(result.preSignedURL, file);
         attachment = { attachmentKey: result.key, attachmentType: file.type };
+
+        tempURL = URL.createObjectURL(file);
       }
 
       const messageData: SendOneToOneMessageInputDTO = {
@@ -42,6 +45,10 @@ const OneToOneChatPage = () => {
         attachment,
       };
 
+      const tempAttachment: Message["attachment"] = messageData.attachment
+        ? { attachmentType: messageData.attachment.attachmentType, attachmentURL: tempURL }
+        : undefined;
+
       const tempMessage: Message = {
         id: `temp-${Date.now}-${Math.random() * 100}`,
         senderId: authenticatedUserId,
@@ -49,7 +56,7 @@ const OneToOneChatPage = () => {
         message: messageData.message,
         sendAt: new Date().toISOString(),
         deletededFor: [],
-        attachment: messageData.attachment,
+        attachment: tempAttachment,
         replyToMessageId: undefined,
         sendStatus: "pending",
       };
@@ -66,6 +73,7 @@ const OneToOneChatPage = () => {
               messageId: tempMessage.id,
             }),
           );
+          if (tempURL) URL.revokeObjectURL(tempURL);
         } else {
           dispath(
             replaceOneToOneMessage({

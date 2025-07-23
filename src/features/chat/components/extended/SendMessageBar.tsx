@@ -85,7 +85,7 @@ const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
       )}
 
       {attachment && attachment.type.toLowerCase().startsWith("video") && attachmentURL && (
-        <div className="flex w-full">
+        <div className="flex w-full justify-center">
           <div className="relative w-fit">
             <div className="bg-offwhite hover:text-offwhite absolute top-1 right-1 z-50 cursor-pointer rounded-full border border-zinc-800/50 p-0.5 text-red-500 hover:bg-red-500">
               <X size={20} onClick={() => handleRemovePoster()} />

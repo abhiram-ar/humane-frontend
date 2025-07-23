@@ -55,6 +55,7 @@ const chatSlice = createSlice({
     ) => {
       const { otherUserId, messages, chatHistorySliceIdx } = action.payload;
       const prevIdx = oneToOneMessagesHistorySliceIdx.get(otherUserId);
+
       if (prevIdx !== undefined && chatHistorySliceIdx <= prevIdx) return;
 
       let existingChat = state.oneToOnechats[otherUserId];
@@ -64,6 +65,8 @@ const chatSlice = createSlice({
 
       const newChat = [...messages, ...existingChat];
       oneToOneMessagesHistorySliceIdx.set(otherUserId, chatHistorySliceIdx);
+
+      console.log("presenff", newChat);
 
       state.oneToOnechats[otherUserId] = newChat;
     },

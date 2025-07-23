@@ -59,7 +59,8 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId }) => {
       dispatch(
         prependMessagesToOneToOneChat({
           otherUserId,
-          messages: page.messages,
+          // incomming message are in new-to-old order
+          messages: page.messages.reverse(),
           chatHistorySliceIdx: idx,
         }),
       );

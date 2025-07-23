@@ -9,6 +9,6 @@ export type Message = {
   isReadBy: string[];
   deletededFor: string[];
 
-  attachment: { attachmentType: string; attachmentKey: string } | undefined;
+  attachment: { attachmentType: string; attachmentURL: string } | undefined;
   replyToMessageId: string | undefined;
 };

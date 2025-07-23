@@ -85,9 +85,7 @@ const OneToOneChatPage = () => {
         <ChatHeader />
       </div>
 
-      <div className="max-h-10/12 overflow-y-scroll">
-        <OneToOneMessagesContainer otherUserId={otherUserId} />
-      </div>
+      <OneToOneMessagesContainer otherUserId={otherUserId} />
       <div className="absolute bottom-0 left-1/2 z-30 w-4/5 -translate-x-1/2">
         <SendMessageBar handleOnSubmit={handleOnSubmit} />
       </div>

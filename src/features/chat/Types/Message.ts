@@ -5,7 +5,7 @@ export type Message = {
   conversationId: string;
   message: string;
 
-  sendAt: Date;
+  sendAt: string;
   deletededFor: string[];
 
   attachment: { attachmentType: string; attachmentKey: string } | undefined;

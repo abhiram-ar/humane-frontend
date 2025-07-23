@@ -4,6 +4,8 @@ import { BasicUserDetails } from "@/features/notification/Types/CombinedNotiWith
 import { Message } from "../Types/Message";
 
 const conversationIdSet = new Set<string>();
+const oneToOneMessagesHistorySliceIdx = new Map<string, number>();
+
 export interface IChatState {
   recentConvo: (ConversationWithLastMessage & { otherUser?: BasicUserDetails })[];
   unReadConvo: number;
@@ -36,6 +38,38 @@ const chatSlice = createSlice({
       );
     },
 
+    /**
+     * Add messsges to the start of chatMessages arrya
+     *
+     * @remarks
+     * wont process the messages if the provided idx is already processed
+     *
+     */
+    prependMessagesToOneToOneChat: (
+      state,
+      action: PayloadAction<{
+        otherUserId: string;
+        messages: Message[];
+        chatHistorySliceIdx: number;
+      }>,
+    ) => {
+      const { otherUserId, messages, chatHistorySliceIdx } = action.payload;
+      const prevIdx = oneToOneMessagesHistorySliceIdx.get(otherUserId);
+      if (prevIdx && chatHistorySliceIdx <= prevIdx) return;
+
+      let existingChat = state.oneToOnechats[otherUserId];
+      if (!existingChat) {
+        existingChat = [];
+      }
+
+      const newChat = [...messages, ...existingChat];
+      oneToOneMessagesHistorySliceIdx.set(otherUserId, chatHistorySliceIdx);
+
+      state.oneToOnechats[otherUserId] = newChat;
+
+      console.log("inserte, chatHistorySliceIdx: idx");
+    },
+
     addMessageToChat: (state, action: PayloadAction<{ otherUserId: string; message: Message }>) => {
       let chatMessages = state.oneToOnechats[action.payload.otherUserId];
       if (!chatMessages) {
@@ -65,6 +99,10 @@ const chatSlice = createSlice({
   },
 });
 
-export const { addToConversationList, addMessageToChat, replaceOneToOneMessage } =
-  chatSlice.actions;
+export const {
+  addToConversationList,
+  addMessageToChat,
+  replaceOneToOneMessage,
+  prependMessagesToOneToOneChat,
+} = chatSlice.actions;
 export default chatSlice.reducer;

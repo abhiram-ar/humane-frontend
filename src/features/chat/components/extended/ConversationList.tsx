@@ -42,15 +42,13 @@ const ConversationList = () => {
     <div className="text-white">
       {conversation &&
         conversation.map((convo) => (
-          <>
-            <div
-              key={convo.id}
-              onClick={() => handleConversationClick(convo)}
-              className="border-b border-zinc-400/20 px-5 py-2"
-            >
-              <ConversationListItem convo={convo} />
-            </div>
-          </>
+          <div
+            key={convo.id}
+            onClick={() => handleConversationClick(convo)}
+            className="border-b border-zinc-400/20 px-5 py-2"
+          >
+            <ConversationListItem convo={convo} />
+          </div>
         ))}
 
       <div ref={observerRef} />

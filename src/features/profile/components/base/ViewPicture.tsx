@@ -30,16 +30,16 @@ const ViewPicture: React.FC<Props> = ({ src, title, children }) => {
           )}
         </DialogTrigger>
         <DialogContent
-        className="border-grey-dark-bg bg-[#272727] !max-w-2xl"
+          className="border-grey-dark-bg !max-h-200 !max-w-3xl w-fit bg-[#272727]/50 backdrop-blur-md"
           aria-describedby="view profile photo"
           aria-description="view profile photo"
         >
           <DialogHeader>
             <DialogTitle className="text-almost-white">{title}</DialogTitle>
           </DialogHeader>
-          <div className="mt-3 flex aspect-auto w-full items-center justify-center">
-            <div className="h-full w-full overflow-clip rounded-md">
-              <img src={src} className="h-full w-full object-cover" alt="profile-picture" />
+          <div className="mt-3 flex aspect-auto h-full w-full items-center justify-center">
+            <div className="max-h-150 h-full w-fit overflow-clip rounded-md">
+              <img src={src} className="h-full  w-full object-contain" alt="profile-picture" />
             </div>
           </div>
         </DialogContent>

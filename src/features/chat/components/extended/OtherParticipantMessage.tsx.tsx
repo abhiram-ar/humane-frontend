@@ -14,12 +14,12 @@ const OtherParticipantMessage: React.FC<Props> = ({ message }) => {
   return (
     <div className="mb-1 flex w-full">
       {/* message itself */}
-      <div className="relative ms-2 max-w-3/5 min-w-35 rounded-t-lg rounded-br-lg bg-pink-200/95 p-2 pb-5 outline-none hover:bg-pink-200">
+      <div className="relative ms-2  max-w-3/5 min-w-35 rounded-t-lg rounded-br-lg bg-pink-200/95 p-2 pb-5 outline-none hover:bg-pink-200">
         {message.attachment &&
           message.attachment.attachmentType?.startsWith("image/") &&
           message.attachment.attachmentURL && (
             <div className="flex w-full pb-2">
-              <div className="relative w-fit">
+              <div className="relative w-fit min-w-30">
                 <ViewPicture src={message.attachment.attachmentURL} title={""}>
                   <PosterImage
                     className="!max-h-80 !w-full cursor-pointer border border-zinc-400/50 bg-zinc-400/10"
@@ -34,7 +34,7 @@ const OtherParticipantMessage: React.FC<Props> = ({ message }) => {
           message.attachment.attachmentType?.toLowerCase().startsWith("video") &&
           message.attachment.attachmentURL && (
             <div className="flex w-full">
-              <div className="relative w-fit">
+              <div className="relative w-120">
                 <VideoPlayer
                   src={message.attachment.attachmentURL}
                   autoplay={false}

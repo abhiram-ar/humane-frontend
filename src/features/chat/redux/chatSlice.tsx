@@ -11,12 +11,14 @@ export interface IChatState {
   unReadConvo: number;
 
   oneToOnechats: Record<string, Message[]>;
+  lastAddedMessageTypeMap: Record<string, "real-time" | "chat-history" | undefined>;
 }
 
 const initialState: IChatState = {
   recentConvo: [],
   unReadConvo: 0,
   oneToOnechats: {},
+  lastAddedMessageTypeMap: {},
 };
 
 const chatSlice = createSlice({
@@ -69,6 +71,7 @@ const chatSlice = createSlice({
       console.log("presenff", newChat);
 
       state.oneToOnechats[otherUserId] = newChat;
+      state.lastAddedMessageTypeMap[otherUserId] = "chat-history";
     },
 
     addMessageToChat: (state, action: PayloadAction<{ otherUserId: string; message: Message }>) => {
@@ -81,6 +84,7 @@ const chatSlice = createSlice({
 
       chatMessages.push(action.payload.message);
       state.oneToOnechats[action.payload.otherUserId] = chatMessages;
+      state.lastAddedMessageTypeMap[action.payload.otherUserId] = "real-time"
     },
 
     replaceOneToOneMessage: (

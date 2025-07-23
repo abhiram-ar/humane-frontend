@@ -15,12 +15,16 @@ type GetOneToOneMessagesResponse = {
   data: { messages: Message[]; pagination: CurosrPagination };
 };
 
-type Props = { otherUserId: string };
-const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId }) => {
+type Props = { otherUserId: string; containerRef: React.RefObject<HTMLDivElement | null> };
+const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef }) => {
   const authenticatedUserId = useUserId();
-  const messages = useAppSelector((state) => state.chat.oneToOnechats[otherUserId]);
+  const { messages, lastInsertedMessageType } = useAppSelector((state) => ({
+    messages: state.chat.oneToOnechats[otherUserId],
+    lastInsertedMessageType: state.chat.lastAddedMessageTypeMap[otherUserId],
+  }));
   const observerRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
+  containerRef.current = observerRef.current;
 
   const [chatHistorySliceIdx, setChatHistorySliceIdx] = useState<number>(-1);
   const [prevScrollHeight, setPrevScrollHeight] = useState(0);
@@ -96,6 +100,22 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId }) => {
       elem.removeEventListener("scroll", fireLoadMoreHistory);
     };
   }, [fetchNextPage, hasNextPage, isFetching]);
+
+  useEffect(() => {
+    if (!observerRef.current) return;
+    const elem = observerRef.current;
+
+    // only scorll to last message if the current scoll is within the threshold limit to
+    // and last inserted messge was a real-time message
+    console.log(elem.scrollHeight, elem.scrollTop, elem.clientHeight);
+    if (
+      lastInsertedMessageType === "real-time" &&
+      Math.abs(elem.scrollHeight - elem.scrollTop - elem.clientHeight) <= elem.clientHeight
+    )
+      elem.scrollTop = elem.scrollHeight;
+
+    return () => {};
+  }, [lastInsertedMessageType, messages]);
 
   return (
     <>

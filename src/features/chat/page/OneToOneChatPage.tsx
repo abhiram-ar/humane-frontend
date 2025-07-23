@@ -12,12 +12,14 @@ import { useAppDispatch } from "@/features/userAuth/hooks/store.hooks";
 import { addMessageToChat, replaceOneToOneMessage } from "../redux/chatSlice";
 import { Message } from "../Types/Message";
 import useUserId from "@/hooks/useUserId";
+import { useRef } from "react";
 
 const OneToOneChatPage = () => {
   const { socket } = useChatSocketProvider();
   const { userId: otherUserId } = useParams();
   const dispath = useAppDispatch();
   const authenticatedUserId = useUserId();
+  const messageContainerRef = useRef<HTMLDivElement>(null);
 
   if (!otherUserId || !authenticatedUserId) return ErrorPage({ message: "User not found" });
 
@@ -62,6 +64,12 @@ const OneToOneChatPage = () => {
       };
 
       dispath(addMessageToChat({ otherUserId: messageData.to, message: tempMessage }));
+      console.log("scrolled", messageContainerRef);
+      setTimeout(() => {
+        if (messageContainerRef.current) {
+          messageContainerRef.current.scrollTo({ top: messageContainerRef.current.scrollHeight });
+        }
+      }, 100);
 
       socket.emit("send-one-to-one-message", messageData, (ack) => {
         console.log("message recived", ack);
@@ -93,7 +101,7 @@ const OneToOneChatPage = () => {
         <ChatHeader />
       </div>
 
-      <OneToOneMessagesContainer otherUserId={otherUserId} />
+      <OneToOneMessagesContainer otherUserId={otherUserId} containerRef={messageContainerRef} />
       <div className="absolute bottom-0 left-1/2 z-30 w-4/5 -translate-x-1/2">
         <SendMessageBar handleOnSubmit={handleOnSubmit} />
       </div>

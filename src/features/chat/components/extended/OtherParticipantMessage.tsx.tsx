@@ -2,8 +2,8 @@ import React from "react";
 import { Message } from "../../Types/Message";
 import { format } from "date-fns";
 import ViewPicture from "@/features/profile/components/base/ViewPicture";
-import PosterImage from "@/features/home/components/PosterImage";
 import VideoPlayer from "@/components/videoPlayer/VideoPlayer";
+import ChatImageAttachment from "./ChatImageAttachment";
 
 type Props = {
   message: Message;
@@ -14,15 +14,15 @@ const OtherParticipantMessage: React.FC<Props> = ({ message }) => {
   return (
     <div className="mb-1 flex w-full">
       {/* message itself */}
-      <div className="relative ms-2 max-w-3/5 min-w-35 rounded-t-lg rounded-br-lg bg-pink-200/95 p-2 pb-5 outline-none hover:bg-pink-200">
+      <div className="relative ms-2 max-w-3/5 min-w-30 rounded-t-lg rounded-br-lg bg-pink-200/95 p-2 pb-5 outline-none hover:bg-pink-200">
         {message.attachment &&
           message.attachment.attachmentType?.startsWith("image/") &&
           message.attachment.attachmentURL && (
             <div className="flex w-full pb-2">
-              <div className="relative w-fit min-w-30">
+              <div className="relative h-50 w-full">
                 <ViewPicture src={message.attachment.attachmentURL}>
-                  <PosterImage
-                    className="!max-h-80 !w-full cursor-pointer border border-zinc-400/50 bg-zinc-400/10"
+                  <ChatImageAttachment
+                    className="cursor-pointer border border-zinc-400/50 bg-zinc-400/10"
                     url={message.attachment.attachmentURL}
                   />
                 </ViewPicture>

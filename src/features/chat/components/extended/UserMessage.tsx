@@ -2,9 +2,9 @@ import { format } from "date-fns";
 import { CheckCheck, CircleX, Clock } from "lucide-react";
 import React from "react";
 import { Message } from "../../Types/Message";
-import PosterImage from "@/features/home/components/PosterImage";
 import VideoPlayer from "@/components/videoPlayer/VideoPlayer";
 import ViewPicture from "@/features/profile/components/base/ViewPicture";
+import ChatImageAttachment from "./ChatImageAttachment";
 
 type Props = {
   message: Message;
@@ -18,15 +18,15 @@ const UserMessage: React.FC<Props> = ({ message }) => {
       <div className="w-full"></div>
 
       {/* message itself */}
-      <div className="bg-green-subtle/95 hover:bg-green-subtle relative me-2 max-w-3/5 min-w-35 rounded-t-lg rounded-bl-lg p-2 pb-5">
+      <div className="bg-green-subtle/95 hover:bg-green-subtle relative me-2 max-w-3/5 min-w-30 rounded-t-lg rounded-bl-lg p-2 pb-5">
         {message.attachment &&
           message.attachment.attachmentType?.startsWith("image/") &&
           message.attachment.attachmentURL && (
             <div className="flex w-full pb-2">
-              <div className="relative min-w-30">
-                <ViewPicture src={message.attachment.attachmentURL} >
-                  <PosterImage
-                    className="!max-h-80  !w-full cursor-pointer border border-zinc-400/50 bg-zinc-400/10"
+              <div className="relative h-50 w-full">
+                <ViewPicture src={message.attachment.attachmentURL}>
+                  <ChatImageAttachment
+                    className="cursor-pointer border border-zinc-400/50 bg-zinc-400/10"
                     url={message.attachment.attachmentURL}
                   />
                 </ViewPicture>

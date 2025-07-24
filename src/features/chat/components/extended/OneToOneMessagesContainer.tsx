@@ -3,19 +3,13 @@ import UserMessage from "./UserMessage.tsx";
 import OtherParticipantMessage from "./OtherParticipantMessage.tsx.tsx";
 import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks.ts";
 import useUserId from "@/hooks/useUserId.tsx";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { api } from "@/lib/axios.ts";
-import { Message } from "../../Types/Message.ts";
-import { CurosrPagination } from "@/types/CursorPagination.type.ts";
-import { API_ROUTES } from "@/lib/API_ROUTES.ts";
-import Spinner from "@/components/Spinner.tsx";
 import { prependMessagesToOneToOneChat } from "../../redux/chatSlice.tsx";
-
-type GetOneToOneMessagesResponse = {
-  data: { messages: Message[]; pagination: CurosrPagination };
-};
+import ScrollToView from "./ScrollToView.tsx";
+import useChatHistoryInfiniteQuery from "../../hooks/useChatHistoryInfiniteQuery.tsx";
+import Spinner from "@/components/Spinner.tsx";
 
 type Props = { otherUserId: string; containerRef: React.RefObject<HTMLDivElement | null> };
+
 const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef }) => {
   const authenticatedUserId = useUserId();
   const { messages, lastInsertedMessageType } = useAppSelector((state) => ({
@@ -29,31 +23,11 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef 
   const [chatHistorySliceIdx, setChatHistorySliceIdx] = useState<number>(-1);
   const [prevScrollHeight, setPrevScrollHeight] = useState(0);
 
-  const { data, isFetching, hasNextPage, fetchNextPage, isLoading } = useInfiniteQuery({
-    queryKey: ["one-to-one-messages", otherUserId],
-    queryFn: async (data) => {
-      const param =
-        data.pageParam === "init"
-          ? {
-              limit: 20,
-              otherUserId,
-            }
-          : {
-              limit: 10,
-              from: data.pageParam,
-              otherUserId,
-            };
+  const scrollToViewTargetRef = useRef<HTMLDivElement>(null);
+  const [showScrollToView, setShowScrollToView] = useState(false);
 
-      const res = await api.get<GetOneToOneMessagesResponse>(
-        `${API_ROUTES.CHAT_ROUTE}/convo/one-to-one/messages`,
-        { params: param },
-      );
-      return res.data.data;
-    },
-    initialPageParam: "init",
-    getNextPageParam: (lastPage) => (lastPage.pagination.hasMore ? lastPage.pagination.from : null),
-    staleTime: Infinity,
-  });
+  const { data, isFetching, hasNextPage, fetchNextPage, isLoading } =
+    useChatHistoryInfiniteQuery(otherUserId);
 
   useEffect(() => {
     if (!data) return;
@@ -107,15 +81,33 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef 
 
     // only scorll to last message if the current scoll is within the threshold limit to
     // and last inserted messge was a real-time message
-    console.log(elem.scrollHeight, elem.scrollTop, elem.clientHeight);
     if (
       lastInsertedMessageType === "real-time" &&
       Math.abs(elem.scrollHeight - elem.scrollTop - elem.clientHeight) <= elem.clientHeight
-    )
+    ) {
       elem.scrollTop = elem.scrollHeight;
-
-    return () => {};
+    }
   }, [lastInsertedMessageType, messages]);
+
+  useEffect(() => {
+    if (!observerRef.current) return;
+    const observer = observerRef.current;
+
+    const handleScroll = () => {
+      if (
+        Math.abs(observer.scrollHeight - observer.scrollTop - observer.clientHeight) >
+        observer.clientHeight
+      ) {
+        setShowScrollToView(true);
+      } else {
+        setShowScrollToView(false);
+      }
+    };
+
+    observer.addEventListener("scroll", handleScroll);
+
+    return () => observer.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <>
@@ -125,15 +117,25 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef 
         </div>
         <div className="pt-2">
           {messages &&
-            messages.map((message) =>
-              authenticatedUserId && authenticatedUserId === message.senderId ? (
-                <UserMessage key={message.id} message={message} />
-              ) : (
-                <OtherParticipantMessage key={message.id} message={message} />
-              ),
-            )}
+            messages.map((message, idx) => (
+              <div
+                ref={idx === messages.length - 1 ? scrollToViewTargetRef : undefined}
+                key={message.id}
+              >
+                {authenticatedUserId && authenticatedUserId === message.senderId ? (
+                  <UserMessage message={message} />
+                ) : (
+                  <OtherParticipantMessage message={message} />
+                )}
+              </div>
+            ))}
         </div>
       </div>
+      {showScrollToView && (
+        <div className="absolute right-10 bottom-20">
+          <ScrollToView targetElemRef={scrollToViewTargetRef} />
+        </div>
+      )}
     </>
   );
 };

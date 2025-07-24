@@ -18,8 +18,9 @@ const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
     getValues,
     setValue,
     clearErrors,
+    trigger,
     reset,
-    formState: { errors },
+    formState: { errors, isValid },
     handleSubmit,
   } = useForm({ resolver: zodResolver(createMessageSchema) });
 
@@ -44,6 +45,7 @@ const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
       }
       setAttachmentURL(null);
     }
+    trigger();
   };
 
   const handleRemovePoster = () => {
@@ -156,7 +158,7 @@ const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
           />
         </div>
         <button
-          disabled={Object.entries(errors).length > 0}
+          disabled={!isValid}
           className="bg-pop-green/90 hover:bg-pop-green flex size-10 min-h-10 min-w-10 cursor-pointer items-center justify-center rounded-full disabled:bg-zinc-400"
         >
           <CornerRightUp size={20} />

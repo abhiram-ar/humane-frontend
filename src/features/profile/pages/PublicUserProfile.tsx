@@ -26,7 +26,7 @@ const PubliicUserProfile = () => {
 
       <div className="px-10">
         <div className="relative flex h-fit w-full justify-between">
-          <div className="relative bottom-25 -mb-25 h-fit">
+          <div className="relative bottom-15 lg:bottom-25 -mb-25 h-fit">
             <ProfilePic url={user?.avatarURL} />
           </div>
 

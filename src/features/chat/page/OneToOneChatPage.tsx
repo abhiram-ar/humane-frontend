@@ -1,5 +1,4 @@
 import { useChatSocketProvider } from "@/app/providers/ChatSocketProvider";
-import ChatHeader from "../components/extended/ChatHeader";
 import OneToOneMessagesContainer from "../components/extended/OneToOneMessagesContainer";
 import SendMessageBar from "../components/extended/SendMessageBar";
 import { CreateMessageFields } from "../Types/CreateMessageFields";
@@ -13,6 +12,7 @@ import { addMessageToChat, replaceOneToOneMessage } from "../redux/chatSlice";
 import { Message } from "../Types/Message";
 import useUserId from "@/hooks/useUserId";
 import { useRef } from "react";
+import OneToOneChatHeader from "../components/extended/OneToOneChatHeader";
 
 const OneToOneChatPage = () => {
   const { socket } = useChatSocketProvider();
@@ -22,6 +22,8 @@ const OneToOneChatPage = () => {
   const messageContainerRef = useRef<HTMLDivElement>(null);
 
   if (!otherUserId || !authenticatedUserId) return ErrorPage({ message: "User not found" });
+
+  console.log(otherUserId);
 
   const handleOnSubmit = async (data: CreateMessageFields) => {
     if (socket) {
@@ -98,7 +100,7 @@ const OneToOneChatPage = () => {
   return (
     <div className="relative h-screen w-full overflow-y-hidden">
       <div className="text-pop-green bg-grey-dark-bg/50 sticky top-0 z-20 backdrop-blur-lg">
-        <ChatHeader />
+        <OneToOneChatHeader otherUserId={otherUserId} />
       </div>
 
       <OneToOneMessagesContainer otherUserId={otherUserId} containerRef={messageContainerRef} />

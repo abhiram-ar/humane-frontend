@@ -29,11 +29,12 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef 
   const { data, isFetching, hasNextPage, fetchNextPage, isLoading } =
     useChatHistoryInfiniteQuery(otherUserId);
 
+  // load data to redux state
   useEffect(() => {
     if (!data) return;
 
     data.pages.forEach((page, idx) => {
-      if (idx <= chatHistorySliceIdx) return;
+      console.log("check", idx, chatHistorySliceIdx);
       dispatch(
         prependMessagesToOneToOneChat({
           otherUserId,
@@ -46,6 +47,7 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef 
     });
   }, [data, otherUserId]);
 
+  // scroll restroration while loading message history
   useEffect(() => {
     if (!observerRef.current) return;
 
@@ -56,6 +58,7 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef 
     }
   }, [chatHistorySliceIdx]);
 
+  // fire load more history based on scoll position
   useEffect(() => {
     if (!observerRef.current || !hasNextPage) return;
     const elem = observerRef.current;
@@ -75,6 +78,7 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef 
     };
   }, [fetchNextPage, hasNextPage, isFetching]);
 
+  // scroll if there is new incomming messages based on threshold
   useEffect(() => {
     if (!observerRef.current) return;
     const elem = observerRef.current;
@@ -89,6 +93,7 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef 
     }
   }, [lastInsertedMessageType, messages]);
 
+  // show scroll to bottom helper
   useEffect(() => {
     if (!observerRef.current) return;
     const observer = observerRef.current;
@@ -109,10 +114,25 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef 
     return () => observer.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // set scoll to end when switch between chats
+  useEffect(() => {
+    if (!observerRef.current || !messages || messages.length === 0) return;
+    const pinnedObserver = observerRef.current;
+
+    const timeout = setTimeout(() => {
+      pinnedObserver.scrollTop = pinnedObserver.scrollHeight;
+    }, 10); // delay to allow DOM paint
+
+    return () => clearTimeout(timeout);
+  }, [messages?.[0]?.id, otherUserId]);
+
   return (
     <>
-      <div ref={observerRef} className="relative max-h-10/12 overflow-y-scroll">
-        <div className="text-pop-green absolute inset-0 mt-2 pb-5">
+      <div
+        ref={observerRef}
+        className="relative flex max-h-10/12 min-h-10/12 flex-col justify-end-safe overflow-y-scroll"
+      >
+        <div className="text-pop-green absolute inset-0 mt-5 pb-5">
           {(isFetching || isLoading) && <Spinner />}
         </div>
         <div className="pt-2">

@@ -68,6 +68,7 @@ const chatSlice = createSlice({
       const newChat = [...messages, ...existingChat];
       oneToOneMessagesHistorySliceIdx.set(otherUserId, chatHistorySliceIdx);
 
+      console.log("presenff", newChat);
 
       state.oneToOnechats[otherUserId] = newChat;
       state.lastAddedMessageTypeMap[otherUserId] = "chat-history";

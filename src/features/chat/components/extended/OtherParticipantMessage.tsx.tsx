@@ -19,7 +19,7 @@ const OtherParticipantMessage: React.FC<Props> = ({ message }) => {
           message.attachment.attachmentType?.startsWith("image/") &&
           message.attachment.attachmentURL && (
             <div className="flex w-full pb-2">
-              <div className="relative h-50 w-full">
+              <div className="relative h-30 w-full xl:h-50">
                 <ViewPicture src={message.attachment.attachmentURL}>
                   <ChatImageAttachment
                     className="cursor-pointer border border-zinc-400/50 bg-zinc-400/10"

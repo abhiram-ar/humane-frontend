@@ -18,12 +18,12 @@ const UserMessage: React.FC<Props> = ({ message }) => {
       <div className="w-full"></div>
 
       {/* message itself */}
-      <div className="bg-green-subtle/95 hover:bg-green-subtle relative me-2 max-w-3/5 min-w-30 rounded-t-lg rounded-bl-lg p-2 pb-5">
+      <div className="bg-green-subtle/95 hover:bg-green-subtle relative me-2 min-w-30 rounded-t-lg rounded-bl-lg p-2 pb-5 max-w-3/5">
         {message.attachment &&
           message.attachment.attachmentType?.startsWith("image/") &&
           message.attachment.attachmentURL && (
             <div className="flex w-full pb-2">
-              <div className="relative h-50 w-full">
+              <div className="relative h-30 w-full xl:h-50">
                 <ViewPicture src={message.attachment.attachmentURL}>
                   <ChatImageAttachment
                     className="cursor-pointer border border-zinc-400/50 bg-zinc-400/10"

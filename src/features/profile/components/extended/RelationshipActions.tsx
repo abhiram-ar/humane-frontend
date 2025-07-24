@@ -18,6 +18,7 @@ import useRemoveFriendshipMutation from "../../hooks/useRemoveFriendshipMutation
 import ButtonPop from "@/components/ButtonPop";
 import ButtonNeutal from "@/components/ButtonNeutal";
 import ButtonLowPriority from "@/components/ButtonLowPriority";
+import { Link } from "react-router";
 
 type Props = {
   userId: string;
@@ -63,12 +64,10 @@ const RelationshipActions: React.FC<Props> = ({ userId }) => {
       )}
 
       {data?.status === "friends" && (
-        <>
+        <div className="flex gap-1">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <ButtonLowPriority>
-                Remove Friend
-              </ButtonLowPriority>
+              <ButtonLowPriority>Remove Friend</ButtonLowPriority>
             </AlertDialogTrigger>
             <AlertDialogContent className="border-grey-dark-bg text-almost-white bg-[#272727]">
               <AlertDialogHeader>
@@ -88,7 +87,13 @@ const RelationshipActions: React.FC<Props> = ({ userId }) => {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-        </>
+
+          <div>
+            <Link to={`/chat/user/${userId}`}>
+              <ButtonNeutal>Message</ButtonNeutal>
+            </Link>
+          </div>
+        </div>
       )}
     </div>
   );

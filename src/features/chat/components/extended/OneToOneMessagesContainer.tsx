@@ -29,6 +29,8 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef 
   const { data, isFetching, hasNextPage, fetchNextPage, isLoading } =
     useChatHistoryInfiniteQuery(otherUserId);
 
+  const firstMessage = messages?.[0]?.id ? true : false;
+
   // load data to redux state
   useEffect(() => {
     if (!data) return;
@@ -117,14 +119,13 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef 
   // set scoll to end when switch between chats
   useEffect(() => {
     if (!observerRef.current || !messages || messages.length === 0) return;
-    const pinnedObserver = observerRef.current;
 
     const timeout = setTimeout(() => {
-      pinnedObserver.scrollTop = pinnedObserver.scrollHeight;
+      observerRef.current!.scrollTop = observerRef.current!.scrollHeight;
     }, 10); // delay to allow DOM paint
 
     return () => clearTimeout(timeout);
-  }, [messages?.[0]?.id, otherUserId]);
+  }, [firstMessage, otherUserId]);
 
   return (
     <>

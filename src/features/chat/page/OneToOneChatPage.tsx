@@ -144,13 +144,24 @@ const OneToOneChatPage = () => {
     }
   };
 
+  console.log("render page");
+
+  const handleOnMessageUpdate = () => {
+    if (!socket || !convo) return;
+    socket.emit("convo-opened", { convoId: convo.id, time: new Date() });
+  };
+
   return (
     <div className="relative h-screen w-full overflow-y-hidden">
       <div className="text-pop-green bg-grey-dark-bg/50 sticky top-0 z-20 backdrop-blur-lg">
         <OneToOneChatHeader otherUserId={otherUserId} />
       </div>
 
-      <OneToOneMessagesContainer otherUserId={otherUserId} containerRef={messageContainerRef} />
+      <OneToOneMessagesContainer
+        otherUserId={otherUserId}
+        containerRef={messageContainerRef}
+        handleOnMessageUpdate={handleOnMessageUpdate}
+      />
       <div className="absolute bottom-0 left-1/2 z-30 w-4/5 -translate-x-1/2">
         <SendMessageBar handleOnSubmit={handleOnSubmit} />
       </div>

@@ -11,9 +11,14 @@ import Spinner from "@/components/Spinner.tsx";
 type Props = {
   otherUserId: string;
   containerRef: React.RefObject<HTMLDivElement | null>;
+  handleOnMessageUpdate?: () => void;
 };
 
-const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef }) => {
+const OneToOneMessagesContainer: React.FC<Props> = ({
+  otherUserId,
+  containerRef,
+  handleOnMessageUpdate,
+}) => {
   const authenticatedUserId = useUserId();
   const { messages, lastInsertedMessageType } = useAppSelector((state) => ({
     messages: state.chat.oneToOnechats[otherUserId],
@@ -39,7 +44,6 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef 
     if (!data) return;
 
     data.pages.forEach((page, idx) => {
-      console.log("check", idx, chatHistorySliceIdx);
       dispatch(
         prependMessagesToOneToOneChat({
           otherUserId,
@@ -129,6 +133,16 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef 
 
     return () => clearTimeout(timeout);
   }, [hasFirstMessage, otherUserId]);
+
+  // edge-case: save last-seen on chat for on app close unexectly
+  // so all the user will have read the message
+  useEffect(() => {
+    if (!handleOnMessageUpdate) return;
+
+    handleOnMessageUpdate();
+
+    return () => handleOnMessageUpdate();
+  }, [messages, handleOnMessageUpdate]);
 
   return (
     <>

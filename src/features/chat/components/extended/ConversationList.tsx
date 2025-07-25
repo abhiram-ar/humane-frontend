@@ -34,7 +34,7 @@ const ConversationList = () => {
   const handleConversationClick = (convo: ConversationWithLastMessage) => {
     if (convo.type === "one-to-one") {
       const otherUser = findOtherUser(convo.participants);
-      navigate(`/chat/user/${otherUser.userId}`);
+      navigate(`/chat/user/${otherUser.userId}`, { state: { convo } });
     }
   };
 

@@ -3,11 +3,11 @@ import { ConversationWithLastMessage } from "../Types/ConversationWithLastMessag
 import { BasicUserDetails } from "@/features/notification/Types/CombinedNotiWithActionableUser";
 import { Message } from "../Types/Message";
 
-const conversationIdSet = new Set<string>();
 const oneToOneMessagesHistorySliceIdx = new Map<string, number>();
 
 export interface IChatState {
   recentConvo: (ConversationWithLastMessage & { otherUser?: BasicUserDetails })[];
+  recentConvoIdxHashMap: Record<string, number>;
   unReadConvo: number;
 
   oneToOnechats: Record<string, Message[]>;
@@ -18,7 +18,9 @@ export interface IChatState {
 
 const initialState: IChatState = {
   recentConvo: [],
+  recentConvoIdxHashMap: {},
   unReadConvo: 0,
+
   oneToOnechats: {},
   lastAddedMessageTypeMap: {},
   activeConvo: null,
@@ -29,18 +31,16 @@ const chatSlice = createSlice({
   initialState,
   reducers: {
     addToConversationList: (state, action: PayloadAction<ConversationWithLastMessage[]>) => {
-      action.payload.forEach((convo) => {
-        if (conversationIdSet.has(convo.id)) return;
+      action.payload.forEach((convo, idx) => {
+        if (state.recentConvoIdxHashMap[convo.id] !== undefined) return;
 
         state.recentConvo.push(convo);
-        conversationIdSet.add(convo.id);
+        state.recentConvoIdxHashMap[convo.id] = idx;
 
-        state.unReadConvo += 1;
+        if (convo.unreadCount > 0) {
+          state.unReadConvo += 1;
+        }
       });
-
-      state.recentConvo.sort(
-        (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-      );
     },
 
     markOneToOneConvoAsRead: (state, action: PayloadAction<{ convoId: string }>) => {
@@ -82,8 +82,6 @@ const chatSlice = createSlice({
       const newChat = [...messages, ...existingChat];
       oneToOneMessagesHistorySliceIdx.set(otherUserId, chatHistorySliceIdx);
 
-      console.log("presenff", newChat);
-
       state.oneToOnechats[otherUserId] = newChat;
       state.lastAddedMessageTypeMap[otherUserId] = "chat-history";
     },
@@ -114,6 +112,9 @@ const chatSlice = createSlice({
         }
 
         state.recentConvo.unshift(deletedConvo);
+      } else {
+        // fetch the convo from api
+        // upadte convo list
       }
     },
 

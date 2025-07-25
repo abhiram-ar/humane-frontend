@@ -3,7 +3,7 @@ import OneToOneMessagesContainer from "../components/extended/OneToOneMessagesCo
 import SendMessageBar from "../components/extended/SendMessageBar";
 import { CreateMessageFields } from "../Types/CreateMessageFields";
 import { SendOneToOneMessageInputDTO } from "@/app/providers/Types/CreateOneToOneMessage.dto";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import ErrorPage from "@/layout/PageNotFoundPage";
 import { getPostMediaPresignedURL } from "@/features/home/services/GetPostMediaPresingedURL";
 import axios from "axios";
@@ -19,14 +19,7 @@ import { Message } from "../Types/Message";
 import useUserId from "@/hooks/useUserId";
 import { useEffect, useRef } from "react";
 import OneToOneChatHeader from "../components/extended/OneToOneChatHeader";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/axios";
-import { API_ROUTES } from "@/lib/API_ROUTES";
-import { OneToOneConversation } from "../Types/Conversation";
-
-type GetOneToOneConvoResponse = {
-  data: { conversation: OneToOneConversation | null };
-};
+import useOneToOneConvoByOtherUserQuery from "../hooks/useOneToOneConvpByOtherUserQuery";
 
 const OneToOneChatPage = () => {
   const { socket } = useChatSocketProvider();
@@ -34,21 +27,9 @@ const OneToOneChatPage = () => {
   const dispath = useAppDispatch();
   const authenticatedUserId = useUserId();
   const messageContainerRef = useRef<HTMLDivElement>(null);
+  const { state } = useLocation();
 
-  const { data: convo } = useQuery({
-    queryKey: ["one-to-one-convo", otherUserId],
-    queryFn: async () => {
-      const res = await api.get<GetOneToOneConvoResponse>(
-        `${API_ROUTES.CHAT_ROUTE}/convo/one-to-one/`,
-        {
-          params: { otherUserId },
-        },
-      );
-      return res.data.data.conversation;
-    },
-    enabled: !!otherUserId,
-    staleTime: Infinity,
-  });
+  const { data: convo } = useOneToOneConvoByOtherUserQuery(otherUserId, state?.convo);
 
   // set currsent convo as active convo
   useEffect(() => {
@@ -143,8 +124,6 @@ const OneToOneChatPage = () => {
       });
     }
   };
-
-  console.log("render page");
 
   const handleOnMessageUpdate = () => {
     if (!socket || !convo) return;

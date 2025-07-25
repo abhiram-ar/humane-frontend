@@ -8,11 +8,24 @@ import ErrorPage from "@/layout/PageNotFoundPage";
 import { getPostMediaPresignedURL } from "@/features/home/services/GetPostMediaPresingedURL";
 import axios from "axios";
 import { useAppDispatch } from "@/features/userAuth/hooks/store.hooks";
-import { addMessageToChat, replaceOneToOneMessage } from "../redux/chatSlice";
+import {
+  addMessageToChat,
+  markOneToOneConvoAsRead,
+  replaceOneToOneMessage,
+  updateLastMessageOfConvo,
+} from "../redux/chatSlice";
 import { Message } from "../Types/Message";
 import useUserId from "@/hooks/useUserId";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import OneToOneChatHeader from "../components/extended/OneToOneChatHeader";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/axios";
+import { API_ROUTES } from "@/lib/API_ROUTES";
+import { OneToOneConversation } from "../Types/Conversation";
+
+type GetOneToOneConvoResponse = {
+  data: { conversation: OneToOneConversation };
+};
 
 const OneToOneChatPage = () => {
   const { socket } = useChatSocketProvider();
@@ -21,9 +34,30 @@ const OneToOneChatPage = () => {
   const authenticatedUserId = useUserId();
   const messageContainerRef = useRef<HTMLDivElement>(null);
 
-  if (!otherUserId || !authenticatedUserId) return ErrorPage({ message: "User not found" });
+  const { data } = useQuery({
+    queryKey: ["one-to-one-convo", otherUserId],
+    queryFn: async () => {
+      const res = await api.get<GetOneToOneConvoResponse>(
+        `${API_ROUTES.CHAT_ROUTE}/convo/one-to-one/`,
+        {
+          params: { otherUserId },
+        },
+      );
+      return res.data.data;
+    },
+    enabled: !!otherUserId,
+    staleTime: Infinity,
+  });
 
-  console.log(otherUserId);
+  useEffect(() => {
+    if (!socket || !data) return;
+
+    socket.emit("convo-opened", { convoId: data.conversation.id, time: new Date() });
+
+    dispath(markOneToOneConvoAsRead({ convoId: data.conversation.id }));
+  }, [data, dispath, otherUserId, socket]);
+
+  if (!otherUserId || !authenticatedUserId) return ErrorPage({ message: "User not found" });
 
   const handleOnSubmit = async (data: CreateMessageFields) => {
     if (socket) {
@@ -66,7 +100,6 @@ const OneToOneChatPage = () => {
       };
 
       dispath(addMessageToChat({ otherUserId: messageData.to, message: tempMessage }));
-      console.log("scrolled", messageContainerRef);
       setTimeout(() => {
         if (messageContainerRef.current) {
           messageContainerRef.current.scrollTo({ top: messageContainerRef.current.scrollHeight });
@@ -74,7 +107,6 @@ const OneToOneChatPage = () => {
       }, 100);
 
       socket.emit("send-one-to-one-message", messageData, (ack) => {
-        console.log("message recived", ack);
         if (ack.success && ack.message) {
           dispath(
             replaceOneToOneMessage({
@@ -82,6 +114,9 @@ const OneToOneChatPage = () => {
               newMessage: ack.message,
               messageId: tempMessage.id,
             }),
+          );
+          dispath(
+            updateLastMessageOfConvo({ convoId: ack.message.conversationId, message: ack.message }),
           );
           if (tempURL) URL.revokeObjectURL(tempURL);
         } else {

@@ -40,8 +40,15 @@ const chatSlice = createSlice({
       );
     },
 
+    markOneToOneConvoAsRead: (state, action: PayloadAction<{ convoId: string }>) => {
+      const convoIdx = state.recentConvo.findIndex((convo) => convo.id === action.payload.convoId);
+      if (convoIdx < 0) return;
+
+      const convo = state.recentConvo[convoIdx];
+      convo.unreadCount = 0;
+    },
+
     /**
-     * Add messsges to the start of chatMessages arrya
      *
      * @remarks
      * wont process the messages if the provided idx is already processed
@@ -84,7 +91,32 @@ const chatSlice = createSlice({
 
       chatMessages.push(action.payload.message);
       state.oneToOnechats[action.payload.otherUserId] = chatMessages;
-      state.lastAddedMessageTypeMap[action.payload.otherUserId] = "real-time"
+      state.lastAddedMessageTypeMap[action.payload.otherUserId] = "real-time";
+
+      const convoIdx = state.recentConvo.findIndex(
+        (convo) => convo.id === action.payload.message.conversationId,
+      );
+      if (convoIdx !== -1) {
+        const [deleted] = state.recentConvo.splice(convoIdx, 1);
+        if (!deleted) return;
+        deleted.unreadCount = (deleted.unreadCount ?? 0) + 1;
+        deleted.lastMessage = action.payload.message;
+        state.recentConvo.unshift(deleted);
+      }
+    },
+
+    updateLastMessageOfConvo: (
+      state,
+      action: PayloadAction<{ convoId: string; message: Message }>,
+    ) => {
+      const convoIdx = state.recentConvo.findIndex((convo) => convo.id === action.payload.convoId);
+      if (convoIdx !== -1) {
+        const [deleted] = state.recentConvo.splice(convoIdx, 1);
+        if (!deleted) return;
+
+        deleted.lastMessage = action.payload.message;
+        state.recentConvo.unshift(deleted);
+      }
     },
 
     replaceOneToOneMessage: (
@@ -106,7 +138,9 @@ const chatSlice = createSlice({
 
 export const {
   addToConversationList,
+  markOneToOneConvoAsRead,
   addMessageToChat,
+  updateLastMessageOfConvo,
   replaceOneToOneMessage,
   prependMessagesToOneToOneChat,
 } = chatSlice.actions;

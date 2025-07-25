@@ -11,7 +11,7 @@ export interface ServerToClientChatEvents {
 }
 
 export interface ClientToServerChatEvents {
-  hello: () => void;
+  "convo-opened": (dto: { time: Date; convoId: string }) => void;
   "send-one-to-one-message": (
     dto: SendOneToOneMessageInputDTO,
     callback: (data: { message: Required<Message> | undefined; success: boolean }) => void,

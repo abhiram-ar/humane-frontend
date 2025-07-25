@@ -8,7 +8,10 @@ import ScrollToView from "./ScrollToView.tsx";
 import useChatHistoryInfiniteQuery from "../../hooks/useChatHistoryInfiniteQuery.tsx";
 import Spinner from "@/components/Spinner.tsx";
 
-type Props = { otherUserId: string; containerRef: React.RefObject<HTMLDivElement | null> };
+type Props = {
+  otherUserId: string;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+};
 
 const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef }) => {
   const authenticatedUserId = useUserId();
@@ -29,7 +32,7 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef 
   const { data, isFetching, hasNextPage, fetchNextPage, isLoading } =
     useChatHistoryInfiniteQuery(otherUserId);
 
-  const firstMessage = messages?.[0]?.id ? true : false;
+  const hasFirstMessage = messages?.[0]?.id ? true : false;
 
   // load data to redux state
   useEffect(() => {
@@ -125,7 +128,7 @@ const OneToOneMessagesContainer: React.FC<Props> = ({ otherUserId, containerRef 
     }, 10); // delay to allow DOM paint
 
     return () => clearTimeout(timeout);
-  }, [firstMessage, otherUserId]);
+  }, [hasFirstMessage, otherUserId]);
 
   return (
     <>

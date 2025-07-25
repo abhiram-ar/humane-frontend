@@ -8,7 +8,12 @@ type GetOneToOneMessagesResponse = {
   data: { messages: Message[]; pagination: CurosrPagination };
 };
 
-const useChatHistoryInfiniteQuery = (otherUserId: string) => {
+const useChatHistoryInfiniteQuery = (otherUserId: string, fromMessage?: Message | undefined) => {
+  let fromString: string | undefined;
+  if (fromMessage) {
+    fromString = `${new Date(fromMessage.sendAt).toISOString()}|${fromMessage.id}`;
+  }
+
   return useInfiniteQuery({
     queryKey: ["one-to-one-messages", otherUserId],
     queryFn: async (data) => {
@@ -30,7 +35,7 @@ const useChatHistoryInfiniteQuery = (otherUserId: string) => {
       );
       return res.data.data;
     },
-    initialPageParam: "init",
+    initialPageParam: fromString ?? "init",
     getNextPageParam: (lastPage) => (lastPage.pagination.hasMore ? lastPage.pagination.from : null),
     staleTime: Infinity,
   });

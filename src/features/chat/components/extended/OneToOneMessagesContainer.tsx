@@ -34,8 +34,10 @@ const OneToOneMessagesContainer: React.FC<Props> = ({
   const scrollToViewTargetRef = useRef<HTMLDivElement>(null);
   const [showScrollToView, setShowScrollToView] = useState(false);
 
-  const { data, isFetching, hasNextPage, fetchNextPage, isLoading } =
-    useChatHistoryInfiniteQuery(otherUserId);
+  const { data, isFetching, hasNextPage, fetchNextPage, isLoading } = useChatHistoryInfiniteQuery(
+    otherUserId,
+    messages?.[0],
+  );
 
   const hasFirstMessage = messages?.[0]?.id ? true : false;
 

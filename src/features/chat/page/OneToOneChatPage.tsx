@@ -12,6 +12,7 @@ import {
   addMessageToChat,
   markOneToOneConvoAsRead,
   replaceOneToOneMessage,
+  setActiveConvo,
   updateLastMessageOfConvo,
 } from "../redux/chatSlice";
 import { Message } from "../Types/Message";
@@ -24,7 +25,7 @@ import { API_ROUTES } from "@/lib/API_ROUTES";
 import { OneToOneConversation } from "../Types/Conversation";
 
 type GetOneToOneConvoResponse = {
-  data: { conversation: OneToOneConversation };
+  data: { conversation: OneToOneConversation | null };
 };
 
 const OneToOneChatPage = () => {
@@ -34,7 +35,7 @@ const OneToOneChatPage = () => {
   const authenticatedUserId = useUserId();
   const messageContainerRef = useRef<HTMLDivElement>(null);
 
-  const { data } = useQuery({
+  const { data: convo } = useQuery({
     queryKey: ["one-to-one-convo", otherUserId],
     queryFn: async () => {
       const res = await api.get<GetOneToOneConvoResponse>(
@@ -43,25 +44,36 @@ const OneToOneChatPage = () => {
           params: { otherUserId },
         },
       );
-      return res.data.data;
+      return res.data.data.conversation;
     },
     enabled: !!otherUserId,
     staleTime: Infinity,
   });
 
+  // set currsent convo as active convo
   useEffect(() => {
-    if (!socket || !data) return;
+    if (!convo) return;
+    dispath(setActiveConvo({ converId: convo.id }));
+  }, [convo, dispath, otherUserId]);
 
-    socket.emit("convo-opened", { convoId: data.conversation.id, time: new Date() });
+  // marking current convo as read
+  useEffect(() => {
+    if (!socket || !convo) return;
 
-    dispath(markOneToOneConvoAsRead({ convoId: data.conversation.id }));
-  }, [data, dispath, otherUserId, socket]);
+    if (convo) {
+      socket.emit("convo-opened", { convoId: convo.id, time: new Date() });
+      dispath(markOneToOneConvoAsRead({ convoId: convo.id }));
+    }
+
+    return () => {
+      socket.emit("convo-opened", { convoId: convo.id, time: new Date() });
+    };
+  }, [convo, dispath, otherUserId, socket]);
 
   if (!otherUserId || !authenticatedUserId) return ErrorPage({ message: "User not found" });
 
   const handleOnSubmit = async (data: CreateMessageFields) => {
     if (socket) {
-      console.log(data);
       let attachment: SendOneToOneMessageInputDTO["attachment"];
 
       const typedAttachement = data.attachment as FileList | undefined;
@@ -90,7 +102,7 @@ const OneToOneChatPage = () => {
       const tempMessage: Message = {
         id: `temp-${Date.now}-${Math.random() * 100}`,
         senderId: authenticatedUserId,
-        conversationId: "unknown",
+        conversationId: convo?.id ?? "unknown",
         message: messageData.message,
         sendAt: new Date().toISOString(),
         deletededFor: [],

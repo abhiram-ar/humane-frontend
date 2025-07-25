@@ -29,7 +29,10 @@ const ConversationListItem: React.FC<Props> = ({ convo, className }) => {
 
             {convo.lastMessage && (
               <>
-                <CheckCheck className="text-pop-green/70 me-1" size={18} />
+                {" "}
+                {convo.lastMessage.senderId === currentUserId && (
+                  <CheckCheck className="text-pop-green/70 me-1" size={18} />
+                )}
                 <span className="inline-block max-w-60 truncate overflow-hidden align-middle text-ellipsis">
                   {convo.lastMessage.message}
                 </span>

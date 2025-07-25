@@ -12,6 +12,8 @@ export interface IChatState {
 
   oneToOnechats: Record<string, Message[]>;
   lastAddedMessageTypeMap: Record<string, "real-time" | "chat-history" | undefined>;
+
+  activeConvo: string | null;
 }
 
 const initialState: IChatState = {
@@ -19,6 +21,7 @@ const initialState: IChatState = {
   unReadConvo: 0,
   oneToOnechats: {},
   lastAddedMessageTypeMap: {},
+  activeConvo: null,
 };
 
 const chatSlice = createSlice({
@@ -46,6 +49,10 @@ const chatSlice = createSlice({
 
       const convo = state.recentConvo[convoIdx];
       convo.unreadCount = 0;
+    },
+
+    setActiveConvo: (state, action: PayloadAction<{ converId: string }>) => {
+      state.activeConvo = action.payload.converId;
     },
 
     /**
@@ -97,11 +104,16 @@ const chatSlice = createSlice({
         (convo) => convo.id === action.payload.message.conversationId,
       );
       if (convoIdx !== -1) {
-        const [deleted] = state.recentConvo.splice(convoIdx, 1);
-        if (!deleted) return;
-        deleted.unreadCount = (deleted.unreadCount ?? 0) + 1;
-        deleted.lastMessage = action.payload.message;
-        state.recentConvo.unshift(deleted);
+        const [deletedConvo] = state.recentConvo.splice(convoIdx, 1);
+        if (!deletedConvo) return;
+
+        deletedConvo.lastMessage = action.payload.message;
+
+        if (state.activeConvo !== deletedConvo.id) {
+          deletedConvo.unreadCount = (deletedConvo.unreadCount ?? 0) + 1;
+        }
+
+        state.recentConvo.unshift(deletedConvo);
       }
     },
 
@@ -140,6 +152,7 @@ export const {
   addToConversationList,
   markOneToOneConvoAsRead,
   addMessageToChat,
+  setActiveConvo,
   updateLastMessageOfConvo,
   replaceOneToOneMessage,
   prependMessagesToOneToOneChat,

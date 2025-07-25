@@ -4,10 +4,10 @@ import { BasicUserDetails } from "@/features/notification/Types/CombinedNotiWith
 import { Message } from "../Types/Message";
 
 const oneToOneMessagesHistorySliceIdx = new Map<string, number>();
+export const recentConvoIdxHashMap: Record<string, number> = {};
 
 export interface IChatState {
   recentConvo: (ConversationWithLastMessage & { otherUser?: BasicUserDetails })[];
-  recentConvoIdxHashMap: Record<string, number>;
   unReadConvo: number;
 
   oneToOnechats: Record<string, Message[]>;
@@ -18,7 +18,6 @@ export interface IChatState {
 
 const initialState: IChatState = {
   recentConvo: [],
-  recentConvoIdxHashMap: {},
   unReadConvo: 0,
 
   oneToOnechats: {},
@@ -32,14 +31,18 @@ const chatSlice = createSlice({
   reducers: {
     addToConversationList: (state, action: PayloadAction<ConversationWithLastMessage[]>) => {
       action.payload.forEach((convo, idx) => {
-        if (state.recentConvoIdxHashMap[convo.id] !== undefined) return;
+        if (recentConvoIdxHashMap[convo.id] !== undefined) return;
 
         state.recentConvo.push(convo);
-        state.recentConvoIdxHashMap[convo.id] = idx;
+        recentConvoIdxHashMap[convo.id] = idx;
 
         if (convo.unreadCount > 0) {
           state.unReadConvo += 1;
         }
+
+        state.recentConvo.sort(
+          (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+        );
       });
     },
 
@@ -112,9 +115,6 @@ const chatSlice = createSlice({
         }
 
         state.recentConvo.unshift(deletedConvo);
-      } else {
-        // fetch the convo from api
-        // upadte convo list
       }
     },
 

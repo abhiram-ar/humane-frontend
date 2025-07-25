@@ -10,7 +10,9 @@ import axios from "axios";
 import { useAppDispatch } from "@/features/userAuth/hooks/store.hooks";
 import {
   addMessageToChat,
+  addToConversationList,
   markOneToOneConvoAsRead,
+  recentConvoIdxHashMap,
   replaceOneToOneMessage,
   setActiveConvo,
   updateLastMessageOfConvo,
@@ -20,6 +22,8 @@ import useUserId from "@/hooks/useUserId";
 import { useEffect, useRef } from "react";
 import OneToOneChatHeader from "../components/extended/OneToOneChatHeader";
 import useOneToOneConvoByOtherUserQuery from "../hooks/useOneToOneConvpByOtherUserQuery";
+import { getUserConvoById } from "../services/getUserConvoById";
+import { ConversationWithLastMessage } from "../Types/ConversationWithLastMessage";
 
 const OneToOneChatPage = () => {
   const { socket } = useChatSocketProvider();
@@ -112,6 +116,24 @@ const OneToOneChatPage = () => {
             updateLastMessageOfConvo({ convoId: ack.message.conversationId, message: ack.message }),
           );
           if (tempURL) URL.revokeObjectURL(tempURL);
+
+          if (!recentConvoIdxHashMap[ack.message.conversationId]) {
+            getUserConvoById(ack.message.conversationId)
+              .then((data) => {
+                if (data.convo) {
+                  const convo: ConversationWithLastMessage = {
+                    ...data.convo,
+                    unreadCount: 1,
+                    lastMessage: ack.message,
+                  };
+                  dispath(addToConversationList([convo]));
+                }
+              })
+              .catch((error) =>
+                console.log("error file getting new conno for first message", error),
+              );
+            // upadte convo list
+          }
         } else {
           dispath(
             replaceOneToOneMessage({

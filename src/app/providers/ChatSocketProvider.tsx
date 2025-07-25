@@ -2,12 +2,17 @@ import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { TypedChatSocket } from "./Types/SocketIOConfig.types";
-import { addMessageToChat } from "@/features/chat/redux/chatSlice";
+import {
+  addMessageToChat,
+  addToConversationList,
+  recentConvoIdxHashMap,
+} from "@/features/chat/redux/chatSlice";
+import { getUserConvoById } from "@/features/chat/services/getUserConvoById";
+import { ConversationWithLastMessage } from "@/features/chat/Types/ConversationWithLastMessage";
 
 type ChatSocketContextType = {
   socket: TypedChatSocket | null;
 };
-
 export const ChatSocketContext = createContext<ChatSocketContextType>({
   socket: null,
 });
@@ -33,6 +38,20 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
 
     socket.on("new-one-to-one-message", (msg) => {
       dispath(addMessageToChat({ message: msg, otherUserId: msg.senderId }));
+      if (!recentConvoIdxHashMap[msg.conversationId]) {
+        getUserConvoById(msg.conversationId)
+          .then((data) => {
+            if (data.convo) {
+              const convo: ConversationWithLastMessage = {
+                ...data.convo,
+                unreadCount: 1,
+                lastMessage: msg,
+              };
+              dispath(addToConversationList([convo]));
+            }
+          })
+          .catch((error) => console.log("error file getting new conno for first message", error));
+      }
     });
 
     return () => {

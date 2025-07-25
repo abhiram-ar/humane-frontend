@@ -1,26 +1,46 @@
 import ProfilePicSmall from "@/components/ProfilePicSmall";
 import { CheckCheck } from "lucide-react";
-import React, { ComponentPropsWithoutRef } from "react";
+import React, { ComponentPropsWithoutRef, useEffect, useState } from "react";
 import useUserId from "@/hooks/useUserId";
 import { ConversationWithLastMessage } from "../../Types/ConversationWithLastMessage";
 import { BasicUserDetails } from "@/features/notification/Types/CombinedNotiWithActionableUser";
+import useFindOtherUserOfOnetoOneConvo from "../../hooks/useFindOtherUserOfOnetoOneConvo";
+import usePublicUserProfileQuery from "@/features/profile/hooks/usePublicUserProfileQuery";
+import { BaseConverstion } from "../../Types/Conversation";
 
 type Props = {
   convo: ConversationWithLastMessage & { otherUser?: BasicUserDetails };
 } & ComponentPropsWithoutRef<"div">;
+
 const ConversationListItem: React.FC<Props> = ({ convo, className }) => {
   const currentUserId = useUserId();
+  const [otherUserProfile, setOtherUserProfile] = useState<BasicUserDetails | undefined>(
+    convo.otherUser,
+  );
+  const find = useFindOtherUserOfOnetoOneConvo();
+
+  let otherParticipant: BaseConverstion["participants"][0] | undefined;
+  if (!convo.otherUser) {
+    otherParticipant = find(convo.participants);
+  }
+  const { user } = usePublicUserProfileQuery(otherParticipant?.userId);
+
+  useEffect(() => {
+    if (!user) return;
+    setOtherUserProfile(user);
+  }, [user]);
+
   return (
     <div className={`mb-2 flex h-fit cursor-pointer gap-3 ${className}`}>
       <div className="size-10 min-w-10 overflow-hidden rounded-full">
-        <ProfilePicSmall avatarURL={convo.otherUser?.avatarURL} />
+        <ProfilePicSmall avatarURL={otherUserProfile?.avatarURL} />
       </div>
 
       <div className="flex w-full items-center justify-between gap-2">
         <div className="">
           <p className="text-base">
-            {convo.otherUser
-              ? `${convo.otherUser.firstName} ${convo.otherUser.lastName || ""}`
+            {otherUserProfile
+              ? `${otherUserProfile.firstName} ${otherUserProfile.lastName || ""}`
               : "Humane user"}
           </p>
           <p className="flex items-center text-sm text-zinc-400">

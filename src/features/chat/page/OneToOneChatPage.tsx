@@ -123,7 +123,7 @@ const OneToOneChatPage = () => {
                 if (data.convo) {
                   const convo: ConversationWithLastMessage = {
                     ...data.convo,
-                    unreadCount: 1,
+                    unreadCount: 0,
                     lastMessage: ack.message,
                   };
                   dispath(addToConversationList([convo]));

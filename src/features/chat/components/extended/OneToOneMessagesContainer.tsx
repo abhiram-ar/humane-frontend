@@ -157,6 +157,15 @@ const OneToOneMessagesContainer: React.FC<Props> = ({
         <div className="text-pop-green absolute inset-0 mt-5 pb-5">
           {(isFetching || isLoading) && <Spinner />}
         </div>
+
+        {!isLoading && (!messages || messages.length === 0) && (
+          <div className="absolute inset-0 mt-2 flex w-full items-center justify-center text-white">
+            <div className="text-center">
+              <p>No message here yet</p>
+              <p className="text-pop-green">Send a message</p>
+            </div>
+          </div>
+        )}
         <div className="pt-2">
           {messages &&
             messages.map((message, idx) => (

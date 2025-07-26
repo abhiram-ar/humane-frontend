@@ -35,7 +35,7 @@ const Friends: React.FC<Props> = ({ children }) => {
       <DialogContent className="border-grey-dark-bg bg-[#272727]" aria-describedby="edit profile">
         <DialogClose ref={dialogCloseRef} />
         <DialogHeader>
-          <DialogTitle className="text-almost-white">Friends</DialogTitle>
+          <DialogTitle className="text-almost-white">Chat with</DialogTitle>
         </DialogHeader>
         <FriendList userId={userId} onUserClick={handleOnUserClick} />
       </DialogContent>

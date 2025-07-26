@@ -38,6 +38,7 @@ const useChatHistoryInfiniteQuery = (otherUserId: string, fromMessage?: Message 
     initialPageParam: fromString ?? "init",
     getNextPageParam: (lastPage) => (lastPage.pagination.hasMore ? lastPage.pagination.from : null),
     staleTime: Infinity,
+    retry: false,
   });
 };
 

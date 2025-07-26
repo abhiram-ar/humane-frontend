@@ -4,6 +4,7 @@ import { BasicUserDetails } from "@/features/notification/Types/CombinedNotiWith
 import { Message } from "../Types/Message";
 
 const oneToOneMessagesHistorySliceIdx = new Map<string, number>();
+const unReadConvoHahsset = new Set<string>();
 export const recentConvoIdxHashMap: Record<string, number> = {};
 
 export interface IChatState {
@@ -39,6 +40,7 @@ const chatSlice = createSlice({
 
         if (convo.unreadCount > 0) {
           state.unReadConvo += 1;
+          unReadConvoHahsset.add(convo.id);
         }
 
         state.recentConvo.sort(
@@ -53,6 +55,13 @@ const chatSlice = createSlice({
 
       const convo = state.recentConvo[convoIdx];
       convo.unreadCount = 0;
+
+      // we might call markOneToOneConvoAsReadFrequenctly
+      // so check if the conversation is unread before decrementing the counter
+      if (unReadConvoHahsset.has(action.payload.convoId)) {
+        state.unReadConvo -= 1;
+        unReadConvoHahsset.delete(action.payload.convoId);
+      }
     },
 
     setActiveConvo: (state, action: PayloadAction<{ converId: string }>) => {
@@ -121,6 +130,13 @@ const chatSlice = createSlice({
 
         if (state.activeConvo !== deletedConvo.id) {
           deletedConvo.unreadCount = (deletedConvo.unreadCount ?? 0) + 1;
+
+          // we might have frequent addMessageToChat
+          // so check if the conversation is read before incrementing the counter
+          if (!unReadConvoHahsset.has(deletedConvo.id)) {
+            state.unReadConvo += 1;
+            unReadConvoHahsset.add(deletedConvo.id);
+          }
         }
 
         state.recentConvo.unshift(deletedConvo);

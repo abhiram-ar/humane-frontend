@@ -9,20 +9,21 @@ export const recentConvoIdxHashMap: Record<string, number> = {};
 export interface IChatState {
   recentConvo: (ConversationWithLastMessage & { otherUser?: BasicUserDetails })[];
   unReadConvo: number;
+  activeConvo: string | null;
+  searchConvoQuery: string | null;
 
   oneToOnechats: Record<string, Message[]>;
   lastAddedMessageTypeMap: Record<string, "real-time" | "chat-history" | undefined>;
-
-  activeConvo: string | null;
 }
 
 const initialState: IChatState = {
   recentConvo: [],
   unReadConvo: 0,
+  searchConvoQuery: null,
+  activeConvo: null,
 
   oneToOnechats: {},
   lastAddedMessageTypeMap: {},
-  activeConvo: null,
 };
 
 const chatSlice = createSlice({
@@ -56,6 +57,14 @@ const chatSlice = createSlice({
 
     setActiveConvo: (state, action: PayloadAction<{ converId: string }>) => {
       state.activeConvo = action.payload.converId;
+    },
+
+    setConvoQuery: (state, action: PayloadAction<{ query: string }>) => {
+      if (!action.payload.query || action.payload.query.trim().length === 0) {
+        state.searchConvoQuery = null;
+      } else {
+        state.searchConvoQuery = action.payload.query.trim();
+      }
     },
 
     /**
@@ -153,6 +162,7 @@ export const {
   addToConversationList,
   markOneToOneConvoAsRead,
   addMessageToChat,
+  setConvoQuery,
   setActiveConvo,
   updateLastMessageOfConvo,
   replaceOneToOneMessage,

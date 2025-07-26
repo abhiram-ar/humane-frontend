@@ -1,13 +1,21 @@
+import { useAppDispatch } from "@/features/userAuth/hooks/store.hooks";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { setConvoQuery } from "../../redux/chatSlice";
 
 const SearchChatBar: React.FC = () => {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState<string>("");
+  const dispatch = useAppDispatch();
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => setQuery(value), 500);
-  //   return () => clearTimeout(timer);
-  // }, [value, setValue, setQuery]);
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    if (!value) {
+      dispatch(setConvoQuery({ query: value }));
+    } else {
+      timer = setTimeout(() => dispatch(setConvoQuery({ query: value })), 500);
+    }
+    return () => clearTimeout(timer);
+  }, [dispatch, value]);
 
   return (
     <div className="bg-grey-light group mx-3 flex h-12 items-center justify-center gap-3 rounded-2xl px-5 py-2">

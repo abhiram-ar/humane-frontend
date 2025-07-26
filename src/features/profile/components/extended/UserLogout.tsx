@@ -20,6 +20,7 @@ import usePublicHumaneScoreQuery from "../../../../hooks/usePublicUserHumaneScor
 import useUserId from "../../../../hooks/useUserId";
 import HumaneScoreNumberFlow from "@/components/HumaneScoreNumberFlow";
 import ProfilePicSmall from "@/components/ProfilePicSmall";
+import { useQueryClient } from "@tanstack/react-query";
 
 const UserLogout = () => {
   const [showLogo, setShowlogo] = useState(false);
@@ -29,11 +30,13 @@ const UserLogout = () => {
 
   const navigate = useNavigate();
   const dispath = useAppDispatch();
+  const queryClient = useQueryClient();
 
   const handleLogut = async () => {
     try {
       await api.post("/api/v1/user/auth/logout");
       dispath(logout());
+      queryClient.resetQueries();
       navigate("/auth/login", { replace: true });
     } catch (error) {
       console.error("error while logging out", error);

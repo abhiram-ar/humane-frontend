@@ -33,6 +33,7 @@ const useConversaionListInifiteQuery = () => {
     },
     initialPageParam: "ini",
     getNextPageParam: (lastPage) => (lastPage.pagination.hasMore ? lastPage.pagination.from : null),
+    staleTime: 10 * 1000,
   });
 };
 

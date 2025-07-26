@@ -53,7 +53,7 @@ const ConversationList = () => {
 
       <div ref={observerRef} />
 
-      <div className="pb-5">
+      <div className="mt-2 pb-5">
         {(isFetching || isLoading) && <Spinner />}
 
         {data && !hasNextPage && !isFetching && (

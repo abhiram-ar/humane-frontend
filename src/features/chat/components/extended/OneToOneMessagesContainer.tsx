@@ -34,6 +34,8 @@ const OneToOneMessagesContainer: React.FC<Props> = ({
   const scrollToViewTargetRef = useRef<HTMLDivElement>(null);
   const [showScrollToView, setShowScrollToView] = useState(false);
 
+  // if we have messges only recived via websockets,
+  // then we can use the first id of such messges to prevent duplicate fething from HTTTP
   const { data, isFetching, hasNextPage, fetchNextPage, isLoading } = useChatHistoryInfiniteQuery(
     otherUserId,
     messages?.[0],

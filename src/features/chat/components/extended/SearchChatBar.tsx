@@ -12,7 +12,7 @@ const SearchChatBar: React.FC = () => {
     if (!value) {
       dispatch(setConvoQuery({ query: value }));
     } else {
-      timer = setTimeout(() => dispatch(setConvoQuery({ query: value })), 500);
+      timer = setTimeout(() => dispatch(setConvoQuery({ query: value })), 200);
     }
     return () => clearTimeout(timer);
   }, [dispatch, value]);

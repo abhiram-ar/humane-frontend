@@ -7,17 +7,20 @@ import { prependMessagesToOneToOneChat } from "../../redux/chatSlice.tsx";
 import ScrollToView from "./ScrollToView.tsx";
 import useChatHistoryInfiniteQuery from "../../hooks/useChatHistoryInfiniteQuery.tsx";
 import Spinner from "@/components/Spinner.tsx";
+import { Message } from "../../Types/Message.ts";
 
 type Props = {
   otherUserId: string;
   containerRef: React.RefObject<HTMLDivElement | null>;
   handleOnMessageUpdate?: () => void;
+  onMessageDeleteClick(message: Message): Promise<void>;
 };
 
 const OneToOneMessagesContainer: React.FC<Props> = ({
   otherUserId,
   containerRef,
   handleOnMessageUpdate,
+  onMessageDeleteClick,
 }) => {
   const authenticatedUserId = useUserId();
   const { messages, lastInsertedMessageType } = useAppSelector((state) => ({
@@ -174,7 +177,7 @@ const OneToOneMessagesContainer: React.FC<Props> = ({
                 key={message.id}
               >
                 {authenticatedUserId && authenticatedUserId === message.senderId ? (
-                  <UserMessage message={message} />
+                  <UserMessage onDeleteClick={onMessageDeleteClick} message={message} />
                 ) : (
                   <OtherParticipantMessage message={message} />
                 )}

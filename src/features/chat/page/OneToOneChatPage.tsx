@@ -11,6 +11,7 @@ import { useAppDispatch } from "@/features/userAuth/hooks/store.hooks";
 import {
   addMessageToChat,
   addToConversationList,
+  deleteOneToOneMessage,
   markOneToOneConvoAsRead,
   recentConvoIdxHashMap,
   replaceOneToOneMessage,
@@ -24,6 +25,9 @@ import OneToOneChatHeader from "../components/extended/OneToOneChatHeader";
 import useOneToOneConvoByOtherUserQuery from "../hooks/useOneToOneConvpByOtherUserQuery";
 import { getUserConvoById } from "../services/getUserConvoById";
 import { ConversationWithLastMessage } from "../Types/ConversationWithLastMessage";
+import toast from "react-hot-toast";
+import { toastMessages } from "@/constants/ToastMessages";
+import useFindOtherUserOfOnetoOneConvo from "../hooks/useFindOtherUserOfOnetoOneConvo";
 
 const OneToOneChatPage = () => {
   const { socket } = useChatSocketProvider();
@@ -32,6 +36,7 @@ const OneToOneChatPage = () => {
   const authenticatedUserId = useUserId();
   const messageContainerRef = useRef<HTMLDivElement>(null);
   const { state } = useLocation();
+  const find = useFindOtherUserOfOnetoOneConvo();
 
   const { data: convo } = useOneToOneConvoByOtherUserQuery(otherUserId, state?.convo);
 
@@ -152,6 +157,45 @@ const OneToOneChatPage = () => {
     socket.emit("convo-opened", { convoId: convo.id, time: new Date() });
   };
 
+  const handleMessageDelete = async (message: Message): Promise<void> => {
+    if (!socket || !convo) {
+      toast.error(toastMessages.CANNOT_DELETE_MESSAGE);
+      return;
+    }
+
+    const otherUser = find(convo.participants);
+
+    if (convo.type === "one-to-one") {
+      dispath(
+        replaceOneToOneMessage({
+          otherUserId: otherUser.userId,
+          messageId: message.id,
+          newMessage: { ...message, sendStatus: "pending" },
+        }),
+      );
+    }
+
+    socket.emit("delete-message", { convoId: convo.id, messageId: message.id }, (ack) => {
+      console.log("server-dele-ack", ack);
+      if (ack) {
+        if (convo.type === "one-to-one") {
+          dispath(deleteOneToOneMessage({ otherUserId: otherUser.userId, messageId: message.id }));
+        }
+      } else {
+        toast.error(toastMessages.ERROR_DELETING_MESSAGE);
+        if (convo.type === "one-to-one") {
+          dispath(
+            replaceOneToOneMessage({
+              otherUserId: otherUser.userId,
+              messageId: message.id,
+              newMessage: { ...message },
+            }),
+          );
+        }
+      }
+    });
+  };
+
   return (
     <div className="relative h-screen w-full overflow-y-hidden">
       <div className="text-pop-green bg-grey-dark-bg/50 sticky top-0 z-20 backdrop-blur-lg">
@@ -162,6 +206,7 @@ const OneToOneChatPage = () => {
         otherUserId={otherUserId}
         containerRef={messageContainerRef}
         handleOnMessageUpdate={handleOnMessageUpdate}
+        onMessageDeleteClick={handleMessageDelete}
       />
       <div className="absolute bottom-0 left-1/2 z-30 w-4/5 -translate-x-1/2">
         <SendMessageBar handleOnSubmit={handleOnSubmit} />

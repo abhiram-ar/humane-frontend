@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { CheckCheck, CircleX, Clock } from "lucide-react";
+import { CheckCheck, CircleX, Clock, Trash2 } from "lucide-react";
 import React from "react";
 import { Message } from "../../Types/Message";
 import VideoPlayer from "@/components/videoPlayer/VideoPlayer";
@@ -8,17 +8,29 @@ import ChatImageAttachment from "./ChatImageAttachment";
 
 type Props = {
   message: Message;
+  onDeleteClick(message: Message): Promise<void>;
 };
 
-const UserMessage: React.FC<Props> = ({ message }) => {
+const UserMessage: React.FC<Props> = ({ message, onDeleteClick }) => {
   const timeString = format(message.sendAt, "hh:mm a - dd MMM");
   return (
-    <div className="mb-1 flex w-full">
+    <div className="group mb-1 flex w-full">
       {/* options */}
-      <div className="w-full"></div>
+      <div className="flex w-full items-center justify-end text-white">
+        {!message.sendStatus && (
+          <div className="translate-y-5 scale-50 cursor-pointer opacity-0 transition-all delay-0 duration-100 ease-in group-hover:block group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100 group-hover:delay-500 group-hover:ease-out">
+            <div
+              onClick={() => onDeleteClick(message)}
+              className="mx-2 rounded-full p-2 hover:bg-zinc-400/50"
+            >
+              <Trash2 size={20} />
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* message itself */}
-      <div className="bg-green-subtle/95 hover:bg-green-subtle relative me-2 min-w-30 rounded-t-lg rounded-bl-lg p-2 pb-5 max-w-3/5">
+      <div className="bg-green-subtle/95 group-hover:bg-green-subtle relative me-2 max-w-3/5 min-w-30 rounded-t-lg rounded-bl-lg p-2 pb-5">
         {message.attachment &&
           message.attachment.attachmentType?.startsWith("image/") &&
           message.attachment.attachmentURL && (

@@ -5,6 +5,7 @@ import { TypedChatSocket } from "./Types/SocketIOConfig.types";
 import {
   addMessageToChat,
   addToConversationList,
+  deleteOneToOneMessage,
   recentConvoIdxHashMap,
 } from "@/features/chat/redux/chatSlice";
 import { getUserConvoById } from "@/features/chat/services/getUserConvoById";
@@ -51,6 +52,15 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
             }
           })
           .catch((error) => console.log("error file getting new conno for first message", error));
+      }
+    });
+
+    socket.on("message-deleted", (event) => {
+      console.log(event);
+      if (event.convoType === "one-to-one") {
+        dispath(
+          deleteOneToOneMessage({ otherUserId: event.deletedBy, messageId: event.message.id }),
+        );
       }
     });
 

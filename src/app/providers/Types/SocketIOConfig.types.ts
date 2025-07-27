@@ -1,11 +1,16 @@
 import { Message } from "@/features/chat/Types/Message";
 import { SendOneToOneMessageInputDTO } from "./CreateOneToOneMessage.dto";
 import { Socket } from "socket.io-client";
+import { Conversation } from "@/features/chat/Types/Conversation";
 
 export interface ServerToClientChatEvents {
   test: (msg: unknown) => void;
   "new-one-to-one-message": (message: Required<Message>) => void;
-  "remove-noti": (noti: unknown) => void;
+  "message-deleted": (event: {
+    message: Message;
+    convoType: Conversation["type"];
+    deletedBy: string;
+  }) => void;
   "update-noti": (noti: unknown) => void;
   withAck: (d: string, callback: (e: number) => void) => void;
 }
@@ -13,6 +18,10 @@ export interface ServerToClientChatEvents {
 export interface ClientToServerChatEvents {
   hello: () => void;
   "convo-opened": (dto: { time: Date; convoId: string }) => void;
+  "delete-message": (
+    dto: { convoId: string; messageId: string },
+    callback: (ack: boolean) => void,
+  ) => void;
   "send-one-to-one-message": (
     dto: SendOneToOneMessageInputDTO,
     callback: (data: { message: Required<Message> | undefined; success: boolean }) => void,

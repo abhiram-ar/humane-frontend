@@ -171,6 +171,17 @@ const chatSlice = createSlice({
         }
       }
     },
+
+    deleteOneToOneMessage: (
+      state,
+      action: PayloadAction<{ otherUserId: string; messageId: string }>,
+    ) => {
+      let chatMessage = state.oneToOnechats[action.payload.otherUserId];
+      if (chatMessage) {
+        chatMessage = chatMessage.filter((message) => message.id !== action.payload.messageId);
+        state.oneToOnechats[action.payload.otherUserId] = chatMessage;
+      }
+    },
   },
 });
 
@@ -182,6 +193,7 @@ export const {
   setActiveConvo,
   updateLastMessageOfConvo,
   replaceOneToOneMessage,
+  deleteOneToOneMessage,
   prependMessagesToOneToOneChat,
 } = chatSlice.actions;
 export default chatSlice.reducer;

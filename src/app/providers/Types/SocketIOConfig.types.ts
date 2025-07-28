@@ -5,9 +5,9 @@ import { Conversation } from "@/features/chat/Types/Conversation";
 
 export interface ServerToClientChatEvents {
   test: (msg: unknown) => void;
-  "new-one-to-one-message": (message: Required<Message>) => void;
+  "new-one-to-one-message": (message: Message, participants: Conversation["participants"]) => void;
   "one-to-one-message-deleted": (event: {
-    message: Required<Message>;
+    message: Message;
     participants: Conversation["participants"];
   }) => void;
   "update-noti": (noti: unknown) => void;

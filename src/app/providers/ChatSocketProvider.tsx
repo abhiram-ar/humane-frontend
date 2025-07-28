@@ -39,8 +39,10 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
       console.log("chat-test-msg", msg);
     });
 
-    socket.on("new-one-to-one-message", (msg) => {
-      dispath(addMessageToChat({ message: msg, otherUserId: msg.senderId }));
+    socket.on("new-one-to-one-message", (msg, participants) => {
+      console.log("new-one-toone", msg);
+      const otherUser = find(participants);
+      dispath(addMessageToChat({ message: msg, otherUserId: otherUser.userId }));
       if (!recentConvoIdxHashMap[msg.conversationId]) {
         getUserConvoById(msg.conversationId)
           .then((data) => {

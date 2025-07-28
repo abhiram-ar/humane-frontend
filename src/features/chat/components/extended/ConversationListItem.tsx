@@ -50,13 +50,18 @@ const ConversationListItem: React.FC<Props> = ({ convo, className }) => {
             {convo.lastMessage && (
               <>
                 {" "}
-                {convo.lastMessage.senderId === currentUserId && (
-                  <CheckCheck className="text-pop-green/70 me-1" size={18} />
-                )}
+                {convo.lastMessage.senderId === currentUserId &&
+                  !convo.lastMessage.status?.deleted && (
+                    <CheckCheck className="text-pop-green/70 me-1" size={18} />
+                  )}
                 <span className="inline-block max-w-60 truncate overflow-hidden align-middle text-ellipsis">
                   {convo.lastMessage.message}
                 </span>
               </>
+            )}
+
+            {convo.lastMessage?.status?.deleted && (
+              <span className="text-sm text-zinc-400 italic">message deleted</span>
             )}
           </p>
         </div>

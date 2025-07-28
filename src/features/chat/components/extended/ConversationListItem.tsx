@@ -7,6 +7,7 @@ import { BasicUserDetails } from "@/features/notification/Types/CombinedNotiWith
 import useFindOtherUserOfOnetoOneConvo from "../../hooks/useFindOtherUserOfOnetoOneConvo";
 import usePublicUserProfileQuery from "@/features/profile/hooks/usePublicUserProfileQuery";
 import { BaseConverstion } from "../../Types/Conversation";
+import TypingIndicatorReplacement from "./TypingIndicatorReplacment";
 
 type Props = {
   convo: ConversationWithLastMessage & { otherUser?: BasicUserDetails };
@@ -43,27 +44,33 @@ const ConversationListItem: React.FC<Props> = ({ convo, className }) => {
               ? `${otherUserProfile.firstName} ${otherUserProfile.lastName || ""}`
               : "Humane user"}
           </p>
-          <p className="flex items-center text-sm text-zinc-400">
-            {/* only for groups: display the author of last message */}
-            {convo.type === "group" && convo.lastMessage?.senderId === currentUserId ? "you:" : ""}
 
-            {convo.lastMessage && (
-              <>
-                {" "}
-                {convo.lastMessage.senderId === currentUserId &&
-                  !convo.lastMessage.status?.deleted && (
-                    <CheckCheck className="text-pop-green/70 me-1" size={18} />
-                  )}
-                <span className="inline-block max-w-60 truncate overflow-hidden align-middle text-ellipsis">
-                  {convo.lastMessage.message}
-                </span>
-              </>
-            )}
+          {/* replace with typing indicator if there is any */}
+          <TypingIndicatorReplacement className="text-pop-green/80 text-sm" convoId={convo.id}>
+            <p className="flex items-center text-sm text-zinc-400">
+              {/* only for groups: display the author of last message */}
+              {convo.type === "group" && convo.lastMessage?.senderId === currentUserId
+                ? "you:"
+                : ""}
 
-            {convo.lastMessage?.status?.deleted && (
-              <span className="text-sm text-zinc-400 italic">message deleted</span>
-            )}
-          </p>
+              {convo.lastMessage && (
+                <>
+                  {" "}
+                  {convo.lastMessage.senderId === currentUserId &&
+                    !convo.lastMessage.status?.deleted && (
+                      <CheckCheck className="text-pop-green/70 me-1" size={18} />
+                    )}
+                  <span className="inline-block max-w-60 truncate overflow-hidden align-middle text-ellipsis">
+                    {convo.lastMessage.message}
+                  </span>
+                </>
+              )}
+
+              {convo.lastMessage?.status?.deleted && (
+                <span className="text-sm text-zinc-400 italic">message deleted</span>
+              )}
+            </p>
+          </TypingIndicatorReplacement>
         </div>
         {convo.unreadCount > 0 && (
           <p className="bg-pop-green/90 size-fit rounded-full p-0.5 px-1.5 text-center align-middle text-xs text-black">

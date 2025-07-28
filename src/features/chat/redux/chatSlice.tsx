@@ -14,7 +14,7 @@ export interface IChatState {
   searchConvoQuery: string | null;
 
   oneToOnechats: Record<string, Message[]>; // key => otherUserId
-  oneToOneChatTypingRegisteredAtMap: Record<string, string>;
+  oneToOneChatTypingRegisteredAtMap: Record<string, string>; // key => convoId
   lastAddedMessageTypeMap: Record<string, "real-time" | "chat-history" | undefined>;
 }
 
@@ -206,9 +206,10 @@ const chatSlice = createSlice({
       state,
       action: PayloadAction<{
         otherUserId: string;
+        convoId: string;
       }>,
     ) => {
-      state.oneToOneChatTypingRegisteredAtMap[action.payload.otherUserId] = new Date().toString();
+      state.oneToOneChatTypingRegisteredAtMap[action.payload.convoId] = new Date().toString();
     },
   },
 });

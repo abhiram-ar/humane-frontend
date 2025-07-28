@@ -3,14 +3,14 @@ import { useAppSelector } from "@/features/userAuth/hooks/store.hooks";
 import { Dot } from "lucide-react";
 import React, { ComponentPropsWithoutRef, useEffect, useState } from "react";
 
-type Props = { userId?: string } & ComponentPropsWithoutRef<"div">;
+type Props = { userId?: string; convoId?: string } & ComponentPropsWithoutRef<"div">;
 
-const UserOnlineAndTypingIndicator: React.FC<Props> = ({ userId, ...props }) => {
+const UserOnlineAndTypingIndicator: React.FC<Props> = ({ userId, convoId, ...props }) => {
   const [isUserOnline, setUserOnline] = useState(false);
   const { socket } = useChatSocketProvider();
   const [typing, setTyping] = useState(false);
   const typingRegisteredAt = useAppSelector((state) =>
-    userId ? state.chat.oneToOneChatTypingRegisteredAtMap[userId] : undefined,
+    convoId ? state.chat.oneToOneChatTypingRegisteredAtMap[convoId] : undefined,
   );
 
   useEffect(() => {

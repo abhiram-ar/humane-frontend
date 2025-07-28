@@ -9,9 +9,10 @@ import UserOnlineAndTypingIndicator from "./UserOnlineAndTypingIndicator";
 
 type Props = {
   otherUserId: string;
+  convoId?: string,
 };
 
-const OneToOneChatHeader: React.FC<Props> = ({ otherUserId }) => {
+const OneToOneChatHeader: React.FC<Props> = ({ otherUserId,convoId }) => {
   const { user, httpStatus } = usePublicUserProfileQuery(otherUserId ?? "invalid");
 
   return (
@@ -28,7 +29,7 @@ const OneToOneChatHeader: React.FC<Props> = ({ otherUserId }) => {
                 </p>
               </Link>
 
-              <UserOnlineAndTypingIndicator userId={otherUserId} />
+              <UserOnlineAndTypingIndicator userId={otherUserId} convoId={convoId} />
             </div>
           ) : (
             <Skeleton className="w-20 text-transparent">.</Skeleton>

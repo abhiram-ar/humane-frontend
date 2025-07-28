@@ -41,7 +41,6 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
     });
 
     socket.on("new-one-to-one-message", (msg, participants) => {
-      console.log("new-one-toone", msg);
       const otherUser = find(participants);
       dispath(addMessageToChat({ message: msg, otherUserId: otherUser.userId }));
       if (!recentConvoIdxHashMap[msg.conversationId]) {
@@ -61,7 +60,6 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
     });
 
     socket.on("one-to-one-message-deleted", (event) => {
-      console.log(event);
       const otherUser = find(event.participants);
       dispath(
         deleteOneToOneMessage({
@@ -71,11 +69,11 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
       );
     });
 
-    socket.on("typing-one-to-one-message", (typingUser) => {
-      console.log("typing-in", typingUser);
+    socket.on("typing-one-to-one-message", (event) => {
       dispath(
         setOneToOneChatTypingIndicator({
-          otherUserId: typingUser,
+          otherUserId: event.typingUser,
+          convoId: event.convoId,
         }),
       );
     });

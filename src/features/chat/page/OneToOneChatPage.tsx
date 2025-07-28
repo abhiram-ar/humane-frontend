@@ -212,9 +212,9 @@ const OneToOneChatPage = () => {
     return () => {
       if (locked) return;
 
-      if (!socket) return;
+      if (!socket || !convo) return;
       locked = true;
-      socket.emit("typing-one-to-one-message", otherUserId);
+      socket.emit("typing-one-to-one-message", { otherUserId, convoId: convo.id });
       console.log("fired-typing");
 
       setTimeout(() => {
@@ -227,7 +227,7 @@ const OneToOneChatPage = () => {
     <div className="relative h-screen w-full overflow-y-hidden">
       <div className="absolute top-0 z-20 w-full">
         <div className="bg-grey-dark-bg/50 backdrop-blur-lg">
-          <OneToOneChatHeader otherUserId={otherUserId} />
+          <OneToOneChatHeader otherUserId={otherUserId} convoId={convo?.id} />
         </div>
       </div>
 

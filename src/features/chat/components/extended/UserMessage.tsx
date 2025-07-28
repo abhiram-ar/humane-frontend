@@ -17,7 +17,7 @@ const UserMessage: React.FC<Props> = ({ message, onDeleteClick }) => {
     <div className="group mb-1 flex w-full">
       {/* options */}
       <div className="flex w-full items-center justify-end text-white">
-        {!message.sendStatus && (
+        {!message.sendStatus && !message.status?.deleted && (
           <div className="translate-y-5 scale-50 cursor-pointer opacity-0 transition-all delay-0 duration-100 ease-in group-hover:block group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100 group-hover:delay-500 group-hover:ease-out">
             <div
               onClick={() => onDeleteClick(message)}
@@ -59,7 +59,11 @@ const UserMessage: React.FC<Props> = ({ message, onDeleteClick }) => {
               </div>
             </div>
           )}
-        <p>{message.message}</p>
+        {!message.status?.deleted ? (
+          <p>{message.message}</p>
+        ) : (
+          <p className="text-sm text-zinc-600 italic">message deleted</p>
+        )}
 
         {/* medtadata */}
         <div className="absolute right-1 bottom-1 flex w-fit items-center gap-1 text-xs text-zinc-500">
@@ -70,7 +74,9 @@ const UserMessage: React.FC<Props> = ({ message, onDeleteClick }) => {
             <CircleX className="fill-red-400" size={13} />
           )}
 
-          {!message.sendStatus && <CheckCheck className="text-green-800" size={13} />}
+          {!message.sendStatus && !message.status?.deleted && (
+            <CheckCheck className="text-green-800" size={13} />
+          )}
         </div>
       </div>
     </div>

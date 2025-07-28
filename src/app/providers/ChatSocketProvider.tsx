@@ -10,6 +10,7 @@ import {
 } from "@/features/chat/redux/chatSlice";
 import { getUserConvoById } from "@/features/chat/services/getUserConvoById";
 import { ConversationWithLastMessage } from "@/features/chat/Types/ConversationWithLastMessage";
+import useFindOtherUserOfOnetoOneConvo from "@/features/chat/hooks/useFindOtherUserOfOnetoOneConvo";
 
 type ChatSocketContextType = {
   socket: TypedChatSocket | null;
@@ -22,6 +23,7 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
   const token = useAppSelector((state) => state.userAuth.token);
   const [chatSocket, setChatSocket] = useState<TypedChatSocket | null>(null);
   const dispath = useAppDispatch();
+  const find = useFindOtherUserOfOnetoOneConvo();
 
   useEffect(() => {
     if (!token) return;
@@ -55,13 +57,15 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
       }
     });
 
-    socket.on("message-deleted", (event) => {
+    socket.on("one-to-one-message-deleted", (event) => {
       console.log(event);
-      if (event.convoType === "one-to-one") {
-        dispath(
-          deleteOneToOneMessage({ otherUserId: event.deletedBy, messageId: event.message.id }),
-        );
-      }
+      const otherUser = find(event.participants);
+      dispath(
+        deleteOneToOneMessage({
+          otherUserId: otherUser.userId,
+          deletedMessage: event.message,
+        }),
+      );
     });
 
     return () => {

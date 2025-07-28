@@ -43,7 +43,12 @@ const OtherParticipantMessage: React.FC<Props> = ({ message }) => {
               </div>
             </div>
           )}
-        <p>{message.message}</p>
+
+        {!message.status?.deleted ? (
+          <p>{message.message}</p>
+        ) : (
+          <p className="w-fit text-sm text-nowrap text-zinc-600 italic">message deleted</p>
+        )}
 
         {/* medtadata */}
         <div className="absolute right-2 bottom-1 flex w-fit items-center gap-1 text-xs text-zinc-500">

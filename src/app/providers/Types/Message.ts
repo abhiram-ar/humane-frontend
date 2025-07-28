@@ -7,7 +7,7 @@ export type Message = {
 
   sendAt: Date;
   isReadBy: string[];
-  deletededFor: string[];
+  status: { deleted: boolean; deletedAt: Date } | undefined;
 
   attachment: { attachmentType: string; attachmentURL: string } | undefined;
   replyToMessageId: string | undefined;

@@ -99,6 +99,7 @@ const OneToOneChatPage = () => {
         attachment: tempAttachment,
         replyToMessageId: undefined,
         sendStatus: "pending",
+        status: undefined,
       };
 
       dispath(addMessageToChat({ otherUserId: messageData.to, message: tempMessage }));
@@ -165,25 +166,34 @@ const OneToOneChatPage = () => {
 
     const otherUser = find(convo.participants);
 
-    if (convo.type === "one-to-one") {
-      dispath(
-        replaceOneToOneMessage({
-          otherUserId: otherUser.userId,
-          messageId: message.id,
-          newMessage: { ...message, sendStatus: "pending" },
-        }),
-      );
-    }
+    dispath(
+      replaceOneToOneMessage({
+        otherUserId: otherUser.userId,
+        messageId: message.id,
+        newMessage: { ...message, sendStatus: "pending" },
+      }),
+    );
 
-    socket.emit("delete-message", { convoId: convo.id, messageId: message.id }, (ack) => {
-      console.log("server-dele-ack", ack);
-      if (ack) {
-        if (convo.type === "one-to-one") {
-          dispath(deleteOneToOneMessage({ otherUserId: otherUser.userId, messageId: message.id }));
-        }
-      } else {
-        toast.error(toastMessages.ERROR_DELETING_MESSAGE);
-        if (convo.type === "one-to-one") {
+    socket.emit(
+      "delete-one-to-one-message",
+      { otherUserId: otherUser.userId, messageId: message.id },
+      (ack) => {
+        console.log("server-dele-ack", ack);
+        if (ack) {
+          dispath(
+            deleteOneToOneMessage({
+              otherUserId: otherUser.userId,
+              // the client of the user which send the delete event will not recive "one-to-one-message" deleted event
+              // we need to manually update the message optimistically
+              deletedMessage: {
+                ...message,
+                message: "",
+                status: { deleted: true, deletedAt: new Date().toString() },
+              },
+            }),
+          );
+        } else {
+          toast.error(toastMessages.ERROR_DELETING_MESSAGE);
           dispath(
             replaceOneToOneMessage({
               otherUserId: otherUser.userId,
@@ -192,8 +202,8 @@ const OneToOneChatPage = () => {
             }),
           );
         }
-      }
-    });
+      },
+    );
   };
 
   return (

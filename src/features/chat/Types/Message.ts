@@ -7,6 +7,7 @@ export type Message = {
 
   sendAt: string;
   deletededFor: string[];
+  status: { deleted: boolean; deletedAt: string } | undefined;
 
   attachment: { attachmentType: string; attachmentURL: string | undefined } | undefined;
   replyToMessageId: string | undefined;

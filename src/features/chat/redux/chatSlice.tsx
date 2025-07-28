@@ -174,12 +174,29 @@ const chatSlice = createSlice({
 
     deleteOneToOneMessage: (
       state,
-      action: PayloadAction<{ otherUserId: string; messageId: string }>,
+      action: PayloadAction<{ otherUserId: string; deletedMessage: Message }>,
     ) => {
-      let chatMessage = state.oneToOnechats[action.payload.otherUserId];
+      const chatMessage = state.oneToOnechats[action.payload.otherUserId];
       if (chatMessage) {
-        chatMessage = chatMessage.filter((message) => message.id !== action.payload.messageId);
+        const deleteMessageIdx = chatMessage.findIndex(
+          (message) => message.id === action.payload.deletedMessage.id,
+        );
+
+        if (deleteMessageIdx !== -1) {
+          chatMessage[deleteMessageIdx] = action.payload.deletedMessage;
+        }
+
         state.oneToOnechats[action.payload.otherUserId] = chatMessage;
+
+        const convoIdx = state.recentConvo.findIndex(
+          (convo) => convo.id === action.payload.deletedMessage.conversationId,
+        );
+        if (
+          convoIdx !== -1 &&
+          state.recentConvo[convoIdx].lastMessage?.id === action.payload.deletedMessage.id
+        ) {
+          state.recentConvo[convoIdx].lastMessage = action.payload.deletedMessage;
+        }
       }
     },
   },

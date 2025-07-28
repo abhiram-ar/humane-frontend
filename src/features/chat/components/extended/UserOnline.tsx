@@ -34,7 +34,7 @@ const UserOnline: React.FC<Props> = ({ userId, ...props }) => {
       <div
         className={`text-pop-green flex stroke-5 opacity-0 transition-all duration-200 ${isUserOnline ? "opacity-100" : ""}`}
       >
-        <Dot />
+        <Dot className="text-zinc-400" />
         <p className="relative">Online</p>
       </div>
     </div>

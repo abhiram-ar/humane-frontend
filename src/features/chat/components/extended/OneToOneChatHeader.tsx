@@ -38,7 +38,7 @@ const OneToOneChatHeader: React.FC<Props> = ({ otherUserId }) => {
           </div>
         </div>
       </div>
-      <div className="text-almost-white flex items-center gap-1 xl:gap-3 overflow-hidden rounded-xl border-zinc-400/50 px-3">
+      <div className="text-almost-white flex items-center gap-1 overflow-hidden rounded-xl border-zinc-400/50 px-3 xl:gap-3">
         <div className="hover:bg-green-subtle/90 rounded-full p-2 hover:text-black">
           <Phone size={20} />
         </div>

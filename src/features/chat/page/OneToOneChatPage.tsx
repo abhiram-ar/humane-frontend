@@ -208,8 +208,10 @@ const OneToOneChatPage = () => {
 
   return (
     <div className="relative h-screen w-full overflow-y-hidden">
-      <div className="text-pop-green bg-grey-dark-bg/50 absolute top-0 z-20 w-full backdrop-blur-lg">
-        <OneToOneChatHeader otherUserId={otherUserId} />
+      <div className="absolute top-0 z-20 w-full">
+        <div className="bg-grey-dark-bg/50 backdrop-blur-lg">
+          <OneToOneChatHeader otherUserId={otherUserId} />
+        </div>
       </div>
 
       <OneToOneMessagesContainer

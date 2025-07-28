@@ -206,6 +206,23 @@ const OneToOneChatPage = () => {
     );
   };
 
+  const throttleUserTypingEventEmmiter = () => {
+    let locked: boolean = false;
+
+    return () => {
+      if (locked) return;
+
+      if (!socket) return;
+      locked = true;
+      socket.emit("typing-one-to-one-message", otherUserId);
+      console.log("fired-typing");
+
+      setTimeout(() => {
+        locked = false;
+      }, 2 * 1000);
+    };
+  };
+
   return (
     <div className="relative h-screen w-full overflow-y-hidden">
       <div className="absolute top-0 z-20 w-full">
@@ -222,7 +239,10 @@ const OneToOneChatPage = () => {
       />
 
       <div className="absolute bottom-0 z-30 w-full lg:left-1/2 lg:w-4/5 lg:-translate-x-1/2">
-        <SendMessageBar handleOnSubmit={handleOnSubmit} />
+        <SendMessageBar
+          handleOnSubmit={handleOnSubmit}
+          onTyping={throttleUserTypingEventEmmiter()}
+        />
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import usePublicUserProfileQuery from "@/features/profile/hooks/usePublicUserPro
 import { Phone, Video } from "lucide-react";
 import React from "react";
 import { Link } from "react-router";
-import UserOnline from "./UserOnline";
+import UserOnlineAndTypingIndicator from "./UserOnlineAndTypingIndicator";
 
 type Props = {
   otherUserId: string;
@@ -28,7 +28,7 @@ const OneToOneChatHeader: React.FC<Props> = ({ otherUserId }) => {
                 </p>
               </Link>
 
-              <UserOnline userId={otherUserId} />
+              <UserOnlineAndTypingIndicator userId={otherUserId} />
             </div>
           ) : (
             <Skeleton className="w-20 text-transparent">.</Skeleton>

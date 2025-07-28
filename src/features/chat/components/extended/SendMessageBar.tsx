@@ -8,9 +8,10 @@ import { CreateMessageFields, createMessageSchema } from "../../Types/CreateMess
 
 type Props = {
   handleOnSubmit: (data: CreateMessageFields) => void;
+  onTyping: () => void;
 };
 
-const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
+const SendMessageBar: React.FC<Props> = ({ handleOnSubmit, onTyping }) => {
   const attachmentFileInputRef = useRef<HTMLInputElement | null>(null);
 
   const {
@@ -145,9 +146,15 @@ const SendMessageBar: React.FC<Props> = ({ handleOnSubmit }) => {
             id="message-input"
             style={{ overflow: "hidden" }}
             onInput={(e) => {
+              // auto height adjust for text ares
               const target = e.target as HTMLTextAreaElement;
               target.style.height = "auto";
               target.style.height = `${target.scrollHeight}px`;
+
+              // typing indicator fire
+              if (target.value.trim().length > 0) {
+                onTyping();
+              }
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {

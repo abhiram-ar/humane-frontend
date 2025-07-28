@@ -13,7 +13,7 @@ export interface ServerToClientChatEvents {
     participants: Conversation["participants"];
   }) => void;
 
-  "update-noti": (noti: unknown) => void;
+  "typing-one-to-one-message": (typingUser: string) => void;
 
   withAck: (d: string, callback: (e: number) => void) => void;
 }
@@ -34,6 +34,9 @@ export interface ClientToServerChatEvents {
   ) => void;
 
   "is-user-online": (userId: string, callback: (ack: boolean) => void) => void;
+
+  // stop typing is handled by reciver
+  "typing-one-to-one-message": (otherUserId: string) => void;
 }
 
 export interface ClientToServerEvents {

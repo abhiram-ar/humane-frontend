@@ -7,6 +7,7 @@ import {
   addToConversationList,
   deleteOneToOneMessage,
   recentConvoIdxHashMap,
+  setOneToOneChatTypingIndicator,
 } from "@/features/chat/redux/chatSlice";
 import { getUserConvoById } from "@/features/chat/services/getUserConvoById";
 import { ConversationWithLastMessage } from "@/features/chat/Types/ConversationWithLastMessage";
@@ -66,6 +67,15 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
         deleteOneToOneMessage({
           otherUserId: otherUser.userId,
           deletedMessage: event.message,
+        }),
+      );
+    });
+
+    socket.on("typing-one-to-one-message", (typingUser) => {
+      console.log("typing-in", typingUser);
+      dispath(
+        setOneToOneChatTypingIndicator({
+          otherUserId: typingUser,
         }),
       );
     });

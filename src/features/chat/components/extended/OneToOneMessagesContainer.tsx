@@ -155,7 +155,7 @@ const OneToOneMessagesContainer: React.FC<Props> = ({
     <>
       <div
         ref={observerRef}
-        className="relative flex max-h-10/12 min-h-10/12 flex-col justify-end-safe overflow-y-scroll"
+        className="relative flex max-h-[91vh] min-h-[91vh] flex-col justify-end-safe overflow-y-scroll"
       >
         <div className="text-pop-green absolute inset-0 mt-5 pb-5">
           {(isFetching || isLoading) && <Spinner />}

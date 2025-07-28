@@ -208,7 +208,7 @@ const OneToOneChatPage = () => {
 
   return (
     <div className="relative h-screen w-full overflow-y-hidden">
-      <div className="text-pop-green bg-grey-dark-bg/50 sticky top-0 z-20 backdrop-blur-lg">
+      <div className="text-pop-green bg-grey-dark-bg/50 absolute top-0 z-20 w-full backdrop-blur-lg">
         <OneToOneChatHeader otherUserId={otherUserId} />
       </div>
 
@@ -218,7 +218,8 @@ const OneToOneChatPage = () => {
         handleOnMessageUpdate={handleOnMessageUpdate}
         onMessageDeleteClick={handleMessageDelete}
       />
-      <div className="absolute bottom-0 left-1/2 z-30 w-4/5 -translate-x-1/2">
+
+      <div className="absolute bottom-0 z-30 w-full lg:left-1/2 lg:w-4/5 lg:-translate-x-1/2">
         <SendMessageBar handleOnSubmit={handleOnSubmit} />
       </div>
     </div>

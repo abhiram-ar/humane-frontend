@@ -214,7 +214,11 @@ const OneToOneChatPage = () => {
 
       if (!socket || !convo) return;
       locked = true;
-      socket.emit("typing-one-to-one-message", { otherUserId, convoId: convo.id });
+      socket.emit("typing-one-to-one-message", {
+        otherUserId,
+        convoId: convo.id,
+        time: new Date(),
+      });
       console.log("fired-typing");
 
       setTimeout(() => {

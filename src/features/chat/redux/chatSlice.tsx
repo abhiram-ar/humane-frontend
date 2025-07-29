@@ -207,9 +207,12 @@ const chatSlice = createSlice({
       action: PayloadAction<{
         otherUserId: string;
         convoId: string;
+        time: Date;
       }>,
     ) => {
-      state.oneToOneChatTypingRegisteredAtMap[action.payload.convoId] = new Date().toString();
+      state.oneToOneChatTypingRegisteredAtMap[action.payload.convoId] = new Date(
+        action.payload.time,
+      ).toString();
     },
   },
 });

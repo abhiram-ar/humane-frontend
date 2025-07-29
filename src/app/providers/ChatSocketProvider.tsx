@@ -74,6 +74,7 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
         setOneToOneChatTypingIndicator({
           otherUserId: event.typingUser,
           convoId: event.convoId,
+          time: event.time,
         }),
       );
     });

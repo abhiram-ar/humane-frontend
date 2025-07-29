@@ -7,7 +7,7 @@ import { BasicUserDetails } from "@/features/notification/Types/CombinedNotiWith
 import useFindOtherUserOfOnetoOneConvo from "../../hooks/useFindOtherUserOfOnetoOneConvo";
 import usePublicUserProfileQuery from "@/features/profile/hooks/usePublicUserProfileQuery";
 import { BaseConverstion } from "../../Types/Conversation";
-import TypingIndicatorReplacement from "./TypingIndicatorReplacment";
+import useChatTyping from "../../hooks/useChatTyping";
 
 type Props = {
   convo: ConversationWithLastMessage & { otherUser?: BasicUserDetails };
@@ -31,6 +31,8 @@ const ConversationListItem: React.FC<Props> = ({ convo, className }) => {
     setOtherUserProfile(user);
   }, [user]);
 
+  const { typing } = useChatTyping(convo.id);
+
   return (
     <div className={`mb-2 flex h-fit cursor-pointer gap-3 ${className}`}>
       <div className="size-10 min-w-10 overflow-hidden rounded-full">
@@ -46,7 +48,7 @@ const ConversationListItem: React.FC<Props> = ({ convo, className }) => {
           </p>
 
           {/* replace with typing indicator if there is any */}
-          <TypingIndicatorReplacement className="text-pop-green/80 text-sm" convoId={convo.id}>
+          {!typing ? (
             <p className="flex items-center text-sm text-zinc-400">
               {/* only for groups: display the author of last message */}
               {convo.type === "group" && convo.lastMessage?.senderId === currentUserId
@@ -70,7 +72,9 @@ const ConversationListItem: React.FC<Props> = ({ convo, className }) => {
                 <span className="text-sm text-zinc-400 italic">message deleted</span>
               )}
             </p>
-          </TypingIndicatorReplacement>
+          ) : (
+            <p className="text-pop-green/80 text-sm">Typing</p>
+          )}
         </div>
         {convo.unreadCount > 0 && (
           <p className="bg-pop-green/90 size-fit rounded-full p-0.5 px-1.5 text-center align-middle text-xs text-black">

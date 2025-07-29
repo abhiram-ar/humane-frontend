@@ -1,17 +1,13 @@
 import { useChatSocketProvider } from "@/app/providers/ChatSocketProvider";
-import { useAppSelector } from "@/features/userAuth/hooks/store.hooks";
 import { Dot } from "lucide-react";
 import React, { ComponentPropsWithoutRef, useEffect, useState } from "react";
+import useChatTyping from "../../hooks/useChatTyping";
 
 type Props = { userId?: string; convoId?: string } & ComponentPropsWithoutRef<"div">;
 
 const UserOnlineAndTypingIndicator: React.FC<Props> = ({ userId, convoId, ...props }) => {
   const [isUserOnline, setUserOnline] = useState(false);
   const { socket } = useChatSocketProvider();
-  const [typing, setTyping] = useState(false);
-  const typingRegisteredAt = useAppSelector((state) =>
-    convoId ? state.chat.oneToOneChatTypingRegisteredAtMap[convoId] : undefined,
-  );
 
   useEffect(() => {
     if (!socket || !userId) return;
@@ -35,19 +31,7 @@ const UserOnlineAndTypingIndicator: React.FC<Props> = ({ userId, convoId, ...pro
     };
   }, [socket, userId]);
 
-  useEffect(() => {
-    if (!typingRegisteredAt) return;
-    let timer: ReturnType<typeof setTimeout>;
-
-    if (Date.now() - new Date(typingRegisteredAt).getTime() < 3000) {
-      setTyping(true);
-      timer = setTimeout(() => setTyping(false), 3000);
-    } else {
-      setTyping(false);
-    }
-
-    return () => clearTimeout(timer);
-  }, [typingRegisteredAt]);
+  const { typing, setTyping } = useChatTyping(convoId);
 
   return (
     <div {...props}>

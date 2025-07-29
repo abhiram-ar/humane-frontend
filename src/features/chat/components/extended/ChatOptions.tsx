@@ -39,7 +39,7 @@ const ChatOptions: React.FC<Props> = ({ convoId, children }) => {
     onSuccess: (res) => {
       if (res.convo.type === "one-to-one") {
         const otherUser = find(res.convo.participants);
-        dispatch(clearOneToOneChat({ otherUserId: otherUser.userId }));
+        dispatch(clearOneToOneChat({ otherUserId: otherUser.userId, convoId: res.convo.id }));
       }
     },
   });
@@ -53,7 +53,7 @@ const ChatOptions: React.FC<Props> = ({ convoId, children }) => {
       <DropdownMenuTrigger asChild>
         {children ? children : <EllipsisVertical />}
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-grey-light overflow-hidden rounded-md border border-zinc-400/50 text-white relative right-4">
+      <DropdownMenuContent className="bg-grey-light relative right-4 overflow-hidden rounded-md border border-zinc-400/50 text-white">
         <DropdownMenuLabel className="px-2 py-1 text-zinc-300">Options</DropdownMenuLabel>
         <hr />
         <div className="">

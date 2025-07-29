@@ -177,7 +177,6 @@ const OneToOneChatPage = () => {
       "delete-one-to-one-message",
       { otherUserId: otherUser.userId, messageId: message.id },
       (ack) => {
-        console.log("server-dele-ack", ack);
         if (ack) {
           dispath(
             deleteOneToOneMessage({
@@ -218,7 +217,6 @@ const OneToOneChatPage = () => {
         convoId: convo.id,
         time: new Date(),
       });
-      console.log("fired-typing");
 
       setTimeout(() => {
         locked = false;

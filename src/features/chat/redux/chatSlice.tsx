@@ -215,8 +215,12 @@ const chatSlice = createSlice({
       ).toString();
     },
 
-    clearOneToOneChat: (state, action: PayloadAction<{ otherUserId: string }>) => {
+    clearOneToOneChat: (state, action: PayloadAction<{ otherUserId: string; convoId: string }>) => {
       state.oneToOnechats[action.payload.otherUserId] = [];
+      const convoIdx = state.recentConvo.findIndex((convo) => convo.id === action.payload.convoId);
+      if (convoIdx !== -1) {
+        state.recentConvo[convoIdx].lastMessage = undefined;
+      }
     },
   },
 });

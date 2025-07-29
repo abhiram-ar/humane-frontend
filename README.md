@@ -46,6 +46,7 @@ src/
 - Real-time chats
 - Typing indicator
 - Online indicator
+- Retry mechanism for messges failed to send
 - Proximity based scrolling for incomming messages
 - UnRead message inicator and count
 

@@ -78,7 +78,7 @@ const UserMessage: React.FC<Props> = ({ message, onDeleteClick, onRetryClick }) 
         </div>
       </div>
       {message.sendStatus && message.sendStatus === "error" && (
-        <div className="group relative flex flex-col justify-end border pe-1">
+        <div className="group relative flex flex-col justify-end pe-1">
           <p
             onClick={() => onRetryClick(message)}
             className="absolute top-2 right-1 cursor-pointer rounded-md border border-black bg-red-400 px-3 py-0.5 text-black opacity-0 group-hover:opacity-100"

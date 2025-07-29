@@ -14,8 +14,6 @@ export type BaseConverstion = {
     lastOpenedAt: Date;
     clearedAt?: Date;
   }[];
-
-  lastMessageId: string;
 };
 
 export type OneToOneConversation = BaseConverstion & {

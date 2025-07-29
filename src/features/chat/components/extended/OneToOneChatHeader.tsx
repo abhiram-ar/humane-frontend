@@ -49,7 +49,7 @@ const OneToOneChatHeader: React.FC<Props> = ({ otherUserId, convoId }) => {
         </div>
 
         <ChatOptions convoId={convoId}>
-          <div className="hover:bg-green-subtle/90 rounded-full p-2 hover:text-black cursor-pointer">
+          <div className="hover:bg-green-subtle/90 rounded-full p-2 hover:text-black cursor-pointer relative">
             <EllipsisVertical size={20} />
           </div>
         </ChatOptions>

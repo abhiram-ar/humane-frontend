@@ -292,7 +292,7 @@ const OneToOneChatPage = () => {
 
   return (
     <div className="relative h-screen w-full overflow-y-hidden">
-      <div className=" top-0 z-20 w-full">
+      <div className="top-0 z-20 w-full">
         <div className="bg-grey-dark-bg/50 backdrop-blur-lg">
           <OneToOneChatHeader otherUserId={otherUserId} convoId={convo?.id} />
         </div>

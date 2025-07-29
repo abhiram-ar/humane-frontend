@@ -53,7 +53,7 @@ const ChatOptions: React.FC<Props> = ({ convoId, children }) => {
       <DropdownMenuTrigger asChild>
         {children ? children : <EllipsisVertical />}
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-grey-light overflow-hidden rounded-md border border-zinc-400/50 text-white">
+      <DropdownMenuContent className="bg-grey-light overflow-hidden rounded-md border border-zinc-400/50 text-white relative right-4">
         <DropdownMenuLabel className="px-2 py-1 text-zinc-300">Options</DropdownMenuLabel>
         <hr />
         <div className="">

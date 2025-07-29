@@ -1,4 +1,4 @@
-#### project structure
+### Project structure
 
 ```bash
 src/
@@ -40,3 +40,17 @@ src/
 └── styles/                 # Global styles (tailwind, css modules, sass)
     └── index.css
 ```
+
+### Chat Feature
+
+- Real-time chats
+- Typing indicator
+- Online indicator
+- Proximity based scrolling for incomming messages
+- UnRead message inicator and count
+
+#### Search chat - notes
+
+- We will fire API to search chat, this may take a while
+- Instead on showing the user the loading indicator, we quickly filter out the chats in the local store(redux) and show it to the user
+- One the API resolves these additonal chats are also appended to the local search results

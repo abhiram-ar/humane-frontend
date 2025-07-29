@@ -6,7 +6,6 @@ export type Message = {
   message: string;
 
   sendAt: string;
-  deletededFor: string[];
   status: { deleted: boolean; deletedAt: string } | undefined;
 
   attachment: { attachmentType: string; attachmentURL: string | undefined } | undefined;
@@ -14,4 +13,8 @@ export type Message = {
 
   // only on client
   sendStatus?: "error" | "pending";
+  tempAttachment?: {
+    attachmentType: string;
+    attachmentKey: string;
+  };
 };

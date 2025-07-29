@@ -2,17 +2,18 @@ import HumaneScoreNumberFlow from "@/components/HumaneScoreNumberFlow";
 import ProfilePicSmall from "@/components/ProfilePicSmall";
 import { Skeleton } from "@/components/ui/skeleton";
 import usePublicUserProfileQuery from "@/features/profile/hooks/usePublicUserProfileQuery";
-import { Phone, Video } from "lucide-react";
+import { EllipsisVertical, Phone, Video } from "lucide-react";
 import React from "react";
 import { Link } from "react-router";
 import UserOnlineAndTypingIndicator from "./UserOnlineAndTypingIndicator";
+import ChatOptions from "./ChatOptions";
 
 type Props = {
   otherUserId: string;
-  convoId?: string,
+  convoId?: string;
 };
 
-const OneToOneChatHeader: React.FC<Props> = ({ otherUserId,convoId }) => {
+const OneToOneChatHeader: React.FC<Props> = ({ otherUserId, convoId }) => {
   const { user, httpStatus } = usePublicUserProfileQuery(otherUserId ?? "invalid");
 
   return (
@@ -39,13 +40,19 @@ const OneToOneChatHeader: React.FC<Props> = ({ otherUserId,convoId }) => {
           </div>
         </div>
       </div>
-      <div className="text-almost-white flex items-center gap-1 overflow-hidden rounded-xl border-zinc-400/50 px-3 xl:gap-3">
-        <div className="hover:bg-green-subtle/90 rounded-full p-2 hover:text-black">
+      <div className="text-almost-white flex items-center gap-1 overflow-hidden rounded-xl border-zinc-400/50 xl:gap-3">
+        <div className="hover:bg-green-subtle/90 rounded-full p-2 hover:text-black cursor-pointer">
           <Phone size={20} />
         </div>
-        <div className="hover:bg-green-subtle/90 rounded-full p-2 hover:text-black">
+        <div className="hover:bg-green-subtle/90 rounded-full p-2 hover:text-black cursor-pointer">
           <Video />
         </div>
+
+        <ChatOptions convoId={convoId}>
+          <div className="hover:bg-green-subtle/90 rounded-full p-2 hover:text-black cursor-pointer">
+            <EllipsisVertical size={20} />
+          </div>
+        </ChatOptions>
       </div>
     </div>
   );

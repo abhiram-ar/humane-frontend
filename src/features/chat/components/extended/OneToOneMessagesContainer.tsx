@@ -14,6 +14,7 @@ type Props = {
   containerRef: React.RefObject<HTMLDivElement | null>;
   handleOnMessageUpdate?: () => void;
   onMessageDeleteClick(message: Message): Promise<void>;
+  onMessageSendRetry(message: Message): Promise<void>;
 };
 
 const OneToOneMessagesContainer: React.FC<Props> = ({
@@ -21,6 +22,7 @@ const OneToOneMessagesContainer: React.FC<Props> = ({
   containerRef,
   handleOnMessageUpdate,
   onMessageDeleteClick,
+  onMessageSendRetry,
 }) => {
   const authenticatedUserId = useUserId();
   const { messages, lastInsertedMessageType } = useAppSelector((state) => ({
@@ -177,7 +179,11 @@ const OneToOneMessagesContainer: React.FC<Props> = ({
                 key={message.id}
               >
                 {authenticatedUserId && authenticatedUserId === message.senderId ? (
-                  <UserMessage onDeleteClick={onMessageDeleteClick} message={message} />
+                  <UserMessage
+                    onRetryClick={onMessageSendRetry}
+                    onDeleteClick={onMessageDeleteClick}
+                    message={message}
+                  />
                 ) : (
                   <OtherParticipantMessage message={message} />
                 )}

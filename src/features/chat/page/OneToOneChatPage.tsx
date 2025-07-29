@@ -95,11 +95,11 @@ const OneToOneChatPage = () => {
         conversationId: convo?.id ?? "unknown",
         message: messageData.message,
         sendAt: new Date().toISOString(),
-        deletededFor: [],
         attachment: tempAttachment,
         replyToMessageId: undefined,
         sendStatus: "pending",
         status: undefined,
+        tempAttachment: messageData.attachment,
       };
 
       dispath(addMessageToChat({ otherUserId: messageData.to, message: tempMessage }));
@@ -227,6 +227,60 @@ const OneToOneChatPage = () => {
     };
   };
 
+  // messagres are errored from server ack
+  // so all the attachments are ok
+  const handleMessageSendRetry = async (erroredMessage: Message) => {
+    if (!socket) return;
+    socket.emit(
+      "send-one-to-one-message",
+      {
+        to: otherUserId,
+        message: erroredMessage.message,
+        attachment: erroredMessage.tempAttachment,
+      },
+      (ack) => {
+        if (ack.success && ack.message) {
+          dispath(
+            replaceOneToOneMessage({
+              otherUserId: otherUserId,
+              newMessage: ack.message,
+              messageId: erroredMessage.id,
+            }),
+          );
+          dispath(
+            updateLastMessageOfConvo({ convoId: ack.message.conversationId, message: ack.message }),
+          );
+
+          if (!recentConvoIdxHashMap[ack.message.conversationId]) {
+            getUserConvoById(ack.message.conversationId)
+              .then((data) => {
+                if (data.convo) {
+                  const convo: ConversationWithLastMessage = {
+                    ...data.convo,
+                    unreadCount: 0,
+                    lastMessage: ack.message,
+                  };
+                  dispath(addToConversationList([convo]));
+                }
+              })
+              .catch((error) =>
+                console.log("error file getting new conno for first message", error),
+              );
+            // upadte convo list
+          }
+        } else {
+          dispath(
+            replaceOneToOneMessage({
+              otherUserId: otherUserId,
+              messageId: erroredMessage.id,
+              newMessage: { ...erroredMessage, sendStatus: "error" },
+            }),
+          );
+        }
+      },
+    );
+  };
+
   return (
     <div className="relative h-screen w-full overflow-y-hidden">
       <div className="absolute top-0 z-20 w-full">
@@ -240,6 +294,7 @@ const OneToOneChatPage = () => {
         containerRef={messageContainerRef}
         handleOnMessageUpdate={handleOnMessageUpdate}
         onMessageDeleteClick={handleMessageDelete}
+        onMessageSendRetry={handleMessageSendRetry}
       />
 
       <div className="absolute bottom-0 z-30 w-full lg:left-1/2 lg:w-4/5 lg:-translate-x-1/2">

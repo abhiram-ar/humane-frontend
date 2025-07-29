@@ -12,11 +12,11 @@ const useChatTyping = (convoId?: string) => {
     let timer: ReturnType<typeof setTimeout>;
 
     const timeDelta = Date.now() - new Date(typingRegisteredAt).getTime();
-    if (timeDelta < 3000) {
+    if (timeDelta < 2000) {
       setTyping(true);
       timer = setTimeout(
         () => setTyping(false),
-        3000 - (Date.now() - new Date(typingRegisteredAt).getTime()),
+        2000 - (Date.now() - new Date(typingRegisteredAt).getTime()),
       );
     } else {
       setTyping(false);

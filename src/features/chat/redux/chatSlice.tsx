@@ -214,6 +214,10 @@ const chatSlice = createSlice({
         action.payload.time,
       ).toString();
     },
+
+    clearOneToOneChat: (state, action: PayloadAction<{ otherUserId: string }>) => {
+      state.oneToOnechats[action.payload.otherUserId] = [];
+    },
   },
 });
 
@@ -228,5 +232,6 @@ export const {
   deleteOneToOneMessage,
   setOneToOneChatTypingIndicator,
   prependMessagesToOneToOneChat,
+  clearOneToOneChat,
 } = chatSlice.actions;
 export default chatSlice.reducer;

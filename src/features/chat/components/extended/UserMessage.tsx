@@ -9,9 +9,10 @@ import ChatImageAttachment from "./ChatImageAttachment";
 type Props = {
   message: Message;
   onDeleteClick(message: Message): Promise<void>;
+  onRetryClick(message: Message): Promise<void>;
 };
 
-const UserMessage: React.FC<Props> = ({ message, onDeleteClick }) => {
+const UserMessage: React.FC<Props> = ({ message, onDeleteClick, onRetryClick }) => {
   const timeString = format(message.sendAt, "hh:mm a - dd MMM");
   return (
     <div className="group mb-1 flex w-full">
@@ -70,15 +71,23 @@ const UserMessage: React.FC<Props> = ({ message, onDeleteClick }) => {
           <p>{timeString}</p>
 
           {message.sendStatus && message.sendStatus === "pending" && <Clock size={13} />}
-          {message.sendStatus && message.sendStatus === "error" && (
-            <CircleX className="fill-red-400" size={13} />
-          )}
 
           {!message.sendStatus && !message.status?.deleted && (
             <CheckCheck className="text-green-800" size={13} />
           )}
         </div>
       </div>
+      {message.sendStatus && message.sendStatus === "error" && (
+        <div className="group relative flex flex-col justify-end border pe-1">
+          <p
+            onClick={() => onRetryClick(message)}
+            className="absolute top-2 right-1 cursor-pointer rounded-md border border-black bg-red-400 px-3 py-0.5 text-black opacity-0 group-hover:opacity-100"
+          >
+            Retry
+          </p>
+          <CircleX className="fill-red-400" size={20} />
+        </div>
+      )}
     </div>
   );
 };

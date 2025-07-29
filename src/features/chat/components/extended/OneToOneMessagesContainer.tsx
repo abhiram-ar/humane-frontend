@@ -157,7 +157,7 @@ const OneToOneMessagesContainer: React.FC<Props> = ({
     <>
       <div
         ref={observerRef}
-        className="relative flex max-h-[91vh] min-h-[91vh] flex-col justify-end-safe overflow-y-scroll"
+        className="relative mb-10 flex max-h-[91vh] min-h-[91vh] flex-col justify-end-safe overflow-y-scroll"
       >
         <div className="text-pop-green absolute inset-0 mt-5 pb-5">
           {(isFetching || isLoading) && <Spinner />}
@@ -190,7 +190,11 @@ const OneToOneMessagesContainer: React.FC<Props> = ({
               </div>
             ))}
         </div>
+        {/* height adjustment */}
+        <div className="min-h-16 "></div>
       </div>
+
+      {/* scoll to bottom ref */}
       {showScrollToView && (
         <div className="absolute right-10 bottom-20">
           <ScrollToView targetElemRef={scrollToViewTargetRef} />

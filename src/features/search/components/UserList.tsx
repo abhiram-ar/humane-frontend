@@ -43,7 +43,7 @@ const demoUsers = [
 const UserList = () => {
   
   return (
-    <div className="h-full p-5 text-lg text-white">
+    <div className="p-5 text-lg text-white">
       {demoUsers.map((user) => (
         <Link to={`/user/${user.id}`} key={user.id}>
           <UserListItem userName={user.name} profileURL={user.profile} />

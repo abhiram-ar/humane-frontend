@@ -1,15 +1,19 @@
 import Spinner from "@/components/Spinner";
 import UserListItem from "@/features/search/components/UserListItem";
 import React, { useEffect, useRef } from "react";
-import { Link } from "react-router";
-import useFriendsListInfniteQuery from "../../hooks/useFriendsListInfniteQuery";
+import { useNavigate } from "react-router";
+import useFriendsListInfniteQuery, {
+  FriendList as FriendListType,
+} from "../../hooks/useFriendsListInfniteQuery";
 
 type Props = {
   userId: string;
+  onUserClick?: (data: FriendListType[0]) => void;
 };
 
-const FriendList: React.FC<Props> = ({ userId }) => {
+const FriendList: React.FC<Props> = ({ userId, onUserClick }) => {
   const observerRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
 
   const {
     data: infiniteData,
@@ -32,19 +36,30 @@ const FriendList: React.FC<Props> = ({ userId }) => {
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetching]);
 
+  const handleUserClick = (user: FriendListType[0]) => {
+    if (onUserClick) {
+      onUserClick(user);
+      return;
+    }
+
+    navigate(`/user/${user.id}`);
+  };
+
   return (
     <div className="h-100 overflow-y-auto pb-1 text-white">
       {infiniteData &&
         infiniteData?.pages?.map((page) =>
           page?.friends?.map((user) => (
-            <div key={user.id} className="flex justify-between">
-              <Link to={`/user/${user.id}`} target="">
-                <UserListItem
-                  profileURL={user.avatarURL}
-                  userName={`${user.firstName} ${user.lastName ?? ""}`}
-                  className="mb-0"
-                />
-              </Link>
+            <div
+              onClick={() => handleUserClick(user)}
+              key={user.id}
+              className="flex justify-between"
+            >
+              <UserListItem
+                profileURL={user.avatarURL}
+                userName={`${user.firstName} ${user.lastName ?? ""}`}
+                className="mb-0"
+              />
             </div>
           )),
         )}

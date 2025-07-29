@@ -13,13 +13,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useNavigate } from "react-router";
 import { useAppDispatch } from "@/features/userAuth/hooks/store.hooks";
-import { logout } from "@/features/userAuth/redux/userAuthSlice";
 import { api } from "@/lib/axios";
 import useCurrentUserProfile from "../../hooks/useCurrentUserProfile";
 import usePublicHumaneScoreQuery from "../../../../hooks/usePublicUserHumaneScoreQuery";
 import useUserId from "../../../../hooks/useUserId";
 import HumaneScoreNumberFlow from "@/components/HumaneScoreNumberFlow";
 import ProfilePicSmall from "@/components/ProfilePicSmall";
+import { useQueryClient } from "@tanstack/react-query";
+import { resetStore } from "@/app/store/store";
 
 const UserLogout = () => {
   const [showLogo, setShowlogo] = useState(false);
@@ -29,12 +30,16 @@ const UserLogout = () => {
 
   const navigate = useNavigate();
   const dispath = useAppDispatch();
+  const queryClient = useQueryClient();
 
   const handleLogut = async () => {
     try {
       await api.post("/api/v1/user/auth/logout");
-      dispath(logout());
+      queryClient.clear();
+      dispath(resetStore());
+
       navigate("/auth/login", { replace: true });
+      setTimeout(() => window.location.reload(), 0);
     } catch (error) {
       console.error("error while logging out", error);
     }

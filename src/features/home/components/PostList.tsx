@@ -26,7 +26,7 @@ const PostList = () => {
   }, [fetchNextPage, hasNextPage, isFetching]);
 
   useEffect(() => {
-    if (isLoading) setTimeout(() => setShowShimmer(false), 1000);
+    if (!isLoading) setTimeout(() => setShowShimmer(false), 1000);
   }, [isLoading]);
 
   return (

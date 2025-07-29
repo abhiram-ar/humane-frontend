@@ -1,10 +1,13 @@
+### Project structure
+
+```bash
 src/
 │
 ├── app/                    # Entry-point level setup (providers, router, global styles)
 │   ├── App.tsx
 │   ├── index.tsx
 │   ├── router.tsx
-│   └── providers/          # React Contexts, Zustand stores, etc.
+│   └── providers/          # React Contexts, Redux stores, etc.
 │
 ├── assets/                 # Static assets like images, fonts
 │
@@ -16,11 +19,12 @@ src/
 │   │   ├── components/     # Auth-related components
 │   │   ├── pages/          # Login, Register pages
 │   │   ├── services/       # API calls
-│   │   └── hooks/          # Feature-specific custom hooks
+│   │   ├── hooks/          # Feature-specific custom hooks
+│   │   └── Types/          # Types handled by the feature
 │   └── dashboard/
 │       └── ...
 │
-├── hooks/                  # App-wide custom hooks (e.g., useDebounce, useFetch)
+├── hooks/                  # App-wide custom hooks (e.g., useDebounce)
 │
 ├── layouts/                # Layouts like AuthLayout, DashboardLayout
 │
@@ -35,4 +39,18 @@ src/
 │
 └── styles/                 # Global styles (tailwind, css modules, sass)
     └── index.css
+```
 
+### Chat Feature
+
+- Real-time chats
+- Typing indicator
+- Online indicator
+- Proximity based scrolling for incomming messages
+- UnRead message inicator and count
+
+#### Search chat - notes
+
+- We will fire API to search chat, this may take a while
+- Instead on showing the user the loading indicator, we quickly filter out the chats in the local store(redux) and show it to the user
+- One the API resolves these additonal chats are also appended to the local search results

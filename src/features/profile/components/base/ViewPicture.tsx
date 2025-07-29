@@ -10,7 +10,7 @@ import React, { ReactNode } from "react";
 
 type Props = {
   src: string;
-  title: string;
+  title?: string;
   children?: ReactNode; // child should be a have a button element
 };
 const ViewPicture: React.FC<Props> = ({ src, title, children }) => {
@@ -30,16 +30,18 @@ const ViewPicture: React.FC<Props> = ({ src, title, children }) => {
           )}
         </DialogTrigger>
         <DialogContent
-        className="border-grey-dark-bg bg-[#272727] !max-w-2xl"
+          className="border-grey-dark-bg !max-h-200 w-fit !max-w-3xl bg-[#272727]/50 backdrop-blur-md"
           aria-describedby="view profile photo"
           aria-description="view profile photo"
         >
-          <DialogHeader>
-            <DialogTitle className="text-almost-white">{title}</DialogTitle>
-          </DialogHeader>
-          <div className="mt-3 flex aspect-auto w-full items-center justify-center">
-            <div className="h-full w-full overflow-clip rounded-md">
-              <img src={src} className="h-full w-full object-cover" alt="profile-picture" />
+          {title && (
+            <DialogHeader>
+              <DialogTitle className="text-almost-white">{title}</DialogTitle>
+            </DialogHeader>
+          )}
+          <div className="mt-3 flex aspect-auto h-full w-full items-center justify-center">
+            <div className="h-full max-h-150 w-fit overflow-clip rounded-md">
+              <img src={src} className="h-full w-full object-contain" alt="profile-picture" />
             </div>
           </div>
         </DialogContent>

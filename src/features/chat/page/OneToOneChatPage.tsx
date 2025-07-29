@@ -37,7 +37,6 @@ const OneToOneChatPage = () => {
   const messageContainerRef = useRef<HTMLDivElement>(null);
   const { state } = useLocation();
   const find = useFindOtherUserOfOnetoOneConvo();
-
   const { data: convo } = useOneToOneConvoByOtherUserQuery(otherUserId, state?.convo);
 
   // set currsent convo as active convo
@@ -231,6 +230,16 @@ const OneToOneChatPage = () => {
   // so all the attachments are ok
   const handleMessageSendRetry = async (erroredMessage: Message) => {
     if (!socket) return;
+
+    // mark message as pening
+    dispath(
+      replaceOneToOneMessage({
+        otherUserId: otherUserId,
+        messageId: erroredMessage.id,
+        newMessage: { ...erroredMessage, sendStatus: "pending" },
+      }),
+    );
+
     socket.emit(
       "send-one-to-one-message",
       {

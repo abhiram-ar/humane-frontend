@@ -33,6 +33,7 @@ const UserMessage: React.FC<Props> = ({ message, onDeleteClick, onRetryClick }) 
       {/* message itself */}
       <div className="bg-green-subtle/95 group-hover:bg-green-subtle relative me-2 max-w-3/5 min-w-30 rounded-t-lg rounded-bl-lg p-2 pb-5">
         {message.attachment &&
+          !message.status?.deleted &&
           message.attachment.attachmentType?.startsWith("image/") &&
           message.attachment.attachmentURL && (
             <div className="flex w-full pb-2">
@@ -48,6 +49,7 @@ const UserMessage: React.FC<Props> = ({ message, onDeleteClick, onRetryClick }) 
           )}
 
         {message.attachment &&
+          !message.status?.deleted &&
           message.attachment.attachmentType?.toLowerCase().startsWith("video") &&
           message.attachment.attachmentURL && (
             <div className="flex w-full">

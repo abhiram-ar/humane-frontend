@@ -11,8 +11,6 @@ export type BaseConverstion = {
   participants: {
     userId: string;
     joinedAt: Date;
-    lastOpenedAt: Date;
-    clearedAt?: Date;
   }[];
 };
 

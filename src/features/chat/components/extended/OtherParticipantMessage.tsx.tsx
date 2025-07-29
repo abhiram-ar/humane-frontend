@@ -16,6 +16,7 @@ const OtherParticipantMessage: React.FC<Props> = ({ message }) => {
       {/* message itself */}
       <div className="relative ms-2 max-w-3/5 min-w-30 rounded-t-lg rounded-br-lg bg-pink-200/95 p-2 pb-5 outline-none hover:bg-pink-200">
         {message.attachment &&
+          !message.status?.deleted &&
           message.attachment.attachmentType?.startsWith("image/") &&
           message.attachment.attachmentURL && (
             <div className="flex w-full pb-2">
@@ -31,6 +32,7 @@ const OtherParticipantMessage: React.FC<Props> = ({ message }) => {
           )}
 
         {message.attachment &&
+          !message.status?.deleted &&
           message.attachment.attachmentType?.toLowerCase().startsWith("video") &&
           message.attachment.attachmentURL && (
             <div className="flex w-full">

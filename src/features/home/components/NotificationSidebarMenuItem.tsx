@@ -18,6 +18,7 @@ import {
 import { NavLink } from "react-router";
 import { API_ROUTES } from "@/lib/API_ROUTES";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { setLastRewaredAt } from "@/features/profile/redux/profilleSlice";
 
 // TODO: refacor
 type GetRecentNotificationResponse = {
@@ -77,8 +78,8 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
       dispatch(updateNotification(noti));
     });
 
-    socket.on("user-rewarded", (amount) => {
-      console.log(amount);
+    socket.on("user-rewarded", () => {
+      dispatch(setLastRewaredAt(new Date().toISOString()));
     });
 
     return () => {

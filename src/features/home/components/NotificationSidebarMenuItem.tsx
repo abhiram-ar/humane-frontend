@@ -77,6 +77,10 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
       dispatch(updateNotification(noti));
     });
 
+    socket.on("user-rewarded", (amount) => {
+      console.log(amount);
+    });
+
     return () => {
       socket.disconnect();
     };

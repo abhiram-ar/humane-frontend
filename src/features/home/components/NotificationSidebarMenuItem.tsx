@@ -6,7 +6,7 @@ import {
   ServerToClientEvents,
 } from "@/features/notification/Types/SocketIOConfig.types";
 import { io, Socket } from "socket.io-client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CombinedNotificationWithActionableUser } from "@/features/notification/Types/CombinedNotiWithActionableUser";
 import { api } from "@/lib/axios";
 import {
@@ -19,6 +19,8 @@ import { NavLink } from "react-router";
 import { API_ROUTES } from "@/lib/API_ROUTES";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { setLastRewaredAt } from "@/features/profile/redux/profilleSlice";
+import useUserId from "@/hooks/useUserId";
+import { GetPublicUserHumaneScore } from "@/hooks/usePublicUserHumaneScoreQuery";
 
 // TODO: refacor
 type GetRecentNotificationResponse = {
@@ -41,6 +43,8 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
   const token = useAppSelector((state) => state.userAuth.token);
   const dispatch = useAppDispatch();
   const isMobile = useIsMobile();
+  const userId = useUserId();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!token) return;
@@ -74,12 +78,21 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
     });
 
     socket.on("update-noti", (noti) => {
-      console.log("upadted", noti);
       dispatch(updateNotification(noti));
     });
 
-    socket.on("user-rewarded", () => {
-      dispatch(setLastRewaredAt(new Date().toISOString()));
+    socket.on("user-rewarded", (amount, rewardedAt) => {
+      dispatch(setLastRewaredAt(new Date(rewardedAt).toISOString()));
+      queryClient.setQueryData(
+        ["total-humane-score", userId],
+        (oldData: GetPublicUserHumaneScore["data"]) => {
+          if (!oldData) return oldData;
+          return {
+            userId: oldData.userId,
+            score: oldData.score + amount,
+          } as GetPublicUserHumaneScore["data"];
+        },
+      ); // delay since Read model will have stale data
     });
 
     return () => {

@@ -125,8 +125,8 @@ const UserVideoPreview: React.FC = () => {
       style={{
         left: pos.x,
         top: pos.y,
-        scale: !(peerStatus === "joined") && dragging ? 1.1 : 1,
-        cursor: !(peerStatus === "pending") ? "default" : "grab",
+        scale: (peerStatus === "joined") && dragging ? 1.1 : 1,
+        cursor: (peerStatus === "pending") ? "default" : "grab",
         userSelect: "none", // prevents text selection while dragging
       }}
     >

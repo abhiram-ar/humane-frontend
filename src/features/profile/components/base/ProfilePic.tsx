@@ -1,15 +1,18 @@
 import { User } from "lucide-react";
-import { useState } from "react";
+import { ComponentPropsWithoutRef, useState } from "react";
 
 type Props = {
   url?: string;
-};
-const ProfilePic: React.FC<Props> = ({ url }) => {
+} & ComponentPropsWithoutRef<"div">;
+const ProfilePic: React.FC<Props> = ({ url, ...props }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
   return (
-    <div className="border-grey-light relative z-10 size-30 lg:size-52 overflow-clip rounded-full border-3 bg-zinc-500">
+    <div
+      className="border-grey-light relative z-10 size-30 overflow-clip rounded-full border-3 bg-zinc-500 lg:size-52"
+      {...props}
+    >
       {isLoading && url && <div className="absolute inset-0 animate-pulse bg-zinc-400/50"></div>}
       {(isError || !url) && (
         <div

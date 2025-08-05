@@ -1,5 +1,7 @@
 import { useAppSelector } from "@/features/userAuth/hooks/store.hooks";
 import React, { TouchEventHandler, useEffect, useRef, useState } from "react";
+import UserProfileTumbnail from "./UserProfileTumbnail";
+import useUserId from "@/hooks/useUserId";
 
 const UserVideoPreview: React.FC = () => {
   const [pos, setPos] = useState({ x: window.innerWidth - 300, y: window.innerHeight - 200 });
@@ -8,6 +10,9 @@ const UserVideoPreview: React.FC = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const userVideoRef = useRef<HTMLVideoElement>(null);
   const videoDeviceId = useAppSelector((state) => state.call.activeVideoDeviceId);
+  const onlyUserInRoom = useAppSelector((state) => state.call.onlyUserInRoom);
+  const cameraOn = useAppSelector((state) => state.call.cameraOn);
+  const userId = useUserId();
 
   // start dragging (mouse + touch)
   const startDrag = (clientX: number, clientY: number) => {
@@ -97,7 +102,6 @@ const UserVideoPreview: React.FC = () => {
           audio: false,
         });
 
-        console.log("streams", streams);
         if (streams) {
           const mediaStream = new MediaStream(streams.getVideoTracks());
           if (userVideoRef.current) {
@@ -110,24 +114,32 @@ const UserVideoPreview: React.FC = () => {
       }
     };
     setVideo();
-  }, [videoDeviceId]);
+  }, [videoDeviceId, cameraOn]);
 
   return (
     <div
       ref={videoContainerRef}
       onMouseDown={onMouseDown}
       onTouchStart={onTouchStart}
-      className="h-max-30 w-max-70 h-30 w-60 overflow-clip rounded-2xl border bg-zinc-400/50 transition-transform"
+      className={`rounded-2xl transition-transform ${!onlyUserInRoom ? "h-max-40 w-max-70 absolute h-40 w-70 overflow-clip border border-zinc-400/50 bg-zinc-800" : "h-full w-full"} `}
       style={{
-        position: "absolute",
         left: pos.x,
         top: pos.y,
-        scale: dragging ? 1.1 : 1,
-        cursor: "grab",
+        scale: !onlyUserInRoom && dragging ? 1.1 : 1,
+        cursor: onlyUserInRoom ? "default" : "grab",
         userSelect: "none", // prevents text selection while dragging
       }}
     >
-      <video muted={true} className="aspect-auto h-full w-full" ref={userVideoRef}></video>
+      {!cameraOn ? (
+        <UserProfileTumbnail userId={userId} minimized={!onlyUserInRoom} />
+      ) : (
+        <video
+          muted={true}
+          className="aspect-auto h-full w-full object-contain"
+          ref={userVideoRef}
+          style={{ transform: "scaleX(-1)" }} // raw stream is has no mirror flip, this flips the like a mirror
+        ></video>
+      )}
     </div>
   );
 };

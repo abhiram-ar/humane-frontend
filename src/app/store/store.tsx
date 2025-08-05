@@ -6,6 +6,7 @@ import mainSearchReducer from "@/features/search/redux/mainSearchSlice";
 import notificationReducer from "@/features/notification/redux/notificationSlice";
 import chatReducer from "@/features/chat/redux/chatSlice";
 import profileReducer from "@/features/profile/redux/profilleSlice";
+import callReducer from "@/features/call/redux/callSlice";
 export const appReducer = combineReducers({
   userAuth: userAuthReducer,
   globalApp: globalAppReducer,
@@ -14,6 +15,7 @@ export const appReducer = combineReducers({
   notifications: notificationReducer,
   chat: chatReducer,
   profile: profileReducer,
+  call: callReducer,
 });
 
 export const resetStore = createAction("RESET_STORE");

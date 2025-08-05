@@ -27,7 +27,7 @@ import HashtagPage from "@/features/home/pages/HashtagPage";
 import ChatWithMessagesPage from "@/features/chat/page/ChatWithMessagesPage";
 import OneToOneChatPage from "@/features/chat/page/OneToOneChatPage";
 import NoConversationSelectedPage from "@/features/chat/page/NoConversationSelectedPage";
-import P2PVideoPage from "@/features/videoCall/pages/P2PCallPage";
+import P2PVideoPage from "@/features/call/pages/P2PCallPage";
 
 export const router = createBrowserRouter([
   {

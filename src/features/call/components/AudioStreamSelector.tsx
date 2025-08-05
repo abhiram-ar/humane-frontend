@@ -24,7 +24,6 @@ export function AudioStreamSelector() {
       try {
         setDeviceFetchingState("loading");
         const devices = await window.navigator.mediaDevices.enumerateDevices();
-        console.log("devices found", devices);
         const audioDevics = devices.filter((device) => device.kind === "audioinput");
         setAudioDevicesInfo(audioDevics);
 
@@ -62,8 +61,6 @@ export function AudioStreamSelector() {
       setDeviceFetchingState("idle");
     };
   }, []);
-
-  console.log(audioDevicesInfo);
 
   return (
     <DropdownMenu>

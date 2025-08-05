@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export type IMainSearchState = {
   activeAudioDeviceId: string;
   activeVideoDeviceId: string;
-  onlyUserInRoom: boolean;
+  peerStatus: "pending" | "rejected" | "joined";
   micOn: boolean;
   cameraOn: boolean;
 };
@@ -11,7 +11,7 @@ export type IMainSearchState = {
 const initialState: IMainSearchState = {
   activeAudioDeviceId: "",
   activeVideoDeviceId: "",
-  onlyUserInRoom: true,
+  peerStatus: "pending",
   micOn: true,
   cameraOn: false,
 };
@@ -27,8 +27,8 @@ export const mainSearchSlice = createSlice({
       state.activeVideoDeviceId = action.payload;
     },
 
-    otherPartyJoined: (state, action: PayloadAction<boolean>) => {
-      state.onlyUserInRoom = action.payload;
+    otherPartyJoined: (state, action: PayloadAction<"pending" | "rejected" | "joined">) => {
+      state.peerStatus = action.payload;
     },
 
     micOn: (state, action: PayloadAction<boolean>) => {

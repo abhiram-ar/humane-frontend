@@ -4,13 +4,13 @@ import UserProfileTumbnail from "./UserProfileTumbnail";
 import useUserId from "@/hooks/useUserId";
 
 const UserVideoPreview: React.FC = () => {
-  const [pos, setPos] = useState({ x: window.innerWidth - 300, y: window.innerHeight - 200 });
+  const [pos, setPos] = useState({ x: window.innerWidth - 400, y: window.innerHeight - 250 });
   const [dragging, setDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 }); // relative change, not anchoring to mouse pos
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const userVideoRef = useRef<HTMLVideoElement>(null);
   const videoDeviceId = useAppSelector((state) => state.call.activeVideoDeviceId);
-  const onlyUserInRoom = useAppSelector((state) => state.call.onlyUserInRoom);
+  const peerStatus = useAppSelector((state) => state.call.peerStatus);
   const cameraOn = useAppSelector((state) => state.call.cameraOn);
   const userId = useUserId();
 
@@ -72,7 +72,7 @@ const UserVideoPreview: React.FC = () => {
 
   const stopDrag = () => setDragging(false);
 
-  // Attach global listeners only while dragging
+  // attach global listeners only while dragging
   useEffect(() => {
     if (dragging) {
       document.addEventListener("mousemove", onMouseMove);
@@ -121,17 +121,17 @@ const UserVideoPreview: React.FC = () => {
       ref={videoContainerRef}
       onMouseDown={onMouseDown}
       onTouchStart={onTouchStart}
-      className={`rounded-2xl transition-transform ${!onlyUserInRoom ? "h-max-40 w-max-70 absolute h-40 w-70 overflow-clip border border-zinc-400/50 bg-zinc-800" : "h-full w-full"} `}
+      className={`rounded-2xl transition-transform ${peerStatus === "joined" ? "h-max-40 w-max-70 absolute h-40 w-70 overflow-clip border border-zinc-400/50 bg-zinc-800" : "h-full w-full"} `}
       style={{
         left: pos.x,
         top: pos.y,
-        scale: !onlyUserInRoom && dragging ? 1.1 : 1,
-        cursor: onlyUserInRoom ? "default" : "grab",
+        scale: !(peerStatus === "joined") && dragging ? 1.1 : 1,
+        cursor: !(peerStatus === "pending") ? "default" : "grab",
         userSelect: "none", // prevents text selection while dragging
       }}
     >
       {!cameraOn ? (
-        <UserProfileTumbnail userId={userId} minimized={!onlyUserInRoom} />
+        <UserProfileTumbnail userId={userId} minimized={peerStatus === "joined"} />
       ) : (
         <video
           muted={true}

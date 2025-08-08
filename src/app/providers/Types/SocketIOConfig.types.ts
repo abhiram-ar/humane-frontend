@@ -13,9 +13,19 @@ export interface ServerToClientChatEvents {
     participants: Conversation["participants"];
   }) => void;
 
-  "typing-one-to-one-message": (event: { typingUser: string; convoId: string, time: Date }) => void;
+  "typing-one-to-one-message": (event: { typingUser: string; convoId: string; time: Date }) => void;
 
-  withAck: (d: string, callback: (e: number) => void) => void;
+  // -------------------------------call events-------------------------------
+
+  "call.incoming": (event: { callerId: string; callId: string }) => void;
+
+  "call.answered.by_other_device": (event: { callId: string; callerId: string }) => void;
+
+  "call.connected": (event: { callId: string; recipientId: string }) => void;
+
+  "call.sdp.offer": (event: { callId: string; offerSDP: string }) => void;
+
+  "call.sdp.answer": (event: { callId: string; answerSDP: string }) => void;
 }
 
 export interface ClientToServerChatEvents {
@@ -36,7 +46,28 @@ export interface ClientToServerChatEvents {
   "is-user-online": (userId: string, callback: (ack: boolean) => void) => void;
 
   // stop typing is handled by reciver
-  "typing-one-to-one-message": (event: { otherUserId: string; convoId: string, time: Date }) => void;
+  "typing-one-to-one-message": (event: {
+    otherUserId: string;
+    convoId: string;
+    time: Date;
+  }) => void;
+
+  // -------------------------------call events-------------------------------
+
+  "call.initiate": (
+    recipientId: string,
+    callback: (
+      res: { ringing: boolean; callId: string } | { ringing: false; error: string },
+    ) => void,
+  ) => void;
+
+  "call.handup": (event: { callId: string }) => void;
+
+  "call.action": (event: { callId: string; action: "answered" | "declined" | "timeout" }) => void;
+
+  "call.sdp.offer": (event: { callId: string; offerSDP: string }) => void;
+
+  "call.sdp.answer": (event: { callId: string; answerSDP: string }) => void;
 }
 
 export interface ClientToServerEvents {

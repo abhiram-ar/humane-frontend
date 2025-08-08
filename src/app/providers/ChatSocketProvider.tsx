@@ -43,7 +43,7 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
     socket.on("new-one-to-one-message", (msg, participants) => {
       const otherUser = find(participants);
       dispath(addMessageToChat({ message: msg, otherUserId: otherUser.userId }));
-      if (!recentConvoIdxHashMap[msg.conversationId]) {
+      if (typeof recentConvoIdxHashMap[msg.conversationId] !== "number") {
         getUserConvoById(msg.conversationId)
           .then((data) => {
             if (data.convo) {

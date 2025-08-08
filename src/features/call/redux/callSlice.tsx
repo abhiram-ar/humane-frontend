@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 export type IMainSearchState = {
   activeAudioDeviceId: string;
   activeVideoDeviceId: string;
-  peerStatus: "pending" | "rejected" | "joined";
+  callStatus: "notInitiated" | "pending" | "rejected" | "joined";
   micOn: boolean;
   cameraOn: boolean;
 };
@@ -11,7 +11,7 @@ export type IMainSearchState = {
 const initialState: IMainSearchState = {
   activeAudioDeviceId: "",
   activeVideoDeviceId: "",
-  peerStatus: "pending",
+  callStatus: "notInitiated",
   micOn: true,
   cameraOn: false,
 };
@@ -27,8 +27,11 @@ export const mainSearchSlice = createSlice({
       state.activeVideoDeviceId = action.payload;
     },
 
-    otherPartyJoined: (state, action: PayloadAction<"pending" | "rejected" | "joined">) => {
-      state.peerStatus = action.payload;
+    callStatus: (
+      state,
+      action: PayloadAction<"notInitiated" | "pending" | "rejected" | "joined">,
+    ) => {
+      state.callStatus = action.payload;
     },
 
     micOn: (state, action: PayloadAction<boolean>) => {
@@ -41,6 +44,6 @@ export const mainSearchSlice = createSlice({
   },
 });
 
-export const { setActiveAudioDeviceId, setActiveVideoDeviceId, otherPartyJoined, cameraOn, micOn } =
+export const { setActiveAudioDeviceId, setActiveVideoDeviceId, callStatus, cameraOn, micOn } =
   mainSearchSlice.actions;
 export default mainSearchSlice.reducer;

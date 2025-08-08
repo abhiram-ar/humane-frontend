@@ -10,7 +10,7 @@ const UserVideoPreview: React.FC = () => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const userVideoRef = useRef<HTMLVideoElement>(null);
   const videoDeviceId = useAppSelector((state) => state.call.activeVideoDeviceId);
-  const peerStatus = useAppSelector((state) => state.call.peerStatus);
+  const peerStatus = useAppSelector((state) => state.call.callStatus);
   const cameraOn = useAppSelector((state) => state.call.cameraOn);
   const userId = useUserId();
 

@@ -122,7 +122,8 @@ const OneToOneChatPage = () => {
           );
           if (tempURL) URL.revokeObjectURL(tempURL);
 
-          if (!recentConvoIdxHashMap[ack.message.conversationId]) {
+          if (typeof recentConvoIdxHashMap[ack.message.conversationId] !== "number") {
+            console.log("fired", recentConvoIdxHashMap);
             getUserConvoById(ack.message.conversationId)
               .then((data) => {
                 if (data.convo) {

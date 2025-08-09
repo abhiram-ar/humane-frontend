@@ -12,13 +12,12 @@ import { replace, useLoaderData, useLocation, useNavigate, useSearchParams } fro
 import ErrorPage from "@/layout/PageNotFoundPage";
 import usePublicUserProfileQuery from "@/features/profile/hooks/usePublicUserProfileQuery";
 import Spinner from "@/components/Spinner";
+import useNavigateBackOnCallEnd from "../hooks/useNavigateBackOnCallEnd";
 
 const P2PVideoPage = () => {
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
   const [searchParams] = useSearchParams();
   const { socket } = useChatSocketProvider();
-  const navigate = useNavigate();
-  const { state } = useLocation();
 
   const dispath = useAppDispatch();
   const callStat = useAppSelector((state) => state.call.callStatus);
@@ -26,16 +25,7 @@ const P2PVideoPage = () => {
 
   const peerId = searchParams.get("peer-id");
   const { httpStatus, isLoading } = usePublicUserProfileQuery(peerId ?? undefined);
-
-  useEffect(() => {
-    if (!state?.from) return;
-    let timer: ReturnType<typeof setTimeout>;
-    if (callStat === "ended") {
-      timer = setTimeout(() => navigate(state.from, { replace: true }), 3 * 1000);
-    }
-
-    return () => clearTimeout(timer);
-  });
+  useNavigateBackOnCallEnd();
 
   if (!peerId) return <ErrorPage message="No recipient" />;
   if (isLoading)

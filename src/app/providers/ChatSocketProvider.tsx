@@ -13,7 +13,9 @@ import { getUserConvoById } from "@/features/chat/services/getUserConvoById";
 import { ConversationWithLastMessage } from "@/features/chat/Types/ConversationWithLastMessage";
 import useFindOtherUserOfOnetoOneConvo from "@/features/chat/hooks/useFindOtherUserOfOnetoOneConvo";
 import {
+  callConnected,
   callDeclinedByPeer,
+  callHangup,
   inComingCall,
   incomingCallRejected,
 } from "@/features/call/redux/callSlice";
@@ -97,6 +99,10 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
     socket.on("call.incoming.cancelled", (event) =>
       dispath(incomingCallRejected({ callId: event.callId })),
     );
+
+    socket.on("call.connected", (event) => dispath(callConnected({ callId: event.callId })));
+
+    socket.on("call.ended", (event) => dispath(callHangup({ callId: event.callId })));
 
     return () => {
       socket.disconnect();

@@ -73,6 +73,11 @@ export const mainSearchSlice = createSlice({
       state.callStatus = "ended";
     },
 
+    callConnected: (state, action: PayloadAction<{ callId: string }>) => {
+      if (state.callId !== action.payload.callId) return;
+      state.callStatus = "joined";
+    },
+
     // -------------- in comming ------------------
 
     inComingCall: (
@@ -86,6 +91,7 @@ export const mainSearchSlice = createSlice({
     incomingCallAccepted: (state, action: PayloadAction<{ callId: string }>) => {
       state.callId = action.payload.callId;
       state.incomingCall = undefined;
+      state.callStatus = "joined";
     },
 
     incomingCallRejected: (state, action: PayloadAction<{ callId: string }>) => {
@@ -103,6 +109,7 @@ export const {
   cameraOn,
   micOn,
   callInitiated,
+  callConnected,
   callHangup,
   callDeclinedByPeer,
   incomingCallAccepted,

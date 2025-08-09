@@ -4,11 +4,11 @@ import UserVideoPreview from "../components/UserVideoPreview";
 import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
 import { callStatus, ringing, callInitiated, callHangup } from "../redux/callSlice";
 import PeerVideoPreview from "../components/PeerVideoPreview";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useChatSocketProvider } from "@/app/providers/ChatSocketProvider";
 import toast from "react-hot-toast";
 import { toastMessages } from "@/constants/ToastMessages";
-import { useSearchParams } from "react-router";
+import { replace, useLoaderData, useLocation, useNavigate, useSearchParams } from "react-router";
 import ErrorPage from "@/layout/PageNotFoundPage";
 import usePublicUserProfileQuery from "@/features/profile/hooks/usePublicUserProfileQuery";
 import Spinner from "@/components/Spinner";
@@ -17,6 +17,8 @@ const P2PVideoPage = () => {
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
   const [searchParams] = useSearchParams();
   const { socket } = useChatSocketProvider();
+  const navigate = useNavigate();
+  const { state } = useLocation();
 
   const dispath = useAppDispatch();
   const callStat = useAppSelector((state) => state.call.callStatus);
@@ -24,6 +26,16 @@ const P2PVideoPage = () => {
 
   const peerId = searchParams.get("peer-id");
   const { httpStatus, isLoading } = usePublicUserProfileQuery(peerId ?? undefined);
+
+  useEffect(() => {
+    if (!state?.from) return;
+    let timer: ReturnType<typeof setTimeout>;
+    if (callStat === "ended") {
+      timer = setTimeout(() => navigate(state.from, { replace: true }), 3 * 1000);
+    }
+
+    return () => clearTimeout(timer);
+  });
 
   if (!peerId) return <ErrorPage message="No recipient" />;
   if (isLoading)

@@ -23,13 +23,15 @@ export interface ServerToClientChatEvents {
 
   "call.acted.by_other_device": (event: { callId: string; callerId: string }) => void;
 
-  "call.declined": (event: { callId: string; recipientId: string }) => void;
-
   "call.connected": (event: { callId: string; recipientId: string }) => void;
+
+  "call.declined": (event: { callId: string; recipientId: string }) => void;
 
   "call.sdp.offer": (event: { callId: string; offerSDP: string }) => void;
 
   "call.sdp.answer": (event: { callId: string; answerSDP: string }) => void;
+
+  "call.ended": (event: { callId: string; at: string }) => void;
 }
 
 export interface ClientToServerChatEvents {

@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { incomingCallAccepted, incomingCallRejected } from "../redux/callSlice";
+import { useLocation, useNavigate } from "react-router";
 
 const InCommingCallDialog = () => {
   const incommingCall = useAppSelector((state) => state.call.incomingCall);
@@ -15,6 +16,8 @@ const InCommingCallDialog = () => {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const { socket } = useChatSocketProvider();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   useEffect(() => {
     if (!incommingCall || !user || !socket) {
@@ -58,6 +61,7 @@ const InCommingCallDialog = () => {
 
       if (res.status === "connected") {
         dispatch(incomingCallAccepted({ callId: incommingCall.callId }));
+        navigate(`/call/user?peer-id=${incommingCall.callerId}`, { state: { from: pathname } });
         toast.success("call connecected");
       }
     });

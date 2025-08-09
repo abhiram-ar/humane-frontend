@@ -53,9 +53,11 @@ export const mainSearchSlice = createSlice({
       state.incomingCall = undefined;
     },
 
-    incomingCallRejected: (state) => {
-      state.callStatus = "notInitiated";
-      state.incomingCall = undefined;
+    incomingCallRejected: (state, action: PayloadAction<{ callId: string }>) => {
+      if (state.incomingCall?.callId === action.payload.callId) {
+        state.callStatus = "notInitiated";
+        state.incomingCall = undefined;
+      }
     },
 
     micOn: (state, action: PayloadAction<boolean>) => {

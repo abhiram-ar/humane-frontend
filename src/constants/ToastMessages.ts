@@ -4,8 +4,8 @@ export const toastMessages = {
 
   CANNOT_START_CALL: "Cannot start call, Retry",
   CANNOT_ACCEPT_CALL: "Cannot accept call, Retry",
-  CALL_TAKEN_ON_OTHER_DEVICE: "Call taken on other device",
-  CALL_ENDED: "Call ENDED",
+  CALL_TAKEN_ON_OTHER_DEVICE: "Call taken another device",
+  CALL_ENDED: "Call ended",
 
   SOMETHING_WENT_WRONG: "Something went wrong!",
 } as const;

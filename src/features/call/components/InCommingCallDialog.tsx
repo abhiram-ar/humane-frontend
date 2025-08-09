@@ -26,7 +26,7 @@ const InCommingCallDialog = () => {
       setShowDialog(true);
       setTimeout(() => {
         socket.emit("call.action", { callId: incommingCall.callId, action: "timeout" });
-        dispatch(incomingCallRejected());
+        dispatch(incomingCallRejected({ callId: incommingCall.callId }));
         setShowDialog(false);
       }, 1000 * 60);
     }
@@ -42,15 +42,18 @@ const InCommingCallDialog = () => {
       console.log("callstatu", res);
       if (res.status === "callTakenOnOtherDevice") {
         toast(toastMessages.CALL_TAKEN_ON_OTHER_DEVICE);
+        dispatch(incomingCallRejected({ callId: incommingCall.callId }));
         return;
       }
-      if (res.status === "callCancelled") {
+      if (res.status === "callEnded") {
         toast(toastMessages.CALL_ENDED);
+        dispatch(incomingCallRejected({ callId: incommingCall.callId }));
         return;
       }
 
       if (res.status === "connected") {
         dispatch(incomingCallAccepted({ callId: incommingCall.callId }));
+        toast.success("call connecected");
       }
     });
   };
@@ -61,7 +64,7 @@ const InCommingCallDialog = () => {
       return;
     }
     socket.emit("call.action", { action: "declined", callId: incommingCall.callId });
-    dispatch(incomingCallRejected());
+    dispatch(incomingCallRejected({ callId: incommingCall.callId }));
   };
 
   return (

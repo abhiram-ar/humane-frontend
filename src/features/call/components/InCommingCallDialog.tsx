@@ -22,14 +22,19 @@ const InCommingCallDialog = () => {
       return;
     }
 
+    let timer: ReturnType<typeof setTimeout>;
     if (Date.now() - new Date(incommingCall.at).getTime() < 1000 * 60) {
       setShowDialog(true);
-      setTimeout(() => {
+      timer = setTimeout(() => {
         socket.emit("call.action", { callId: incommingCall.callId, action: "timeout" });
         dispatch(incomingCallRejected({ callId: incommingCall.callId }));
         setShowDialog(false);
       }, 1000 * 60);
     }
+    return () => {
+      clearInterval(timer);
+      setShowDialog(false);
+    };
   }, [incommingCall, user, socket]);
 
   const handleAccept = () => {

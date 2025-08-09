@@ -21,7 +21,7 @@ const UserProfileTumbnail: React.FC<Props> = ({ userId, minimized, ...props }) =
           {user ? (
             <p>{`${user?.firstName ?? ""} ${user?.lastName ?? ""}`}</p>
           ) : (
-            <Skeleton className="h-[1em] w-full border">.</Skeleton>
+            <Skeleton className="w-full border text-transparent">.</Skeleton>
           )}
           <CallRingingStatus />
         </div>
@@ -35,9 +35,17 @@ export default UserProfileTumbnail;
 const CallRingingStatus = () => {
   const callStaus = useAppSelector((state) => state.call.callStatus);
   return (
-    <p className="text-zinc animate-pulse font-normal text-zinc-300">
-      {callStaus === "ringing" && "ringing..."}
-      {callStaus === "pending" && "connecting..."}
-    </p>
+    <>
+      <p className="text-zinc animate-pulse font-normal text-zinc-300">
+        {callStaus === "ringing" && "ringing..."}
+        {callStaus === "pending" && "connecting..."}
+      </p>
+
+      {callStaus === "rejected" && (
+        <p className="text-zinc font-normal text-orange-400">Declined call</p>
+      )}
+
+      {callStaus === "ended" && <p className="text-zinc font-normal text-zinc-400"> Call ended</p>}
+    </>
   );
 };

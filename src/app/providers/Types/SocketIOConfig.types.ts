@@ -19,7 +19,11 @@ export interface ServerToClientChatEvents {
 
   "call.incoming": (event: { callerId: string; callId: string; at: string }) => void;
 
+  "call.incoming.cancelled": (event: { callerId: string; callId: string }) => void;
+
   "call.acted.by_other_device": (event: { callId: string; callerId: string }) => void;
+
+  "call.declined": (event: { callId: string; recipientId: string }) => void;
 
   "call.connected": (event: { callId: string; recipientId: string }) => void;
 
@@ -59,6 +63,11 @@ export interface ClientToServerChatEvents {
     callback: (
       res: { ringing: boolean; callId: string } | { ringing: false; error: string },
     ) => void,
+  ) => void;
+
+  "call.cancel-initiated-call": (
+    event: { callId: string },
+    callback: (arg: { cancelled: boolean }) => void,
   ) => void;
 
   "call.action": (

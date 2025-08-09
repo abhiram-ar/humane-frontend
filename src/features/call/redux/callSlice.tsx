@@ -4,7 +4,7 @@ export type IMainSearchState = {
   callId: string | undefined;
   activeAudioDeviceId: string;
   activeVideoDeviceId: string;
-  callStatus: "notInitiated" | "pending" | "ringing" | "rejected" | "joined"; // pending => server not initiated callId, ringing => wating for peer to respond
+  callStatus: "notInitiated" | "pending" | "ringing" | "rejected" | "joined" | "ended"; // pending => server not initiated callId, ringing => wating for peer to respond
   micOn: boolean;
   cameraOn: boolean;
   incomingCall: { callId: string; callerId: string; at: string } | undefined;
@@ -31,12 +31,24 @@ export const mainSearchSlice = createSlice({
       state.activeVideoDeviceId = action.payload;
     },
 
+    micOn: (state, action: PayloadAction<boolean>) => {
+      state.micOn = action.payload;
+    },
+
+    cameraOn: (state, action: PayloadAction<boolean>) => {
+      state.cameraOn = action.payload;
+    },
+
     callStatus: (
       state,
-      action: PayloadAction<"notInitiated" | "pending" | "ringing" | "rejected" | "joined">,
+      action: PayloadAction<
+        "notInitiated" | "pending" | "ringing" | "rejected" | "joined" | "ended"
+      >,
     ) => {
       state.callStatus = action.payload;
     },
+
+    // --------------- outgoing  ----------------
 
     callInitiated: (state) => {
       state.callStatus = "pending";
@@ -47,33 +59,39 @@ export const mainSearchSlice = createSlice({
       state.callId = action.payload.callId;
     },
 
+    callDeclinedByPeer: (state, action: PayloadAction<{ callId: string }>) => {
+      if (state.callId === action.payload.callId) {
+        state.callId = undefined;
+        state.callStatus = "rejected";
+      }
+    },
+
+    callHangup: (state, action: PayloadAction<{ callId: string }>) => {
+      if (state.callId !== action.payload.callId) return;
+
+      state.callId = undefined;
+      state.callStatus = "ended";
+    },
+
+    // -------------- in comming ------------------
+
+    inComingCall: (
+      state,
+      action: PayloadAction<{ callId: string; callerId: string; at: string }>,
+    ) => {
+      if (state.incomingCall || state.callId) return;
+      state.incomingCall = action.payload;
+    },
+
     incomingCallAccepted: (state, action: PayloadAction<{ callId: string }>) => {
-      state.callStatus = "joined";
       state.callId = action.payload.callId;
       state.incomingCall = undefined;
     },
 
     incomingCallRejected: (state, action: PayloadAction<{ callId: string }>) => {
       if (state.incomingCall?.callId === action.payload.callId) {
-        state.callStatus = "notInitiated";
         state.incomingCall = undefined;
       }
-    },
-
-    micOn: (state, action: PayloadAction<boolean>) => {
-      state.micOn = action.payload;
-    },
-
-    cameraOn: (state, action: PayloadAction<boolean>) => {
-      state.cameraOn = action.payload;
-    },
-
-    inComingCall: (
-      state,
-      action: PayloadAction<{ callId: string; callerId: string; at: string }>,
-    ) => {
-      state.incomingCall = action.payload;
-      state.callStatus = "ringing";
     },
   },
 });
@@ -85,6 +103,8 @@ export const {
   cameraOn,
   micOn,
   callInitiated,
+  callHangup,
+  callDeclinedByPeer,
   incomingCallAccepted,
   incomingCallRejected,
   inComingCall,

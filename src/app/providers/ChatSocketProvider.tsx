@@ -12,7 +12,11 @@ import {
 import { getUserConvoById } from "@/features/chat/services/getUserConvoById";
 import { ConversationWithLastMessage } from "@/features/chat/Types/ConversationWithLastMessage";
 import useFindOtherUserOfOnetoOneConvo from "@/features/chat/hooks/useFindOtherUserOfOnetoOneConvo";
-import { inComingCall, incomingCallRejected } from "@/features/call/redux/callSlice";
+import {
+  callDeclinedByPeer,
+  inComingCall,
+  incomingCallRejected,
+} from "@/features/call/redux/callSlice";
 
 type ChatSocketContextType = {
   socket: TypedChatSocket | null;
@@ -87,6 +91,12 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
       console.log("other", event);
       dispath(incomingCallRejected({ callId: event.callId }));
     });
+
+    socket.on("call.declined", (event) => dispath(callDeclinedByPeer({ callId: event.callId })));
+
+    socket.on("call.incoming.cancelled", (event) =>
+      dispath(incomingCallRejected({ callId: event.callId })),
+    );
 
     return () => {
       socket.disconnect();

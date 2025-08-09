@@ -2,7 +2,7 @@ import { createPortal } from "react-dom";
 import CallControls from "../components/CallControls";
 import UserVideoPreview from "../components/UserVideoPreview";
 import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
-import { callStatus, ringing, callInitiated } from "../redux/callSlice";
+import { callStatus, ringing, callInitiated, callHangup } from "../redux/callSlice";
 import PeerVideoPreview from "../components/PeerVideoPreview";
 import { useState } from "react";
 import { useChatSocketProvider } from "@/app/providers/ChatSocketProvider";
@@ -20,6 +20,7 @@ const P2PVideoPage = () => {
 
   const dispath = useAppDispatch();
   const callStat = useAppSelector((state) => state.call.callStatus);
+  const callId = useAppSelector((state) => state.call.callId);
 
   const peerId = searchParams.get("peer-id");
   const { httpStatus, isLoading } = usePublicUserProfileQuery(peerId ?? undefined);
@@ -43,6 +44,7 @@ const P2PVideoPage = () => {
 
   const hanedleStartCall = async () => {
     if (!socket) {
+      console.log("fired");
       toast.error(toastMessages.CANNOT_START_CALL);
       return;
     }
@@ -61,6 +63,16 @@ const P2PVideoPage = () => {
     }
   };
 
+  const handleHandupCall = () => {
+    if (!socket || !callId) {
+      toast.error(toastMessages.CANNOT_START_CALL);
+      return;
+    }
+    //2 states need to manges - while ringing  and while connected
+    socket.emit("call.handup", { callId: callId });
+    dispath(callHangup({ callId }));
+  };
+
   return createPortal(
     <>
       <div className="bg-grey-dark-bg absolute inset-0 overflow-clip">
@@ -73,7 +85,7 @@ const P2PVideoPage = () => {
           Toggle peer
         </button>
         <div className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white">
-          <CallControls startCall={hanedleStartCall} />
+          <CallControls handupCall={handleHandupCall} startCall={hanedleStartCall} />
         </div>
       </div>
     </>,

@@ -6,9 +6,10 @@ import { cameraOn, micOn } from "../redux/callSlice";
 
 type Props = {
   startCall: () => void;
+  handupCall: () => void;
 };
 
-const CallControls: React.FC<Props> = ({ startCall }) => {
+const CallControls: React.FC<Props> = ({ startCall, handupCall }) => {
   const micStatus = useAppSelector((state) => state.call.micOn);
   const cameraStatus = useAppSelector((state) => state.call.cameraOn);
   const callStatus = useAppSelector((state) => state.call.callStatus);
@@ -38,8 +39,12 @@ const CallControls: React.FC<Props> = ({ startCall }) => {
       </div>
 
       <div className="flex max-h-40 w-40 max-w-40 justify-end">
-        {callStatus === "joined" && (
-          <div className="cursor-pointer rounded-full bg-red-500/80 p-3 hover:bg-red-500">
+        {/*  */}
+        {(callStatus === "joined" || callStatus === "ringing") && (
+          <div
+            onClick={handupCall}
+            className="cursor-pointer rounded-full bg-red-500/80 p-3 hover:bg-red-500"
+          >
             <div className="rotate-135 px-3">
               <Phone />
             </div>
@@ -58,20 +63,22 @@ const CallControls: React.FC<Props> = ({ startCall }) => {
           </div>
         )}
 
-        {callStatus === "pending" ||
-          (callStatus === "ringing" && (
-            <div className="cursor-pointer rounded-full bg-blue-400/90 p-3 hover:bg-blue-400">
-              <div className="px-3 text-black">
-                <PhoneCall className="animate-pulse" />
-              </div>
+        {callStatus === "pending" && (
+          <div className="cursor-pointer rounded-full bg-blue-400/90 p-3 hover:bg-blue-400">
+            <div className="px-3 text-black">
+              <PhoneCall className="animate-pulse" />
             </div>
-          ))}
+          </div>
+        )}
 
-        {callStatus === "rejected" && (
-          <div className="cursor-pointer rounded-full bg-orange-400/80 p-3 hover:bg-orange-400">
+        {(callStatus === "rejected" || callStatus === "ended") && (
+          <div
+            onClick={startCall}
+            className="bg-pop-green/80 hover:bg-pop-green cursor-pointer rounded-full p-3"
+          >
             <div className="flex gap-2 px-3 text-black">
               <PhoneMissed />
-              <p>Not taken</p>
+              <p>Call Again</p>
             </div>
           </div>
         )}

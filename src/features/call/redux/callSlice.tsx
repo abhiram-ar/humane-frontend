@@ -1,19 +1,23 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type IMainSearchState = {
+  callId: string | undefined;
   activeAudioDeviceId: string;
   activeVideoDeviceId: string;
-  callStatus: "notInitiated" | "pending" | "rejected" | "joined";
+  callStatus: "notInitiated" | "pending" | "ringing" | "rejected" | "joined";
   micOn: boolean;
   cameraOn: boolean;
+  incomingCall: { callId: string; callerId: string; at: string } | undefined;
 };
 
 const initialState: IMainSearchState = {
+  callId: undefined,
   activeAudioDeviceId: "",
   activeVideoDeviceId: "",
   callStatus: "notInitiated",
   micOn: true,
   cameraOn: false,
+  incomingCall: undefined,
 };
 
 export const mainSearchSlice = createSlice({
@@ -29,9 +33,18 @@ export const mainSearchSlice = createSlice({
 
     callStatus: (
       state,
-      action: PayloadAction<"notInitiated" | "pending" | "rejected" | "joined">,
+      action: PayloadAction<"notInitiated" | "pending" | "ringing" | "rejected" | "joined">,
     ) => {
       state.callStatus = action.payload;
+    },
+
+    callInitiated: (state) => {
+      state.callStatus = "pending";
+    },
+
+    ringing: (state, action: PayloadAction<{ callId: string }>) => {
+      state.callStatus = "ringing";
+      state.callId = action.payload.callId;
     },
 
     micOn: (state, action: PayloadAction<boolean>) => {
@@ -41,9 +54,24 @@ export const mainSearchSlice = createSlice({
     cameraOn: (state, action: PayloadAction<boolean>) => {
       state.cameraOn = action.payload;
     },
+
+    inComingCall: (
+      state,
+      action: PayloadAction<{ callId: string; callerId: string; at: string }>,
+    ) => {
+      state.incomingCall = action.payload;
+    },
   },
 });
 
-export const { setActiveAudioDeviceId, setActiveVideoDeviceId, callStatus, cameraOn, micOn } =
-  mainSearchSlice.actions;
+export const {
+  setActiveAudioDeviceId,
+  setActiveVideoDeviceId,
+  callStatus,
+  cameraOn,
+  micOn,
+  callInitiated,
+  inComingCall,
+  ringing,
+} = mainSearchSlice.actions;
 export default mainSearchSlice.reducer;

@@ -1,14 +1,16 @@
 import { useAppSelector } from "@/features/userAuth/hooks/store.hooks";
 import React, { useEffect, useRef } from "react";
 import UserProfileTumbnail from "./UserProfileTumbnail";
-import useUserId from "@/hooks/useUserId";
 
-const PeerVideoPreview: React.FC = () => {
+type Props = {
+  peerId: string;
+};
+
+const PeerVideoPreview: React.FC<Props> = ({ peerId }) => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const userVideoRef = useRef<HTMLVideoElement>(null);
   const cameraOn = useAppSelector((state) => state.call.cameraOn);
   const videoDeviceId = useAppSelector((state) => state.call.activeVideoDeviceId);
-  const userId = useUserId();
 
   useEffect(() => {
     if (!userVideoRef.current || !videoDeviceId) return;
@@ -40,9 +42,12 @@ const PeerVideoPreview: React.FC = () => {
       style={{
         userSelect: "none", // prevents text selection while dragging
       }}
-        >
+    >
       {!cameraOn ? (
-        <UserProfileTumbnail userId={userId} className="h-full w-full bg-radial-[at_50%_75%] from-purple-800 from-5%  to-zinc-900" />
+        <UserProfileTumbnail
+          userId={peerId}
+          className="h-full w-full bg-radial-[at_50%_75%] from-purple-800 from-5% to-zinc-900"
+        />
       ) : (
         <video
           muted={true}

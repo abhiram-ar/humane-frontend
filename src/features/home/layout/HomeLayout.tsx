@@ -3,12 +3,14 @@ import Sidebar from "../components/Sidebar";
 import { useScrollContext } from "@/app/providers/ScrollRestoreationProvider";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import MobileNavbar from "../components/MobileNavbar";
+import InCommingCallDialog from "@/features/call/components/InCommingCallDialog";
 
 const HomeLayout = () => {
   const { ref } = useScrollContext();
   const isMobile = useIsMobile();
   return (
     <div className="bg-grey-dark-bg">
+      <InCommingCallDialog />
       {!isMobile && <Sidebar />}
       <div
         ref={ref}

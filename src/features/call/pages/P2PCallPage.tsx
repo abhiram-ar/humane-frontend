@@ -2,7 +2,7 @@ import { createPortal } from "react-dom";
 import CallControls from "../components/CallControls";
 import UserVideoPreview from "../components/UserVideoPreview";
 import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
-import { callStatus } from "../redux/callSlice";
+import { callStatus, ringing, callInitiated } from "../redux/callSlice";
 import PeerVideoPreview from "../components/PeerVideoPreview";
 import { useState } from "react";
 import { useChatSocketProvider } from "@/app/providers/ChatSocketProvider";
@@ -19,7 +19,7 @@ const P2PVideoPage = () => {
   const { socket } = useChatSocketProvider();
 
   const dispath = useAppDispatch();
-  const peerstaus = useAppSelector((state) => state.call.callStatus);
+  const callStat = useAppSelector((state) => state.call.callStatus);
 
   const peerId = searchParams.get("peer-id");
   const { httpStatus, isLoading } = usePublicUserProfileQuery(peerId ?? undefined);
@@ -27,14 +27,17 @@ const P2PVideoPage = () => {
   if (!peerId) return <ErrorPage message="No recipient" />;
   if (isLoading)
     return (
-      <div className=" flex justify-center items-center border h-full w-full">
-        <Spinner />
+      <div className="bg-grey-dark-bg absolute inset-0 overflow-clip">
+        <div className="flex h-full w-full flex-col items-center justify-center text-white">
+          <Spinner />
+          <p className="mt-1 text-zinc-400">Initializing</p>
+        </div>
       </div>
     );
   if (httpStatus === 404) return <ErrorPage message="Invalid User" />;
 
   const toggleOtherPerson = () => {
-    if (peerstaus == "pending") dispath(callStatus("joined"));
+    if (callStat == "pending") dispath(callStatus("joined"));
     else dispath(callStatus("pending"));
   };
 
@@ -44,10 +47,12 @@ const P2PVideoPage = () => {
       return;
     }
     try {
-      dispath(callStatus("pending"));
+      dispath(callInitiated());
 
       socket.emit("call.initiate", peerId, (res) => {
-        console.log(res);
+        if (res.ringing) {
+          dispath(ringing({ callId: res.callId }));
+        }
       });
     } catch (error) {
       console.log("error starting call", error);
@@ -61,7 +66,7 @@ const P2PVideoPage = () => {
       <div className="bg-grey-dark-bg absolute inset-0 overflow-clip">
         {/* draggable contaienr */}
         <div className="mx-auto mt-5 h-11/12 w-[95vw] border">
-          {peerstaus === "joined" && <PeerVideoPreview />}
+          {callStat !== "notInitiated" && <PeerVideoPreview peerId={peerId} />}
           <UserVideoPreview />
         </div>
         <button className="absolute top-0 left-0 bg-amber-200" onClick={() => toggleOtherPerson()}>

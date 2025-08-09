@@ -49,7 +49,7 @@ const CallControls: React.FC<Props> = ({ startCall }) => {
         {callStatus === "notInitiated" && (
           <div
             onClick={startCall}
-            className="bg-pop-green/80 hover:bg-pop-green ms-10 cursor-pointer rounded-full p-3 "
+            className="bg-pop-green/80 hover:bg-pop-green ms-10 cursor-pointer rounded-full p-3"
           >
             <div className="flex gap-1 px-0.5 text-black">
               <Phone />
@@ -58,13 +58,14 @@ const CallControls: React.FC<Props> = ({ startCall }) => {
           </div>
         )}
 
-        {callStatus === "pending" && (
-          <div className="cursor-pointer rounded-full bg-blue-400/90 p-3 hover:bg-blue-400">
-            <div className="px-3 text-black">
-              <PhoneCall className="animate-pulse" />
+        {callStatus === "pending" ||
+          (callStatus === "ringing" && (
+            <div className="cursor-pointer rounded-full bg-blue-400/90 p-3 hover:bg-blue-400">
+              <div className="px-3 text-black">
+                <PhoneCall className="animate-pulse" />
+              </div>
             </div>
-          </div>
-        )}
+          ))}
 
         {callStatus === "rejected" && (
           <div className="cursor-pointer rounded-full bg-orange-400/80 p-3 hover:bg-orange-400">

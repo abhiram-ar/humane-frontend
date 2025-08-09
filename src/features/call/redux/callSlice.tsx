@@ -4,7 +4,7 @@ export type IMainSearchState = {
   callId: string | undefined;
   activeAudioDeviceId: string;
   activeVideoDeviceId: string;
-  callStatus: "notInitiated" | "pending" | "ringing" | "rejected" | "joined";
+  callStatus: "notInitiated" | "pending" | "ringing" | "rejected" | "joined"; // pending => server not initiated callId, ringing => wating for peer to respond
   micOn: boolean;
   cameraOn: boolean;
   incomingCall: { callId: string; callerId: string; at: string } | undefined;
@@ -47,6 +47,17 @@ export const mainSearchSlice = createSlice({
       state.callId = action.payload.callId;
     },
 
+    incomingCallAccepted: (state, action: PayloadAction<{ callId: string }>) => {
+      state.callStatus = "joined";
+      state.callId = action.payload.callId;
+      state.incomingCall = undefined;
+    },
+
+    incomingCallRejected: (state) => {
+      state.callStatus = "notInitiated";
+      state.incomingCall = undefined;
+    },
+
     micOn: (state, action: PayloadAction<boolean>) => {
       state.micOn = action.payload;
     },
@@ -60,6 +71,7 @@ export const mainSearchSlice = createSlice({
       action: PayloadAction<{ callId: string; callerId: string; at: string }>,
     ) => {
       state.incomingCall = action.payload;
+      state.callStatus = "ringing";
     },
   },
 });
@@ -71,6 +83,8 @@ export const {
   cameraOn,
   micOn,
   callInitiated,
+  incomingCallAccepted,
+  incomingCallRejected,
   inComingCall,
   ringing,
 } = mainSearchSlice.actions;

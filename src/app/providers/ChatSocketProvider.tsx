@@ -80,7 +80,7 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
       );
     });
     socket.on("call.incoming", (event) => {
-      dispath(inComingCall({ ...event, at: new Date().toUTCString() }));
+      dispath(inComingCall(event));
     });
 
     return () => {

@@ -4,28 +4,122 @@ import UserVideoPreview from "../components/UserVideoPreview";
 import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
 import { callStatus, ringing, callInitiated, callHangup } from "../redux/callSlice";
 import PeerVideoPreview from "../components/PeerVideoPreview";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useChatSocketProvider } from "@/app/providers/ChatSocketProvider";
 import toast from "react-hot-toast";
 import { toastMessages } from "@/constants/ToastMessages";
-import { replace, useLoaderData, useLocation, useNavigate, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
 import ErrorPage from "@/layout/PageNotFoundPage";
 import usePublicUserProfileQuery from "@/features/profile/hooks/usePublicUserProfileQuery";
 import Spinner from "@/components/Spinner";
 import useNavigateBackOnCallEnd from "../hooks/useNavigateBackOnCallEnd";
 
 const P2PVideoPage = () => {
-  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
-  const [searchParams] = useSearchParams();
+  const peerConnectionRef = useRef<RTCPeerConnection>(null);
   const { socket } = useChatSocketProvider();
+  const [searchParams] = useSearchParams();
 
   const dispath = useAppDispatch();
-  const callStat = useAppSelector((state) => state.call.callStatus);
+  const callState = useAppSelector((state) => state.call.callStatus);
   const callId = useAppSelector((state) => state.call.callId);
+  const clientType = useAppSelector((state) => state.call.clientType);
 
   const peerId = searchParams.get("peer-id");
   const { httpStatus, isLoading } = usePublicUserProfileQuery(peerId ?? undefined);
   useNavigateBackOnCallEnd();
+
+  useEffect(() => {
+    if (clientType !== "caller" || callState !== "joined" || !socket || !callId) return;
+
+    let pc = peerConnectionRef.current;
+    if (!pc) {
+      pc = new RTCPeerConnection();
+      peerConnectionRef.current = pc;
+    }
+
+    pc.onnegotiationneeded = async () => {
+      console.log("negotiation-needed-fired");
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+      socket.emit("call.sdp.offer", {
+        callId: callId,
+        offerSDP: JSON.stringify(pc.localDescription),
+      });
+    };
+
+    pc.onicecandidate = (event) => {
+      console.log("my-ice candidates", event);
+      if (!event.candidate) return;
+      socket.emit("call.ice-candidates", { callId, ice: JSON.stringify(event.candidate) });
+    };
+
+    socket.on("call.sdp.answer", async (event) => {
+      console.log("got anaswer", event);
+      const answer = JSON.parse(event.answerSDP);
+      await pc.setRemoteDescription(answer);
+    });
+
+    socket.on("call.ice-candidates", async (event) => {
+      console.log("got foreign-ice");
+      const ice = JSON.parse(event.ice);
+      await pc.addIceCandidate(ice);
+    });
+
+    const startStream = async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: false,
+      });
+
+      pc.addTrack(stream.getVideoTracks()[0], stream);
+    };
+    startStream();
+    return () => {};
+  }, [clientType, peerId, callId, socket, callState]);
+
+  useEffect(() => {
+    if (clientType !== "callee" || callState !== "joined" || !socket || !callId) return;
+
+    let pc = peerConnectionRef.current;
+    if (!pc) {
+      pc = new RTCPeerConnection();
+      peerConnectionRef.current = pc;
+    }
+
+    socket.on("call.sdp.offer", async (event) => {
+      console.log("got offer", event);
+      await pc.setRemoteDescription(JSON.parse(event.offerSDP));
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+      socket.emit("call.sdp.answer", { callId, answerSDP: JSON.stringify(answer) });
+    });
+
+    pc.onicecandidate = (event) => {
+      console.log("my-ice candidates", event);
+      if (!event.candidate) return;
+      socket.emit("call.ice-candidates", { callId, ice: JSON.stringify(event.candidate) });
+    };
+
+    socket.on("call.ice-candidates", (event) => {
+      console.log("got foreign-ice");
+      const ice = JSON.parse(event.ice);
+      pc.addIceCandidate(ice);
+    });
+
+    const startStream = async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: false,
+      });
+
+      pc.addTrack(stream.getVideoTracks()[0], stream);
+    };
+    startStream();
+
+    return () => {
+      // cleanup
+    };
+  }, [clientType, peerId, callId, socket, callState]);
 
   if (!peerId) return <ErrorPage message="No recipient" />;
   if (isLoading)
@@ -40,7 +134,7 @@ const P2PVideoPage = () => {
   if (httpStatus === 404) return <ErrorPage message="Invalid User" />;
 
   const toggleOtherPerson = () => {
-    if (callStat == "pending") dispath(callStatus("joined"));
+    if (callState == "pending") dispath(callStatus("joined"));
     else dispath(callStatus("pending"));
   };
 
@@ -80,7 +174,9 @@ const P2PVideoPage = () => {
       <div className="bg-grey-dark-bg absolute inset-0 overflow-clip">
         {/* draggable contaienr */}
         <div className="mx-auto mt-5 h-11/12 w-[95vw] border">
-          {callStat !== "notInitiated" && <PeerVideoPreview peerId={peerId} />}
+          {callState !== "notInitiated" && (
+            <PeerVideoPreview peerConnection={peerConnectionRef.current} peerId={peerId} />
+          )}
           <UserVideoPreview />
         </div>
         <button className="absolute top-0 left-0 bg-amber-200" onClick={() => toggleOtherPerson()}>

@@ -1,39 +1,54 @@
 import { useAppSelector } from "@/features/userAuth/hooks/store.hooks";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import UserProfileTumbnail from "./UserProfileTumbnail";
 
 type Props = {
   peerId: string;
+  peerConnection: RTCPeerConnection | null;
 };
 
-const PeerVideoPreview: React.FC<Props> = ({ peerId }) => {
+const PeerVideoPreview: React.FC<Props> = ({ peerId, peerConnection }) => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
-  const userVideoRef = useRef<HTMLVideoElement>(null);
-  const cameraOn = useAppSelector((state) => state.call.cameraOn);
+  const peerVideoRef = useRef<HTMLVideoElement>(null);
+  const [cameraOn, setCameraOn] = useState(false);
   const videoDeviceId = useAppSelector((state) => state.call.activeVideoDeviceId);
 
-  useEffect(() => {
-    if (!userVideoRef.current || !videoDeviceId) return;
-    const setVideo = async () => {
-      try {
-        const streams = await window.navigator.mediaDevices.getUserMedia({
-          video: { deviceId: { exact: videoDeviceId } },
-          audio: false,
-        });
+  // useEffect(() => {
+  //   if (!peerVideoRef.current || !videoDeviceId) return;
+  //   const setVideo = async () => {
+  //     try {
+  //       const streams = await window.navigator.mediaDevices.getUserMedia({
+  //         video: { deviceId: { exact: videoDeviceId } },
+  //         audio: false,
+  //       });
 
-        if (streams) {
-          const mediaStream = new MediaStream(streams.getVideoTracks());
-          if (userVideoRef.current) {
-            userVideoRef.current.srcObject = mediaStream;
-            userVideoRef.current.play();
-          }
-        }
-      } catch (error) {
-        console.log("error loaing camera stream", error);
+  //       if (streams) {
+  //         const mediaStream = new MediaStream(streams.getVideoTracks());
+  //         if (peerVideoRef.current) {
+  //           peerVideoRef.current.srcObject = mediaStream;
+  //           peerVideoRef.current.play();
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.log("error loaing camera stream", error);
+  //     }
+  //   };
+  //   setVideo();
+  // }, [videoDeviceId, cameraOn]);
+
+  useEffect(() => {
+    setCameraOn(true);
+    if (!peerConnection) return;
+    peerConnection.ontrack = (event) => {
+      const mediaStream = new MediaStream();
+      console.log("track received:", event.track);
+      if (peerVideoRef.current) {
+        mediaStream.addTrack(event.track);
+        peerVideoRef.current.srcObject = mediaStream;
+        peerVideoRef.current.play();
       }
     };
-    setVideo();
-  }, [videoDeviceId, cameraOn]);
+  }, [peerConnection]);
 
   return (
     <div
@@ -52,7 +67,7 @@ const PeerVideoPreview: React.FC<Props> = ({ peerId }) => {
         <video
           muted={true}
           className="aspect-auto h-full w-full object-contain"
-          ref={userVideoRef}
+          ref={peerVideoRef}
           style={{ transform: "scaleX(-1)" }} // raw stream is has no mirror flip, this flips the like a mirror
         ></video>
       )}

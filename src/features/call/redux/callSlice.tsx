@@ -8,6 +8,7 @@ export type IMainSearchState = {
   micOn: boolean;
   cameraOn: boolean;
   incomingCall: { callId: string; callerId: string; at: string } | undefined;
+  clientType: "caller" | "callee" | undefined;
 };
 
 const initialState: IMainSearchState = {
@@ -18,6 +19,7 @@ const initialState: IMainSearchState = {
   micOn: true,
   cameraOn: false,
   incomingCall: undefined,
+  clientType: undefined,
 };
 
 export const mainSearchSlice = createSlice({
@@ -52,6 +54,7 @@ export const mainSearchSlice = createSlice({
 
     callInitiated: (state) => {
       state.callStatus = "pending";
+      state.clientType = "caller";
     },
 
     ringing: (state, action: PayloadAction<{ callId: string }>) => {
@@ -71,6 +74,7 @@ export const mainSearchSlice = createSlice({
 
       state.callId = undefined;
       state.callStatus = "ended";
+      state.clientType = undefined;
     },
 
     callConnected: (state, action: PayloadAction<{ callId: string }>) => {
@@ -92,6 +96,7 @@ export const mainSearchSlice = createSlice({
       state.callId = action.payload.callId;
       state.incomingCall = undefined;
       state.callStatus = "joined";
+      state.clientType = "callee";
     },
 
     incomingCallRejected: (state, action: PayloadAction<{ callId: string }>) => {

@@ -25,8 +25,8 @@ const OtherParticipantMessage: React.FC<Props> = ({ message }) => {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <PhoneMissed size={18} className="text-red-500" />
-              <p className="text-red-500">Not Connected</p>
+              <PhoneMissed size={18} className="text-red-400" />
+              <p className="text-red-400">Not Connected</p>
             </div>
           )}
 

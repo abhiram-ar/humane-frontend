@@ -3,17 +3,59 @@ import { AudioStreamSelector } from "./AudioStreamSelector";
 import { VideoStreamSelector } from "./VideoStreamSelector";
 import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
 import { cameraOn, micOn } from "../redux/callSlice";
+import React, { useRef } from "react";
 
 type Props = {
   startCall: () => void;
   handupCall: () => void;
+  peerConectionRef: React.RefObject<RTCPeerConnection | null>;
+  localStreamRef: React.RefObject<MediaStream | null>;
 };
 
-const CallControls: React.FC<Props> = ({ startCall, handupCall }) => {
+const CallControls: React.FC<Props> = ({
+  startCall,
+  handupCall,
+  peerConectionRef,
+  localStreamRef,
+}) => {
   const micStatus = useAppSelector((state) => state.call.micOn);
   const cameraStatus = useAppSelector((state) => state.call.cameraOn);
   const callStatus = useAppSelector((state) => state.call.callStatus);
   const dispath = useAppDispatch();
+  const removeTrackTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  const handleVideoToogle = () => {
+    const newCameraState = !cameraStatus;
+    dispath(cameraOn(newCameraState));
+
+    if (removeTrackTimerRef.current) {
+      clearTimeout(removeTrackTimerRef.current);
+    }
+
+    if (peerConectionRef.current && !newCameraState && localStreamRef.current) {
+      const pc = peerConectionRef.current;
+      const sender = pc.getSenders();
+      sender
+        .filter((sender) => sender.track?.kind === "video")
+        .forEach((sender) => {
+          if (!sender.track) return;
+          sender.track.enabled = false;
+          removeTrackTimerRef.current = setTimeout(() => {
+            sender.track?.stop();
+            pc.removeTrack(sender);
+          }, 10 * 1000);
+        });
+    } else if (peerConectionRef.current && newCameraState && localStreamRef.current) {
+      const pc = peerConectionRef.current;
+      const sender = pc.getSenders();
+      sender
+        .filter((sender) => sender.track?.kind === "video")
+        .forEach((sender) => {
+          if (!sender.track) return;
+          sender.track.enabled = true;
+        });
+    }
+  };
 
   return (
     <div className="item-center flex justify-center gap-2 rounded-4xl border border-zinc-400/50 bg-zinc-700 px-3 py-2 transition-all duration-200">
@@ -31,7 +73,7 @@ const CallControls: React.FC<Props> = ({ startCall, handupCall }) => {
       <div className="flex rounded-full bg-zinc-600">
         <VideoStreamSelector />
         <div
-          onClick={() => dispath(cameraOn(!cameraStatus))}
+          onClick={handleVideoToogle}
           className={`rounded-full p-3 ${cameraStatus ? "bg-zinc-500/80 hover:bg-zinc-500" : "bg-red-500/50 hover:bg-red-500/70"}`}
         >
           {cameraStatus ? <Video /> : <VideoOff />}

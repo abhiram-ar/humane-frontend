@@ -4,7 +4,7 @@ import UserVideoPreview from "../components/UserVideoPreview";
 import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
 import { callStatus, ringing, callInitiated, callHangup } from "../redux/callSlice";
 import PeerVideoPreview from "../components/PeerVideoPreview";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useChatSocketProvider } from "@/app/providers/ChatSocketProvider";
 import toast from "react-hot-toast";
 import { toastMessages } from "@/constants/ToastMessages";
@@ -23,103 +23,256 @@ const P2PVideoPage = () => {
   const callState = useAppSelector((state) => state.call.callStatus);
   const callId = useAppSelector((state) => state.call.callId);
   const clientType = useAppSelector((state) => state.call.clientType);
+  const activeAudioDeviceId = useAppSelector((state) => state.call.activeAudioDeviceId);
+  const activeVideoDeviceId = useAppSelector((state) => state.call.activeVideoDeviceId);
+  const micOn = useAppSelector((state) => state.call.micOn);
+  const cameraOn = useAppSelector((state) => state.call.cameraOn);
 
   const peerId = searchParams.get("peer-id");
   const { httpStatus, isLoading } = usePublicUserProfileQuery(peerId ?? undefined);
+
+  // polite = true => will be forgiving in RTC state collisions (receiver usually  polite)
+  const queuedCandidatesRef = useRef<RTCIceCandidate[]>([]);
+  const makingOffer = useRef<boolean>(false);
+  const isSettingRemoteDescritionPending = useRef<boolean>(false);
+  const localStreamRef = useRef<MediaStream>(null);
+  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+  const polite = clientType === "callee";
+
   useNavigateBackOnCallEnd();
 
-  useEffect(() => {
-    if (clientType !== "caller" || callState !== "joined" || !socket || !callId) return;
-
+  const createOrGetPC = useCallback((): RTCPeerConnection => {
     let pc = peerConnectionRef.current;
-    if (!pc) {
-      pc = new RTCPeerConnection();
-      peerConnectionRef.current = pc;
-    }
+    if (pc) return pc;
 
+    pc = new RTCPeerConnection();
+    peerConnectionRef.current = pc;
+
+    pc.onicecandidate = (event) => {
+      console.log("my-ice candidates", event);
+      if (!event.candidate || !callId) return;
+      socket?.emit("call.ice-candidates", { callId, ice: JSON.stringify(event.candidate) });
+    };
+
+    // debounced negotiation handler:
     pc.onnegotiationneeded = async () => {
-      console.log("negotiation-needed-fired");
-      const offer = await pc.createOffer();
-      await pc.setLocalDescription(offer);
-      socket.emit("call.sdp.offer", {
-        callId: callId,
-        offerSDP: JSON.stringify(pc.localDescription),
-      });
+      try {
+        if (makingOffer.current || !callId) return;
+        makingOffer.current = true;
+
+        console.log("negotiation-needed-fired");
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        socket?.emit("call.sdp.offer", {
+          callId: callId,
+          offerSDP: JSON.stringify(pc.localDescription),
+        });
+      } catch (err) {
+        console.error("negotiationneeded error:", err);
+      } finally {
+        makingOffer.current = false;
+      }
     };
 
-    pc.onicecandidate = (event) => {
-      console.log("my-ice candidates", event);
-      if (!event.candidate) return;
-      socket.emit("call.ice-candidates", { callId, ice: JSON.stringify(event.candidate) });
+    pc.ontrack = async (event) => {
+      console.log("track received:", event.track);
+      let stream = remoteStream;
+      if (!stream) {
+        stream = new MediaStream();
+      }
+
+      const exitingVideoTracks = stream.getVideoTracks();
+      // CHECK-if this is necessary:remove existing track
+      if (exitingVideoTracks.length) {
+        for (const track of exitingVideoTracks) {
+          stream.removeTrack(track);
+          console.log("removing exising video tracks");
+        }
+      }
+
+      event.track.onended = (t) => {
+        console.log("on ended", t);
+        setRemoteStream(null);
+      };
+
+      stream.addTrack(event.track);
+      if (event.track.enabled) setRemoteStream(stream);
+      else setRemoteStream(null);
     };
 
-    socket.on("call.sdp.answer", async (event) => {
-      console.log("got anaswer", event);
-      const answer = JSON.parse(event.answerSDP);
-      await pc.setRemoteDescription(answer);
-    });
+    return pc;
+  }, [callId, socket]);
 
-    socket.on("call.ice-candidates", async (event) => {
-      console.log("got foreign-ice");
-      const ice = JSON.parse(event.ice);
-      await pc.addIceCandidate(ice);
-    });
-
-    const startStream = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: false,
-      });
-
-      pc.addTrack(stream.getVideoTracks()[0], stream);
-    };
-    startStream();
-    return () => {};
-  }, [clientType, peerId, callId, socket, callState]);
-
-  useEffect(() => {
-    if (clientType !== "callee" || callState !== "joined" || !socket || !callId) return;
-
-    let pc = peerConnectionRef.current;
-    if (!pc) {
-      pc = new RTCPeerConnection();
-      peerConnectionRef.current = pc;
+  const flushQueuedCandidates = useCallback(async (pc: RTCPeerConnection) => {
+    if (!queuedCandidatesRef.current.length) return;
+    for (const c of queuedCandidatesRef.current) {
+      try {
+        await pc.addIceCandidate(c);
+      } catch (error) {
+        console.log("error addeding queued ice candidate", error);
+      }
     }
+  }, []);
 
-    socket.on("call.sdp.offer", async (event) => {
-      console.log("got offer", event);
-      await pc.setRemoteDescription(JSON.parse(event.offerSDP));
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-      socket.emit("call.sdp.answer", { callId, answerSDP: JSON.stringify(answer) });
-    });
+  // common socket listeners for caller and callee
+  useEffect(() => {
+    if (!socket) return;
 
-    pc.onicecandidate = (event) => {
-      console.log("my-ice candidates", event);
-      if (!event.candidate) return;
-      socket.emit("call.ice-candidates", { callId, ice: JSON.stringify(event.candidate) });
+    const onOffer = async (event: { callId: string; offerSDP: string }) => {
+      try {
+        if (!peerId || event.callId !== callId) return;
+        const pc = createOrGetPC();
+        // collision detection
+        const offerCollision = makingOffer.current || isSettingRemoteDescritionPending.current;
+        if (offerCollision && !polite) {
+          console.warn("skipping remote offer because of state collision and impolite role");
+          return;
+        }
+
+        isSettingRemoteDescritionPending.current = true;
+        await pc.setRemoteDescription(JSON.parse(event.offerSDP));
+        isSettingRemoteDescritionPending.current = false;
+
+        // flush ice, now that we have remote desc set
+        await flushQueuedCandidates(pc);
+
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        socket.emit("call.sdp.answer", { callId, answerSDP: JSON.stringify(answer) });
+      } catch (error) {
+        isSettingRemoteDescritionPending.current = false;
+        console.log("error handling incomming offer ", error);
+      }
     };
 
-    socket.on("call.ice-candidates", (event) => {
-      console.log("got foreign-ice");
-      const ice = JSON.parse(event.ice);
-      pc.addIceCandidate(ice);
-    });
-
-    const startStream = async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: false,
-      });
-
-      pc.addTrack(stream.getVideoTracks()[0], stream);
+    const onAnswer = async (event: { callId: string; answerSDP: string }) => {
+      try {
+        if (event.callId !== callId) return;
+        const pc = createOrGetPC();
+        // here we since we are only setting remote desc, we might not have conflit of RTC states : double check required
+        await pc.setRemoteDescription(JSON.parse(event.answerSDP));
+        await flushQueuedCandidates(pc);
+      } catch (error) {
+        console.error("error while handling incoming answer", error);
+      }
     };
-    startStream();
+
+    const onRemoteICE = async (event: { callId: string; ice: string }) => {
+      try {
+        if (event.callId !== callId) return;
+        const pc = peerConnectionRef.current;
+        const candidate = JSON.parse(event.ice) as RTCIceCandidate;
+        if (pc && pc.remoteDescription && pc.remoteDescription.type) {
+          await pc.addIceCandidate(candidate);
+        } else {
+          queuedCandidatesRef.current.push(candidate);
+        }
+      } catch (error) {
+        console.error("error while setting remote ice-c", error);
+      }
+    };
+
+    socket.on("call.sdp.offer", onOffer);
+    socket.on("call.sdp.answer", onAnswer);
+    socket.on("call.ice-candidates", onRemoteICE);
 
     return () => {
-      // cleanup
+      socket.off("call.sdp.offer", onOffer);
+      socket.off("call.sdp.answer", onAnswer);
+      socket.off("call.ice-candidates", onRemoteICE);
     };
-  }, [clientType, peerId, callId, socket, callState]);
+  }, [callId, createOrGetPC, flushQueuedCandidates, polite, socket]);
+
+  const startLocalMedia = useCallback(
+    async (options: {
+      video: boolean;
+      audio: boolean;
+      audioDevicId: string;
+      videoDeviceId: string;
+    }) => {
+      try {
+        if (!options.audio && !options.video) {
+          console.error("u: cannot request media if both of audio and video is false");
+          return;
+        }
+
+        if (!options.audioDevicId && !options.videoDeviceId) {
+          console.error("no audio or video device selected");
+          return;
+        }
+
+        const s = await window.navigator.mediaDevices.getUserMedia({
+          video: options.video ? { deviceId: { exact: options.videoDeviceId } } : false,
+          audio: false,
+        });
+        stopLocalTracks();
+        localStreamRef.current = s;
+        const pc = createOrGetPC();
+
+        const vidTracks = s.getVideoTracks();
+
+        if (!vidTracks.length) {
+          return;
+        }
+
+        setTimeout(() => {
+          pc.addTrack(vidTracks[0], s);
+          console.log("add stream, fired");
+        }, 2 * 1000);
+      } catch (error) {
+        console.error(`${startLocalMedia.name}:getUserMedia failed `, error);
+      }
+    },
+    [createOrGetPC],
+  );
+
+  // caller specific settigs
+  useEffect(() => {
+    if (!socket || !callId || callState !== "joined" || clientType !== "caller") return;
+
+    (async () => {
+      await startLocalMedia({
+        video: cameraOn,
+        audio: micOn,
+        audioDevicId: activeAudioDeviceId,
+        videoDeviceId: activeVideoDeviceId,
+      });
+    })();
+  }, [
+    activeAudioDeviceId,
+    activeVideoDeviceId,
+    callId,
+    callState,
+    cameraOn,
+    clientType,
+    micOn,
+    socket,
+    startLocalMedia,
+  ]);
+
+  // callerr specif setting
+  useEffect(() => {
+    if (!socket || !callId || callState !== "joined" || clientType !== "callee") return;
+
+    (async () => {
+      await startLocalMedia({
+        video: cameraOn,
+        audio: micOn,
+        videoDeviceId: activeVideoDeviceId,
+        audioDevicId: activeAudioDeviceId,
+      });
+    })();
+  }, [
+    activeAudioDeviceId,
+    activeVideoDeviceId,
+    callId,
+    callState,
+    cameraOn,
+    clientType,
+    micOn,
+    socket,
+    startLocalMedia,
+  ]);
 
   if (!peerId) return <ErrorPage message="No recipient" />;
   if (isLoading)
@@ -140,7 +293,6 @@ const P2PVideoPage = () => {
 
   const hanedleStartCall = async () => {
     if (!socket) {
-      console.log("fired");
       toast.error(toastMessages.CANNOT_START_CALL);
       return;
     }
@@ -159,6 +311,19 @@ const P2PVideoPage = () => {
     }
   };
 
+  const stopLocalTracks = () => {
+    const s = localStreamRef.current;
+    if (!s) return;
+    s.getTracks().forEach((t) => {
+      try {
+        t.stop();
+      } catch (e) {
+        console.error("error closing local stream", e);
+      }
+    });
+    localStreamRef.current = null;
+  };
+
   const handleHandupCall = () => {
     if (!socket || !callId) {
       toast.error(toastMessages.CANNOT_START_CALL);
@@ -167,6 +332,13 @@ const P2PVideoPage = () => {
     //2 states need to manges - while ringing  and while connected
     socket.emit("call.handup", { callId: callId });
     dispath(callHangup({ callId }));
+
+    stopLocalTracks();
+    const pc = peerConnectionRef.current;
+    if (pc) {
+      pc.close();
+      peerConnectionRef.current = null;
+    }
   };
 
   return createPortal(
@@ -175,7 +347,7 @@ const P2PVideoPage = () => {
         {/* draggable contaienr */}
         <div className="mx-auto mt-5 h-11/12 w-[95vw] border">
           {callState !== "notInitiated" && (
-            <PeerVideoPreview peerConnection={peerConnectionRef.current} peerId={peerId} />
+            <PeerVideoPreview remoteStream={remoteStream} peerId={peerId} />
           )}
           <UserVideoPreview />
         </div>
@@ -183,7 +355,12 @@ const P2PVideoPage = () => {
           Toggle peer
         </button>
         <div className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white">
-          <CallControls handupCall={handleHandupCall} startCall={hanedleStartCall} />
+          <CallControls
+            handupCall={handleHandupCall}
+            startCall={hanedleStartCall}
+            peerConectionRef={peerConnectionRef}
+            localStreamRef={localStreamRef}
+          />
         </div>
       </div>
     </>,

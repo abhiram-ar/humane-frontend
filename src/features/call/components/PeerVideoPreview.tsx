@@ -1,76 +1,47 @@
-import { useAppSelector } from "@/features/userAuth/hooks/store.hooks";
 import React, { useEffect, useRef, useState } from "react";
 import UserProfileTumbnail from "./UserProfileTumbnail";
 
 type Props = {
   peerId: string;
-  peerConnection: RTCPeerConnection | null;
+  remoteStream: MediaStream | null;
 };
 
-const PeerVideoPreview: React.FC<Props> = ({ peerId, peerConnection }) => {
+const PeerVideoPreview: React.FC<Props> = ({ peerId, remoteStream }) => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const peerVideoRef = useRef<HTMLVideoElement>(null);
   const [cameraOn, setCameraOn] = useState(false);
-  const videoDeviceId = useAppSelector((state) => state.call.activeVideoDeviceId);
-
-  // useEffect(() => {
-  //   if (!peerVideoRef.current || !videoDeviceId) return;
-  //   const setVideo = async () => {
-  //     try {
-  //       const streams = await window.navigator.mediaDevices.getUserMedia({
-  //         video: { deviceId: { exact: videoDeviceId } },
-  //         audio: false,
-  //       });
-
-  //       if (streams) {
-  //         const mediaStream = new MediaStream(streams.getVideoTracks());
-  //         if (peerVideoRef.current) {
-  //           peerVideoRef.current.srcObject = mediaStream;
-  //           peerVideoRef.current.play();
-  //         }
-  //       }
-  //     } catch (error) {
-  //       console.log("error loaing camera stream", error);
-  //     }
-  //   };
-  //   setVideo();
-  // }, [videoDeviceId, cameraOn]);
 
   useEffect(() => {
-    setCameraOn(true);
-    if (!peerConnection) return;
-    peerConnection.ontrack = (event) => {
-      const mediaStream = new MediaStream();
-      console.log("track received:", event.track);
-      if (peerVideoRef.current) {
-        mediaStream.addTrack(event.track);
-        peerVideoRef.current.srcObject = mediaStream;
-        peerVideoRef.current.play();
-      }
-    };
-  }, [peerConnection]);
+    setCameraOn(!!remoteStream);
+    if (peerVideoRef.current && remoteStream?.getVideoTracks().length) {
+      peerVideoRef.current.srcObject = remoteStream
+      peerVideoRef.current.play().catch((e) => console.error("error remote stream autoplay", e));
+      console.log("setting strem", remoteStream);
+    } else {
+      setCameraOn(false);
+    }
+  }, [remoteStream]);
 
   return (
     <div
       ref={videoContainerRef}
-      className={`h-full w-full rounded-2xl transition-transform`}
+      className="relative h-full w-full rounded-2xl transition-transform"
       style={{
         userSelect: "none", // prevents text selection while dragging
       }}
     >
-      {!cameraOn ? (
+      {!cameraOn && (
         <UserProfileTumbnail
           userId={peerId}
-          className="h-full w-full bg-radial-[at_50%_75%] from-purple-800 from-5% to-zinc-900"
+          className="absolute h-full w-full bg-radial-[at_50%_75%] from-purple-800 from-5% to-zinc-900"
         />
-      ) : (
-        <video
-          muted={true}
-          className="aspect-auto h-full w-full object-contain"
-          ref={peerVideoRef}
-          style={{ transform: "scaleX(-1)" }} // raw stream is has no mirror flip, this flips the like a mirror
-        ></video>
       )}
+      <video
+        muted={true}
+        className="aspect-auto h-full w-full object-contain"
+        ref={peerVideoRef}
+        style={{ transform: "scaleX(-1)" }} // raw stream is has no mirror flip, this flips the like a mirror
+      ></video>
     </div>
   );
 };

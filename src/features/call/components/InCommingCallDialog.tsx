@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { incomingCallAccepted, incomingCallRejected } from "../redux/callSlice";
 import { useLocation, useNavigate } from "react-router";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const InCommingCallDialog = () => {
   const incommingCall = useAppSelector((state) => state.call.incomingCall);
@@ -18,6 +19,7 @@ const InCommingCallDialog = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const isMobole = useIsMobile();
 
   useEffect(() => {
     if (!incommingCall || !user || !socket) {
@@ -78,7 +80,7 @@ const InCommingCallDialog = () => {
 
   return (
     <div
-      className={`bg-grey-light rounded-xl px-5 py-3 ring-2 transition-all delay-200 duration-200 ease-out ${showDialog ? "translate-y-5 scale-100 opacity-100" : "-translate-y-[10em] scale-90 opacity-20"}`}
+      className={`bg-grey-light rounded-xl px-5 py-3 ring-2 transition-all delay-200 duration-200 ease-out ${showDialog ? "translate-y-5 scale-100 opacity-100" : "-translate-y-[10em] scale-90 opacity-20"} ${isMobole ? "flex justify-between" : ""}`}
     >
       <div className="flex items-center gap-3 text-white">
         <ProfilePicSmall className="border" avatarURL={user?.avatarURL} />
@@ -93,12 +95,12 @@ const InCommingCallDialog = () => {
         </div>
       </div>
 
-      <div className="mt-3 flex gap-2">
+      <div className={`flex gap-2 ${isMobole ? "" : "mt-3"}`}>
         <ButtonPop onClick={handleAccept}>Accept</ButtonPop>
 
         <button
           onClick={handleDeclineCall}
-          className={`cursor-pointer rounded-full bg-red-400/80 px-4 py-1 font-semibold text-black hover:bg-red-400`}
+          className={`cursor-pointer rounded-full bg-red-400/80 px-5 py-1 font-semibold text-black hover:bg-red-400`}
         >
           Decline
         </button>

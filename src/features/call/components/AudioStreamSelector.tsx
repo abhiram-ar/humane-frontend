@@ -9,59 +9,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/Dropdown";
 import { ChevronUp } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useMediaDeviceSelector } from "../hooks/useMediaDeviceSelector";
+import { useEffect } from "react";
+import { setActiveAudioDeviceId } from "../redux/callSlice";
+import { useAppDispatch } from "@/features/userAuth/hooks/store.hooks";
 
 export function AudioStreamSelector() {
-  const [activeAudioInputDeviceId, setActiveAdudioInputDeviceId] = React.useState("");
-  const [audioDevicesInfo, setAudioDevicesInfo] = useState<MediaDeviceInfo[]>([]);
+  const dispatch = useAppDispatch();
 
-  const [deviceFetchingState, setDeviceFetchingState] = useState<
-    "idle" | "loading" | "fetched" | "error"
-  >("idle");
+  const { activeDeviceId, setActiveDeviceId, devices, state } =
+    useMediaDeviceSelector("audioinput");
 
   useEffect(() => {
-    const getAudioStreams = async () => {
-      try {
-        setDeviceFetchingState("loading");
-        const devices = await window.navigator.mediaDevices.enumerateDevices();
-        const audioDevics = devices.filter((device) => device.kind === "audioinput");
-        setAudioDevicesInfo(audioDevics);
-
-        setDeviceFetchingState("fetched");
-
-        return audioDevics;
-      } catch (error) {
-        setDeviceFetchingState("error");
-        console.log(error);
-      }
-    };
-
-    setTimeout(async () => {
-      await window.navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      const audioDevices = await getAudioStreams();
-      if (audioDevices && audioDevices?.length > 0) {
-        // for initial load, set the default app's audio input as OS's default auidio input stream
-        // which is at index 0 as per the MDN docs
-        setActiveAdudioInputDeviceId(audioDevices[0].deviceId);
-      }
-    }, 500);
-
-    let refreshTimer: ReturnType<typeof setTimeout>;
-    window.navigator.mediaDevices.ondevicechange = async () => {
-      await window.navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-
-      // we might have multiple device changes events comming at a instant
-      // so debouncing this
-      setDeviceFetchingState("loading");
-      clearTimeout(refreshTimer);
-      refreshTimer = setTimeout(getAudioStreams, 200);
-    };
-
-    return () => {
-      setDeviceFetchingState("idle");
-    };
-  }, []);
-
+    if (!activeDeviceId) return;
+    dispatch(setActiveAudioDeviceId(activeDeviceId));
+  }, [activeDeviceId, dispatch]);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -73,18 +35,15 @@ export function AudioStreamSelector() {
         <DropdownMenuLabel>Audio Input Devices</DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-zinc-400/50" />
 
-        {deviceFetchingState === "loading" && (
+        {state === "loading" && (
           <div>
             <Spinner className="mt-3 flex h-8 w-full justify-center" />
           </div>
         )}
 
-        {deviceFetchingState === "fetched" && (
-          <DropdownMenuRadioGroup
-            value={activeAudioInputDeviceId}
-            onValueChange={setActiveAdudioInputDeviceId}
-          >
-            {audioDevicesInfo.map((audioStream) => (
+        {state === "fetched" && (
+          <DropdownMenuRadioGroup value={activeDeviceId} onValueChange={setActiveDeviceId}>
+            {devices.map((audioStream) => (
               <DropdownMenuRadioItem
                 key={audioStream.deviceId}
                 value={audioStream.deviceId}

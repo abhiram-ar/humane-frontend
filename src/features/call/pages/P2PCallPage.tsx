@@ -48,56 +48,43 @@ const P2PVideoPage = () => {
     pc = new RTCPeerConnection();
     peerConnectionRef.current = pc;
 
-    pc.onicecandidate = (event) => {
-      console.log("my-ice candidates", event);
-      if (!event.candidate || !callId) return;
-      socket?.emit("call.ice-candidates", { callId, ice: JSON.stringify(event.candidate) });
+    pc.onicecandidate = (ev) => {
+      if (!ev.candidate || !callId) return;
+      socket?.emit("call.ice-candidates", { callId, ice: JSON.stringify(ev.candidate) });
     };
 
-    // debounced negotiation handler:
     pc.onnegotiationneeded = async () => {
       try {
-        if (makingOffer.current || !callId) return;
+        if (!callId) return;
+        // if signalingState isn't stable, negotiation shouldn't run
+        if (makingOffer.current || pc.signalingState !== "stable") return;
         makingOffer.current = true;
-
-        console.log("negotiation-needed-fired");
         const offer = await pc.createOffer();
         await pc.setLocalDescription(offer);
-        socket?.emit("call.sdp.offer", {
-          callId: callId,
-          offerSDP: JSON.stringify(pc.localDescription),
-        });
+        socket?.emit("call.sdp.offer", { callId, offerSDP: JSON.stringify(pc.localDescription) });
       } catch (err) {
-        console.error("negotiationneeded error:", err);
+        console.error("errror while negotiating", err);
       } finally {
         makingOffer.current = false;
       }
     };
 
-    pc.ontrack = async (event) => {
-      console.log("track received:", event.track);
-      let stream = remoteStream;
-      if (!stream) {
-        stream = new MediaStream();
-      }
-
-      const exitingVideoTracks = stream.getVideoTracks();
-      // CHECK-if this is necessary:remove existing track
-      if (exitingVideoTracks.length) {
-        for (const track of exitingVideoTracks) {
-          stream.removeTrack(track);
-          console.log("removing exising video tracks");
-        }
-      }
-
-      event.track.onended = (t) => {
-        console.log("on ended", t);
-        setRemoteStream(null);
+    pc.ontrack = (event) => {
+      // prefer full stream (most browsers set streams[0])
+      const s =
+        event.streams && event.streams[0] ? event.streams[0] : new MediaStream([event.track]);
+      setRemoteStream(s);
+      event.track.onended = () => {
+        // if no tracks left, clear
+        if (!s.getVideoTracks().length && !s.getAudioTracks().length) setRemoteStream(null);
       };
+    };
 
-      stream.addTrack(event.track);
-      if (event.track.enabled) setRemoteStream(stream);
-      else setRemoteStream(null);
+    pc.onconnectionstatechange = () => {
+      console.log("pc state", pc.connectionState);
+      if (pc.connectionState === "failed") {
+        // try restart? or emit hangup
+      }
     };
 
     return pc;
@@ -105,11 +92,11 @@ const P2PVideoPage = () => {
 
   const flushQueuedCandidates = useCallback(async (pc: RTCPeerConnection) => {
     if (!queuedCandidatesRef.current.length) return;
-    for (const c of queuedCandidatesRef.current) {
+    for (const c of queuedCandidatesRef.current.splice(0)) {
       try {
-        await pc.addIceCandidate(c);
-      } catch (error) {
-        console.log("error addeding queued ice candidate", error);
+        await pc.addIceCandidate(new RTCIceCandidate(c));
+      } catch (err) {
+        console.warn("failed adding queued candidate", err);
       }
     }
   }, []);
@@ -118,30 +105,26 @@ const P2PVideoPage = () => {
   useEffect(() => {
     if (!socket) return;
 
-    const onOffer = async (event: { callId: string; offerSDP: string }) => {
+    const onOffer = async (event: { offerSDP: string; callId: string }) => {
+      const pc = createOrGetPC();
+      const offer = JSON.parse(event.offerSDP);
+      const offerCollision = makingOffer.current || pc.signalingState !== "stable";
+      if (offerCollision && !polite) {
+        console.warn("impolite: ignoring offer collision");
+        return;
+      }
+      isSettingRemoteDescritionPending.current = true;
       try {
-        if (!peerId || event.callId !== callId) return;
-        const pc = createOrGetPC();
-        // collision detection
-        const offerCollision = makingOffer.current || isSettingRemoteDescritionPending.current;
-        if (offerCollision && !polite) {
-          console.warn("skipping remote offer because of state collision and impolite role");
-          return;
-        }
-
-        isSettingRemoteDescritionPending.current = true;
-        await pc.setRemoteDescription(JSON.parse(event.offerSDP));
-        isSettingRemoteDescritionPending.current = false;
-
-        // flush ice, now that we have remote desc set
+        await pc.setRemoteDescription(offer);
         await flushQueuedCandidates(pc);
-
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
-        socket.emit("call.sdp.answer", { callId, answerSDP: JSON.stringify(answer) });
-      } catch (error) {
+        socket.emit("call.sdp.answer", {
+          callId: event.callId,
+          answerSDP: JSON.stringify(pc.localDescription),
+        });
+      } finally {
         isSettingRemoteDescritionPending.current = false;
-        console.log("error handling incomming offer ", error);
       }
     };
 
@@ -160,12 +143,12 @@ const P2PVideoPage = () => {
     const onRemoteICE = async (event: { callId: string; ice: string }) => {
       try {
         if (event.callId !== callId) return;
+        const candidateInit = JSON.parse(event.ice) as RTCIceCandidate;
         const pc = peerConnectionRef.current;
-        const candidate = JSON.parse(event.ice) as RTCIceCandidate;
         if (pc && pc.remoteDescription && pc.remoteDescription.type) {
-          await pc.addIceCandidate(candidate);
+          await pc.addIceCandidate(new RTCIceCandidate(candidateInit));
         } else {
-          queuedCandidatesRef.current.push(candidate);
+          queuedCandidatesRef.current.push(candidateInit);
         }
       } catch (error) {
         console.error("error while setting remote ice-c", error);
@@ -184,43 +167,45 @@ const P2PVideoPage = () => {
   }, [callId, createOrGetPC, flushQueuedCandidates, polite, socket]);
 
   const startLocalMedia = useCallback(
-    async (options: {
+    async (opts: {
       video: boolean;
       audio: boolean;
-      audioDevicId: string;
-      videoDeviceId: string;
+      audioDeviceId?: string;
+      videoDeviceId?: string;
     }) => {
       try {
-        if (!options.audio && !options.video) {
-          console.error("u: cannot request media if both of audio and video is false");
-          return;
-        }
+        if (!opts.audio && !opts.video) throw new Error("No media requested");
 
-        if (!options.audioDevicId && !options.videoDeviceId) {
-          console.error("no audio or video device selected");
-          return;
-        }
+        const constraints: MediaStreamConstraints = {
+          audio: opts.audio
+            ? opts.audioDeviceId
+              ? { deviceId: { exact: opts.audioDeviceId } }
+              : true
+            : false,
+          video: opts.video
+            ? opts.videoDeviceId
+              ? { deviceId: { exact: opts.videoDeviceId } }
+              : true
+            : false,
+        };
 
-        const s = await window.navigator.mediaDevices.getUserMedia({
-          video: options.video ? { deviceId: { exact: options.videoDeviceId } } : false,
-          audio: false,
-        });
+        const s = await navigator.mediaDevices.getUserMedia(constraints);
         stopLocalTracks();
         localStreamRef.current = s;
+
         const pc = createOrGetPC();
 
-        const vidTracks = s.getVideoTracks();
-
-        if (!vidTracks.length) {
-          return;
+        // for each local track: try to replace existing sender track. otherwise add trak
+        for (const t of s.getTracks()) {
+          const sender = pc.getSenders().find((s) => s.track && s.track.kind === t.kind);
+          if (sender) {
+            await sender.replaceTrack(t);
+          } else {
+            pc.addTrack(t, s);
+          }
         }
-
-        setTimeout(() => {
-          pc.addTrack(vidTracks[0], s);
-          console.log("add stream, fired");
-        }, 2 * 1000);
-      } catch (error) {
-        console.error(`${startLocalMedia.name}:getUserMedia failed `, error);
+      } catch (err) {
+        console.error("startLocalMedia failed", err);
       }
     },
     [createOrGetPC],
@@ -234,8 +219,8 @@ const P2PVideoPage = () => {
       await startLocalMedia({
         video: cameraOn,
         audio: micOn,
-        audioDevicId: activeAudioDeviceId,
         videoDeviceId: activeVideoDeviceId,
+        audioDeviceId: activeAudioDeviceId,
       });
     })();
   }, [
@@ -259,7 +244,7 @@ const P2PVideoPage = () => {
         video: cameraOn,
         audio: micOn,
         videoDeviceId: activeVideoDeviceId,
-        audioDevicId: activeAudioDeviceId,
+        audioDeviceId: activeAudioDeviceId,
       });
     })();
   }, [

@@ -10,62 +10,18 @@ import {
 } from "@/components/ui/Dropdown";
 import { useAppDispatch } from "@/features/userAuth/hooks/store.hooks";
 import { ChevronUp } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { setActiveVideoDeviceId } from "../redux/callSlice";
+import { useMediaDeviceSelector } from "../hooks/useMediaDeviceSelector";
 
 export function VideoStreamSelector() {
-  const [activeInputDeviceId, setActiveVideoInputDeviceId] = React.useState("");
-  const [videoDevicesInfo, setVideoDevicesInfo] = useState<MediaDeviceInfo[]>([]);
   const dispatch = useAppDispatch();
-
-  const [deviceFetchingState, setDeviceFetchingState] = useState<
-    "idle" | "loading" | "fetched" | "error"
-  >("idle");
-
-  useEffect(() => {
-    const getVideoStreams = async () => {
-      try {
-        setDeviceFetchingState("loading");
-        const devices = await window.navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter((device) => device.kind === "videoinput");
-
-        setVideoDevicesInfo(videoDevices);
-        setDeviceFetchingState("fetched");
-
-        return videoDevices;
-      } catch (error) {
-        setDeviceFetchingState("error");
-        console.log(error);
-      }
-    };
-
-    // inital page load
-    setTimeout(async () => {
-      await window.navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      const videoDevices = await getVideoStreams();
-      if (videoDevices && videoDevices?.length > 0) {
-        // for initial load, set the default app's audio input as OS's default auidio input stream
-        // which is at index 0 as per the MDN docs
-        setActiveVideoInputDeviceId(videoDevices[0].deviceId);
-      }
-    }, 500);
-
-    // when new media devies become online
-    let refreshTimer: ReturnType<typeof setTimeout>;
-    window.navigator.mediaDevices.ondevicechange = async () => {
-      await window.navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-
-      // we might have multiple device changes events comming at a instant
-      // so debouncing this
-      setDeviceFetchingState("loading");
-      clearTimeout(refreshTimer);
-      refreshTimer = setTimeout(getVideoStreams, 200);
-    };
-
-    return () => {
-      setDeviceFetchingState("idle");
-    };
-  }, []);
+  const {
+    activeDeviceId: activeInputDeviceId,
+    setActiveDeviceId: setActiveVideoInputDeviceId,
+    devices: videoDevicesInfo,
+    state: deviceFetchingState,
+  } = useMediaDeviceSelector("videoinput");
 
   useEffect(() => {
     if (!activeInputDeviceId) return;

@@ -116,22 +116,28 @@ const UserVideoPreview: React.FC = () => {
     setVideo();
   }, [videoDeviceId, cameraOn]);
 
+  const minmimized =
+    peerStatus === "joined" ||
+    peerStatus === "ended" ||
+    peerStatus === "ringing" ||
+    peerStatus === "pending";
+
   return (
     <div
       ref={videoContainerRef}
       onMouseDown={onMouseDown}
       onTouchStart={onTouchStart}
-      className={`rounded-2xl transition-transform ${peerStatus === "joined" ? "h-max-40 w-max-70 absolute h-40 w-70 overflow-clip border border-zinc-400/50 bg-zinc-800" : "h-full w-full"} `}
+      className={`rounded-2xl transition-transform ${minmimized ? "h-max-40 w-max-70 absolute z-5 h-40 w-70 overflow-clip border border-zinc-400/50 bg-zinc-800" : "h-full w-full"} `}
       style={{
         left: pos.x,
         top: pos.y,
-        scale: (peerStatus === "joined") && dragging ? 1.1 : 1,
-        cursor: (peerStatus === "pending") ? "default" : "grab",
+        scale: peerStatus === "joined" && dragging ? 1.1 : 1,
+        cursor: peerStatus === "pending" ? "default" : "grab",
         userSelect: "none", // prevents text selection while dragging
       }}
     >
       {!cameraOn ? (
-        <UserProfileTumbnail userId={userId} minimized={peerStatus === "joined"} />
+        <UserProfileTumbnail userId={userId} minimized={minmimized} />
       ) : (
         <video
           muted={true}

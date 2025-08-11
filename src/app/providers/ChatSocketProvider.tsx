@@ -15,7 +15,6 @@ import useFindOtherUserOfOnetoOneConvo from "@/features/chat/hooks/useFindOtherU
 import {
   callConnected,
   callDeclinedByPeer,
-  callHangup,
   inComingCall,
   incomingCallRejected,
 } from "@/features/call/redux/callSlice";
@@ -103,8 +102,6 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
     socket.on("call.connected", (event) =>
       setTimeout(() => dispath(callConnected({ callId: event.callId })), 2 * 1000),
     );
-
-    socket.on("call.ended", (event) => dispath(callHangup({ callId: event.callId })));
 
     return () => {
       socket.disconnect();

@@ -40,6 +40,8 @@ const CallControls: React.FC<Props> = ({
         .forEach((sender) => {
           if (!sender.track) return;
           sender.track.enabled = false;
+
+          // keep the track for some some, then permannatly remove
           removeTrackTimerRef.current = setTimeout(() => {
             sender.track?.stop();
             pc.removeTrack(sender);

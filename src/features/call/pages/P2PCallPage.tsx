@@ -2,7 +2,13 @@ import { createPortal } from "react-dom";
 import CallControls from "../components/CallControls";
 import UserVideoPreview from "../components/UserVideoPreview";
 import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
-import { callStatus, ringing, callInitiated, callHangup } from "../redux/callSlice";
+import {
+  callStatus,
+  ringing,
+  callInitiated,
+  callHangup,
+  peerMediaStateChanged,
+} from "../redux/callSlice";
 import PeerVideoPreview from "../components/PeerVideoPreview";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useChatSocketProvider } from "@/app/providers/ChatSocketProvider";
@@ -83,7 +89,11 @@ const P2PVideoPage = () => {
     pc.onconnectionstatechange = () => {
       console.log("pc state", pc.connectionState);
       if (pc.connectionState === "failed") {
-        // try restart? or emit hangup
+        if (callId) dispath(callHangup({ callId }));
+      }
+
+      if (pc.connectionState === "closed") {
+        cleanup();
       }
     };
 
@@ -155,16 +165,30 @@ const P2PVideoPage = () => {
       }
     };
 
+    const onCallend = (event: { callId: string; at: string }) => {
+      console.log("cleauop fire", cleanup);
+      cleanup();
+      dispath(callHangup({ callId: event.callId }));
+    };
+
+    const onPeerMediaState = (event: { callId: string; micOn: boolean; videoOn: boolean }) => {
+      dispath(peerMediaStateChanged({ micOn: event.micOn, cameraOn: event.videoOn }));
+    };
+
     socket.on("call.sdp.offer", onOffer);
     socket.on("call.sdp.answer", onAnswer);
     socket.on("call.ice-candidates", onRemoteICE);
+    socket.on("call.ended", onCallend);
+    socket.on("call.media.state", onPeerMediaState);
 
     return () => {
       socket.off("call.sdp.offer", onOffer);
       socket.off("call.sdp.answer", onAnswer);
       socket.off("call.ice-candidates", onRemoteICE);
+      socket.off("call.ended", onCallend);
+      socket.on("call.media.state", onPeerMediaState);
     };
-  }, [callId, createOrGetPC, flushQueuedCandidates, polite, socket]);
+  }, [callId, createOrGetPC, dispath, flushQueuedCandidates, polite, socket]);
 
   const startLocalMedia = useCallback(
     async (opts: {
@@ -259,6 +283,47 @@ const P2PVideoPage = () => {
     startLocalMedia,
   ]);
 
+  useEffect(() => {
+    if (!socket || !callId) return;
+
+    socket.emit("call.media.state", { callId, micOn, videoOn: cameraOn });
+  }, [callId, cameraOn, micOn, socket]);
+
+  const stopLocalTracks = () => {
+    const s = localStreamRef.current;
+    if (!s) return;
+    s.getTracks().forEach((t) => {
+      try {
+        t.stop();
+      } catch (e) {
+        console.error("error closing local stream", e);
+      }
+    });
+    localStreamRef.current = null;
+  };
+
+  const cleanup = () => {
+    stopLocalTracks();
+    const pc = peerConnectionRef.current;
+    if (pc) {
+      try {
+        pc.getSenders().forEach((s) => {
+          try {
+            s.replaceTrack(null);
+          } catch (e) {
+            console.error("error cleanup", e);
+          }
+        });
+      } catch (e) {
+        console.log("errror cleanup", e);
+      }
+      pc.close();
+      peerConnectionRef.current = null;
+    }
+    setRemoteStream(null);
+    queuedCandidatesRef.current = [];
+  };
+
   if (!peerId) return <ErrorPage message="No recipient" />;
   if (isLoading)
     return (
@@ -296,19 +361,6 @@ const P2PVideoPage = () => {
     }
   };
 
-  const stopLocalTracks = () => {
-    const s = localStreamRef.current;
-    if (!s) return;
-    s.getTracks().forEach((t) => {
-      try {
-        t.stop();
-      } catch (e) {
-        console.error("error closing local stream", e);
-      }
-    });
-    localStreamRef.current = null;
-  };
-
   const handleHandupCall = () => {
     if (!socket || !callId) {
       toast.error(toastMessages.CANNOT_START_CALL);
@@ -316,14 +368,9 @@ const P2PVideoPage = () => {
     }
     //2 states need to manges - while ringing  and while connected
     socket.emit("call.handup", { callId: callId });
-    dispath(callHangup({ callId }));
 
-    stopLocalTracks();
-    const pc = peerConnectionRef.current;
-    if (pc) {
-      pc.close();
-      peerConnectionRef.current = null;
-    }
+    cleanup();
+    setTimeout(() => dispath(callHangup({ callId })), 1 * 200);
   };
 
   return createPortal(
@@ -339,7 +386,7 @@ const P2PVideoPage = () => {
         <button className="absolute top-0 left-0 bg-amber-200" onClick={() => toggleOtherPerson()}>
           Toggle peer
         </button>
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 text-white">
+        <div className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2 text-white">
           <CallControls
             handupCall={handleHandupCall}
             startCall={hanedleStartCall}

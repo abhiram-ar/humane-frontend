@@ -31,6 +31,8 @@ export interface ServerToClientChatEvents {
 
   "call.ice-candidates": (event: { callId: string; ice: string }) => void;
 
+  "call.media.state": (event: { callId: string; micOn: boolean; videoOn: boolean }) => void;
+
   "call.sdp.answer": (event: { callId: string; answerSDP: string }) => void;
 
   "call.ended": (event: { callId: string; at: string }) => void;
@@ -81,9 +83,11 @@ export interface ClientToServerChatEvents {
 
   "call.handup": (event: { callId: string }) => void;
 
-  "call.sdp.offer": (event: { callId: string; offerSDP: string }) => void;
-
   "call.ice-candidates": (event: { callId: string; ice: string }) => void;
+
+  "call.media.state": (event: { callId: string; micOn: boolean; videoOn: boolean }) => void;
+
+  "call.sdp.offer": (event: { callId: string; offerSDP: string }) => void;
 
   "call.sdp.answer": (event: { callId: string; answerSDP: string }) => void;
 }

@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import UserProfileTumbnail from "./UserProfileTumbnail";
+import { useAppSelector } from "@/features/userAuth/hooks/store.hooks";
 
 type Props = {
   peerId: string;
@@ -9,18 +10,29 @@ type Props = {
 const PeerVideoPreview: React.FC<Props> = ({ peerId, remoteStream }) => {
   const videoContainerRef = useRef<HTMLDivElement>(null);
   const peerVideoRef = useRef<HTMLVideoElement>(null);
-  const [cameraOn, setCameraOn] = useState(false);
+  const { cameraOn, micOn } = useAppSelector((state) => state.call.peerMediaState);
 
   useEffect(() => {
-    setCameraOn(!!remoteStream);
     if (peerVideoRef.current && remoteStream?.getVideoTracks().length) {
-      peerVideoRef.current.srcObject = remoteStream
+      peerVideoRef.current.srcObject = remoteStream;
       peerVideoRef.current.play().catch((e) => console.error("error remote stream autoplay", e));
       console.log("setting strem", remoteStream);
     } else {
-      setCameraOn(false);
+      //
     }
   }, [remoteStream]);
+
+  useEffect(() => {
+    if (!peerVideoRef.current || !remoteStream?.getAudioTracks().length) {
+      return;
+    }
+    const peerVideoStream = peerVideoRef.current;
+    peerVideoStream.muted = micOn;
+
+    return () => {
+      peerVideoStream.muted = true;
+    };
+  }, [micOn, remoteStream]);
 
   return (
     <div
@@ -33,7 +45,8 @@ const PeerVideoPreview: React.FC<Props> = ({ peerId, remoteStream }) => {
       {!cameraOn && (
         <UserProfileTumbnail
           userId={peerId}
-          className="absolute h-full w-full bg-radial-[at_50%_75%] from-purple-800 from-5% to-zinc-900"
+          showCallStatus={true}
+          className="absolute z-2 h-full w-full bg-radial-[at_50%_75%] from-purple-800 from-5% to-zinc-900"
         />
       )}
       <video

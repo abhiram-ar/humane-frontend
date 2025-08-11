@@ -7,8 +7,14 @@ import React, { ComponentPropsWithoutRef } from "react";
 type Props = {
   userId?: string;
   minimized?: boolean;
+  showCallStatus?: boolean;
 } & ComponentPropsWithoutRef<"div">;
-const UserProfileTumbnail: React.FC<Props> = ({ userId, minimized, ...props }) => {
+const UserProfileTumbnail: React.FC<Props> = ({
+  userId,
+  minimized,
+  showCallStatus = false,
+  ...props
+}) => {
   const { user } = usePublicUserProfileQuery(userId);
   return (
     <div className="h-full w-full bg-radial-[at_50%_75%] from-zinc-600 to-zinc-800" {...props}>
@@ -23,7 +29,7 @@ const UserProfileTumbnail: React.FC<Props> = ({ userId, minimized, ...props }) =
           ) : (
             <Skeleton className="w-full border text-transparent">.</Skeleton>
           )}
-          <CallRingingStatus />
+          {showCallStatus && <CallRingingStatus />}
         </div>
       </div>
     </div>

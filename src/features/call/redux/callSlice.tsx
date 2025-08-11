@@ -9,6 +9,7 @@ export type IMainSearchState = {
   cameraOn: boolean;
   incomingCall: { callId: string; callerId: string; at: string } | undefined;
   clientType: "caller" | "callee" | undefined;
+  peerMediaState: { micOn: boolean; cameraOn: boolean };
 };
 
 const initialState: IMainSearchState = {
@@ -20,6 +21,7 @@ const initialState: IMainSearchState = {
   cameraOn: false,
   incomingCall: undefined,
   clientType: undefined,
+  peerMediaState: { micOn: false, cameraOn: false },
 };
 
 export const mainSearchSlice = createSlice({
@@ -50,6 +52,16 @@ export const mainSearchSlice = createSlice({
       state.callStatus = action.payload;
     },
 
+    peerMediaStateChanged: (
+      state,
+      action: PayloadAction<{ micOn?: boolean; cameraOn?: boolean }>,
+    ) => {
+      if (typeof action.payload.micOn === "boolean")
+        state.peerMediaState.micOn = action.payload.micOn;
+      if (typeof action.payload.cameraOn === "boolean")
+        state.peerMediaState.cameraOn = action.payload.cameraOn;
+    },
+
     // --------------- outgoing  ----------------
 
     callInitiated: (state) => {
@@ -75,6 +87,7 @@ export const mainSearchSlice = createSlice({
       state.callId = undefined;
       state.callStatus = "ended";
       state.clientType = undefined;
+      state.peerMediaState = { micOn: false, cameraOn: false };
     },
 
     callConnected: (state, action: PayloadAction<{ callId: string }>) => {
@@ -117,6 +130,7 @@ export const {
   callConnected,
   callHangup,
   callDeclinedByPeer,
+  peerMediaStateChanged,
   incomingCallAccepted,
   incomingCallRejected,
   inComingCall,

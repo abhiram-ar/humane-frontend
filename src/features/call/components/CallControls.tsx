@@ -43,6 +43,7 @@ const CallControls: React.FC<Props> = ({
 
           // keep the track for some some, then permannatly remove
           removeTrackTimerRef.current = setTimeout(() => {
+            if (pc.connectionState === "closed") return;
             sender.track?.stop();
             pc.removeTrack(sender);
           }, 10 * 1000);
@@ -60,7 +61,7 @@ const CallControls: React.FC<Props> = ({
   };
 
   return (
-    <div className="item-center flex justify-center gap-2 rounded-4xl border border-zinc-400/50 bg-zinc-700 px-3 py-2 transition-all duration-200">
+    <div className="item-center flex justify-center gap-2 rounded-4xl border border-zinc-500/50 bg-zinc-700 px-3 py-2 transition-all duration-200">
       {/* timeer */}
       <div className="flex rounded-full bg-zinc-600">
         <AudioStreamSelector />

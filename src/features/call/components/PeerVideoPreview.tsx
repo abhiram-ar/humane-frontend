@@ -15,12 +15,14 @@ const PeerVideoPreview: React.FC<Props> = ({ peerId, remoteStream }) => {
   useEffect(() => {
     if (peerVideoRef.current && remoteStream?.getVideoTracks().length) {
       peerVideoRef.current.srcObject = remoteStream;
+
       peerVideoRef.current.play().catch((e) => console.error("error remote stream autoplay", e));
+      peerVideoRef.current.muted = micOn;
       console.log("setting strem", remoteStream);
     } else {
       //
     }
-  }, [remoteStream]);
+  }, [micOn, remoteStream]);
 
   useEffect(() => {
     if (!peerVideoRef.current || !remoteStream?.getAudioTracks().length) {

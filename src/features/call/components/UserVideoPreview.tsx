@@ -12,6 +12,7 @@ const UserVideoPreview: React.FC = () => {
   const videoDeviceId = useAppSelector((state) => state.call.activeVideoDeviceId);
   const peerStatus = useAppSelector((state) => state.call.callStatus);
   const cameraOn = useAppSelector((state) => state.call.cameraOn);
+  const userMediaStreamRef = useRef<MediaStream | null>(null);
   const userId = useUserId();
 
   // start dragging (mouse + touch)
@@ -103,7 +104,13 @@ const UserVideoPreview: React.FC = () => {
         });
 
         if (streams) {
-          const mediaStream = new MediaStream(streams.getVideoTracks());
+          let mediaStream: MediaStream | null = userMediaStreamRef.current;
+          if (!mediaStream) {
+            mediaStream = new MediaStream();
+            userMediaStreamRef.current = mediaStream;
+          }
+          mediaStream.addTrack(streams.getVideoTracks()[0]);
+
           if (userVideoRef.current) {
             userVideoRef.current.srcObject = mediaStream;
             userVideoRef.current.play();
@@ -113,7 +120,20 @@ const UserVideoPreview: React.FC = () => {
         console.log("error loaing camera stream", error);
       }
     };
-    setVideo();
+    if (cameraOn) setVideo();
+
+    return () => {
+      const s = userMediaStreamRef.current;
+      if (!s) return;
+      s.getTracks().forEach((t) => {
+        try {
+          t.stop();
+        } catch (e) {
+          console.error("error closing local stream", e);
+        }
+      });
+      userMediaStreamRef.current = null;
+    };
   }, [videoDeviceId, cameraOn]);
 
   const minmimized =
@@ -127,12 +147,12 @@ const UserVideoPreview: React.FC = () => {
       ref={videoContainerRef}
       onMouseDown={onMouseDown}
       onTouchStart={onTouchStart}
-      className={`rounded-2xl transition-transform ${minmimized ? "h-max-40 w-max-70 absolute z-5 h-40 w-70 overflow-clip border border-zinc-400/50 bg-zinc-800" : "h-full w-full"} `}
+      className={`rounded-2xl transition-transform ${minmimized ? "h-max-40 w-max-70 absolute z-5 h-40 w-70 overflow-clip border-2 border-zinc-600/50 bg-zinc-800" : "h-full w-full"} `}
       style={{
         left: pos.x,
         top: pos.y,
-        scale: peerStatus === "joined" && dragging ? 1.1 : 1,
-        cursor: peerStatus === "pending" ? "default" : "grab",
+        scale: minmimized && dragging ? 1.1 : 1,
+        cursor: peerStatus === "notInitiated" ? "default" : "grab",
         userSelect: "none", // prevents text selection while dragging
       }}
     >
@@ -141,7 +161,7 @@ const UserVideoPreview: React.FC = () => {
       ) : (
         <video
           muted={true}
-          className="aspect-auto h-full w-full object-contain"
+          className="aspect-auto h-full w-full object-cover"
           ref={userVideoRef}
           style={{ transform: "scaleX(-1)" }} // raw stream is has no mirror flip, this flips the like a mirror
         ></video>

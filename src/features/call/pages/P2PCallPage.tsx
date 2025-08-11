@@ -88,12 +88,14 @@ const P2PVideoPage = () => {
 
     pc.onconnectionstatechange = () => {
       console.log("pc state", pc.connectionState);
+
       if (pc.connectionState === "failed") {
-        if (callId) dispath(callHangup({ callId }));
+        handleHandupCall();
       }
 
       if (pc.connectionState === "closed") {
         cleanup();
+        if (callId) setTimeout(() => dispath(callHangup({ callId })), 200);
       }
     };
 
@@ -166,7 +168,6 @@ const P2PVideoPage = () => {
     };
 
     const onCallend = (event: { callId: string; at: string }) => {
-      console.log("cleauop fire", cleanup);
       cleanup();
       dispath(callHangup({ callId: event.callId }));
     };
@@ -336,11 +337,6 @@ const P2PVideoPage = () => {
     );
   if (httpStatus === 404) return <ErrorPage message="Invalid User" />;
 
-  const toggleOtherPerson = () => {
-    if (callState == "pending") dispath(callStatus("joined"));
-    else dispath(callStatus("pending"));
-  };
-
   const hanedleStartCall = async () => {
     if (!socket) {
       toast.error(toastMessages.CANNOT_START_CALL);
@@ -363,7 +359,7 @@ const P2PVideoPage = () => {
 
   const handleHandupCall = () => {
     if (!socket || !callId) {
-      toast.error(toastMessages.CANNOT_START_CALL);
+      toast.error(toastMessages.SOMETHING_WENT_WRONG);
       return;
     }
     //2 states need to manges - while ringing  and while connected
@@ -377,15 +373,13 @@ const P2PVideoPage = () => {
     <>
       <div className="bg-grey-dark-bg absolute inset-0 overflow-clip">
         {/* draggable contaienr */}
-        <div className="mx-auto mt-5 h-11/12 w-[95vw] border">
+        <div className="mx-auto mt-5 h-11/12 w-[95vw] rounded-2xl overflow-clip ring-2 ring-zinc-800/70">
           {callState !== "notInitiated" && (
             <PeerVideoPreview remoteStream={remoteStream} peerId={peerId} />
           )}
           <UserVideoPreview />
         </div>
-        <button className="absolute top-0 left-0 bg-amber-200" onClick={() => toggleOtherPerson()}>
-          Toggle peer
-        </button>
+
         <div className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2 text-white">
           <CallControls
             handupCall={handleHandupCall}

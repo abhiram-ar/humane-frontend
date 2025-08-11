@@ -6,12 +6,15 @@ import Spinner from "@/components/Spinner";
 import { useAppSelector } from "@/features/userAuth/hooks/store.hooks";
 import useConversaionListInifiteQuery from "../../hooks/useConversaionListInifiteQuery";
 import useFindOtherUserOfOnetoOneConvo from "../../hooks/useFindOtherUserOfOnetoOneConvo";
+import { useDispatch } from "react-redux";
+import { addToConversationList } from "../../redux/chatSlice";
 
 const ConversationList = () => {
   const navigate = useNavigate();
   const observerRef = useRef<HTMLDivElement>(null);
   const conversation = useAppSelector((state) => state.chat.recentConvo);
   const findOtherUser = useFindOtherUserOfOnetoOneConvo();
+  const dispath = useDispatch();
 
   const { data, isLoading, hasNextPage, isFetching, fetchNextPage } =
     useConversaionListInifiteQuery();
@@ -30,6 +33,11 @@ const ConversationList = () => {
 
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetching]);
+
+  useEffect(() => {
+    if (!data) return;
+    dispath(addToConversationList(data.pages.flatMap((page) => page.conversations)));
+  }, [data, dispath]);
 
   const handleConversationClick = (convo: ConversationWithLastMessage) => {
     if (convo.type === "one-to-one") {

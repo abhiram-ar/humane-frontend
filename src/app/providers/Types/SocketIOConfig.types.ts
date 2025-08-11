@@ -13,9 +13,29 @@ export interface ServerToClientChatEvents {
     participants: Conversation["participants"];
   }) => void;
 
-  "typing-one-to-one-message": (event: { typingUser: string; convoId: string, time: Date }) => void;
+  "typing-one-to-one-message": (event: { typingUser: string; convoId: string; time: Date }) => void;
 
-  withAck: (d: string, callback: (e: number) => void) => void;
+  // -------------------------------call events-------------------------------
+
+  "call.incoming": (event: { callerId: string; callId: string; at: string }) => void;
+
+  "call.incoming.cancelled": (event: { callerId: string; callId: string }) => void;
+
+  "call.acted.by_other_device": (event: { callId: string; callerId: string }) => void;
+
+  "call.connected": (event: { callId: string; recipientId: string }) => void;
+
+  "call.declined": (event: { callId: string; recipientId: string }) => void;
+
+  "call.sdp.offer": (event: { callId: string; offerSDP: string }) => void;
+
+  "call.ice-candidates": (event: { callId: string; ice: string }) => void;
+
+  "call.media.state": (event: { callId: string; micOn: boolean; videoOn: boolean }) => void;
+
+  "call.sdp.answer": (event: { callId: string; answerSDP: string }) => void;
+
+  "call.ended": (event: { callId: string; at: string }) => void;
 }
 
 export interface ClientToServerChatEvents {
@@ -36,7 +56,40 @@ export interface ClientToServerChatEvents {
   "is-user-online": (userId: string, callback: (ack: boolean) => void) => void;
 
   // stop typing is handled by reciver
-  "typing-one-to-one-message": (event: { otherUserId: string; convoId: string, time: Date }) => void;
+  "typing-one-to-one-message": (event: {
+    otherUserId: string;
+    convoId: string;
+    time: Date;
+  }) => void;
+
+  // -------------------------------call events-------------------------------
+
+  "call.initiate": (
+    recipientId: string,
+    callback: (
+      res: { ringing: boolean; callId: string } | { ringing: false; error: string },
+    ) => void,
+  ) => void;
+
+  "call.cancel-initiated-call": (
+    event: { callId: string },
+    callback: (arg: { cancelled: boolean }) => void,
+  ) => void;
+
+  "call.action": (
+    event: { callId: string; action: "answered" | "declined" | "timeout" },
+    callback?: (arg: { status: "connected" | "callTakenOnOtherDevice" | "callEnded" }) => void,
+  ) => void;
+
+  "call.handup": (event: { callId: string }) => void;
+
+  "call.ice-candidates": (event: { callId: string; ice: string }) => void;
+
+  "call.media.state": (event: { callId: string; micOn: boolean; videoOn: boolean }) => void;
+
+  "call.sdp.offer": (event: { callId: string; offerSDP: string }) => void;
+
+  "call.sdp.answer": (event: { callId: string; answerSDP: string }) => void;
 }
 
 export interface ClientToServerEvents {

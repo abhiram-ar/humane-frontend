@@ -1,0 +1,135 @@
+import { Mic, MicOff, Phone, PhoneCall, PhoneMissed, Video, VideoOff } from "lucide-react";
+import { AudioStreamSelector } from "./AudioStreamSelector";
+import { VideoStreamSelector } from "./VideoStreamSelector";
+import { useAppDispatch, useAppSelector } from "@/features/userAuth/hooks/store.hooks";
+import { cameraOn, micOn } from "../redux/callSlice";
+import React, { useRef } from "react";
+
+type Props = {
+  startCall: () => void;
+  handupCall: () => void;
+  peerConectionRef: React.RefObject<RTCPeerConnection | null>;
+  localStreamRef: React.RefObject<MediaStream | null>;
+};
+
+const CallControls: React.FC<Props> = ({
+  startCall,
+  handupCall,
+  peerConectionRef,
+  localStreamRef,
+}) => {
+  const micStatus = useAppSelector((state) => state.call.micOn);
+  const cameraStatus = useAppSelector((state) => state.call.cameraOn);
+  const callStatus = useAppSelector((state) => state.call.callStatus);
+  const dispath = useAppDispatch();
+  const removeTrackTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  const handleVideoToogle = () => {
+    const newCameraState = !cameraStatus;
+    dispath(cameraOn(newCameraState));
+
+    if (removeTrackTimerRef.current) {
+      clearTimeout(removeTrackTimerRef.current);
+    }
+
+    if (peerConectionRef.current && !newCameraState && localStreamRef.current) {
+      const pc = peerConectionRef.current;
+      const sender = pc.getSenders();
+      sender
+        .filter((sender) => sender.track?.kind === "video")
+        .forEach((sender) => {
+          if (!sender.track) return;
+          sender.track.enabled = false;
+
+          // keep the track for some some, then permannatly remove
+          removeTrackTimerRef.current = setTimeout(() => {
+            if (pc.connectionState === "closed") return;
+            sender.track?.stop();
+            pc.removeTrack(sender);
+          }, 10 * 1000);
+        });
+    } else if (peerConectionRef.current && newCameraState && localStreamRef.current) {
+      const pc = peerConectionRef.current;
+      const sender = pc.getSenders();
+      sender
+        .filter((sender) => sender.track?.kind === "video")
+        .forEach((sender) => {
+          if (!sender.track) return;
+          sender.track.enabled = true;
+        });
+    }
+  };
+
+  return (
+    <div className="item-center flex justify-center gap-2 rounded-4xl border border-zinc-500/50 bg-zinc-700 px-3 py-2 transition-all duration-200">
+      {/* timeer */}
+      <div className="flex rounded-full bg-zinc-600">
+        <AudioStreamSelector />
+        <div
+          onClick={() => dispath(micOn(!micStatus))}
+          className={`rounded-full p-3 ${micStatus ? "bg-zinc-500/80 hover:bg-zinc-500" : "bg-red-500/50 hover:bg-red-500/70"}`}
+        >
+          {micStatus ? <Mic /> : <MicOff />}
+        </div>
+      </div>
+
+      <div className="flex rounded-full bg-zinc-600">
+        <VideoStreamSelector />
+        <div
+          onClick={handleVideoToogle}
+          className={`rounded-full p-3 ${cameraStatus ? "bg-zinc-500/80 hover:bg-zinc-500" : "bg-red-500/50 hover:bg-red-500/70"}`}
+        >
+          {cameraStatus ? <Video /> : <VideoOff />}
+        </div>
+      </div>
+
+      <div className="flex max-h-40 w-40 max-w-40 justify-end">
+        {/*  */}
+        {(callStatus === "joined" || callStatus === "ringing") && (
+          <div
+            onClick={handupCall}
+            className="cursor-pointer rounded-full bg-red-500/80 p-3 hover:bg-red-500"
+          >
+            <div className="rotate-135 px-3">
+              <Phone />
+            </div>
+          </div>
+        )}
+
+        {callStatus === "notInitiated" && (
+          <div
+            onClick={startCall}
+            className="bg-pop-green/80 hover:bg-pop-green ms-10 cursor-pointer rounded-full p-3"
+          >
+            <div className="flex gap-1 px-0.5 text-black">
+              <Phone />
+              <p>Start call</p>
+            </div>
+          </div>
+        )}
+
+        {callStatus === "pending" && (
+          <div className="cursor-pointer rounded-full bg-blue-400/90 p-3 hover:bg-blue-400">
+            <div className="px-3 text-black">
+              <PhoneCall className="animate-pulse" />
+            </div>
+          </div>
+        )}
+
+        {(callStatus === "rejected" || callStatus === "ended") && (
+          <div
+            onClick={startCall}
+            className="bg-pop-green/80 hover:bg-pop-green cursor-pointer rounded-full p-3"
+          >
+            <div className="flex gap-2 px-3 text-black">
+              <PhoneMissed />
+              <p>Call Again</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CallControls;

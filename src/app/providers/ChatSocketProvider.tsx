@@ -12,6 +12,12 @@ import {
 import { getUserConvoById } from "@/features/chat/services/getUserConvoById";
 import { ConversationWithLastMessage } from "@/features/chat/Types/ConversationWithLastMessage";
 import useFindOtherUserOfOnetoOneConvo from "@/features/chat/hooks/useFindOtherUserOfOnetoOneConvo";
+import {
+  callConnected,
+  callDeclinedByPeer,
+  inComingCall,
+  incomingCallRejected,
+} from "@/features/call/redux/callSlice";
 
 type ChatSocketContextType = {
   socket: TypedChatSocket | null;
@@ -43,7 +49,7 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
     socket.on("new-one-to-one-message", (msg, participants) => {
       const otherUser = find(participants);
       dispath(addMessageToChat({ message: msg, otherUserId: otherUser.userId }));
-      if (!recentConvoIdxHashMap[msg.conversationId]) {
+      if (typeof recentConvoIdxHashMap[msg.conversationId] !== "number") {
         getUserConvoById(msg.conversationId)
           .then((data) => {
             if (data.convo) {
@@ -78,6 +84,24 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
         }),
       );
     });
+    socket.on("call.incoming", (event) => {
+      dispath(inComingCall(event));
+    });
+
+    socket.on("call.acted.by_other_device", (event) => {
+      console.log("other", event);
+      dispath(incomingCallRejected({ callId: event.callId }));
+    });
+
+    socket.on("call.declined", (event) => dispath(callDeclinedByPeer({ callId: event.callId })));
+
+    socket.on("call.incoming.cancelled", (event) =>
+      dispath(incomingCallRejected({ callId: event.callId })),
+    );
+
+    socket.on("call.connected", (event) =>
+      setTimeout(() => dispath(callConnected({ callId: event.callId })), 2 * 1000),
+    );
 
     return () => {
       socket.disconnect();

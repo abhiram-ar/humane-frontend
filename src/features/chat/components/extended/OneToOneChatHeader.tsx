@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import usePublicUserProfileQuery from "@/features/profile/hooks/usePublicUserProfileQuery";
 import { EllipsisVertical, Phone, Video } from "lucide-react";
 import React from "react";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import UserOnlineAndTypingIndicator from "./UserOnlineAndTypingIndicator";
 import ChatOptions from "./ChatOptions";
 
@@ -15,6 +15,8 @@ type Props = {
 
 const OneToOneChatHeader: React.FC<Props> = ({ otherUserId, convoId }) => {
   const { user, httpStatus } = usePublicUserProfileQuery(otherUserId ?? "invalid");
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   return (
     <div className="flex w-full items-center justify-between border-b border-zinc-400/50 px-5 py-3">
@@ -41,15 +43,18 @@ const OneToOneChatHeader: React.FC<Props> = ({ otherUserId, convoId }) => {
         </div>
       </div>
       <div className="text-almost-white flex items-center gap-1 overflow-hidden rounded-xl border-zinc-400/50 xl:gap-3">
-        <div className="hover:bg-green-subtle/90 rounded-full p-2 hover:text-black cursor-pointer">
+        <div
+          onClick={() => navigate(`/call/user?peer-id=${user?.id}`, { state: { from: pathname } })}
+          className="hover:bg-green-subtle/90 cursor-pointer rounded-full p-2 hover:text-black"
+        >
           <Phone size={20} />
         </div>
-        <div className="hover:bg-green-subtle/90 rounded-full p-2 hover:text-black cursor-pointer">
+        <div className="hover:bg-green-subtle/90 cursor-pointer rounded-full p-2 hover:text-black">
           <Video />
         </div>
 
         <ChatOptions convoId={convoId}>
-          <div className="hover:bg-green-subtle/90 rounded-full p-2 hover:text-black cursor-pointer relative">
+          <div className="hover:bg-green-subtle/90 relative cursor-pointer rounded-full p-2 hover:text-black">
             <EllipsisVertical size={20} />
           </div>
         </ChatOptions>

@@ -19,7 +19,7 @@ const InCommingCallDialog = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const isMobole = useIsMobile();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (!incommingCall || !user || !socket) {
@@ -80,30 +80,34 @@ const InCommingCallDialog = () => {
 
   return (
     <div
-      className={`bg-grey-light rounded-xl px-5 py-3 ring-2 transition-all delay-200 duration-200 ease-out ${showDialog ? "translate-y-5 scale-100 opacity-100" : "-translate-y-[10em] scale-90 opacity-20"} ${isMobole ? "flex justify-between" : ""}`}
+      className={`fixed top-0 z-50 ${isMobile ? "w-full px-3" : "right-5"} ${incommingCall ? "" : "hidden"} `}
     >
-      <div className="flex items-center gap-3 text-white">
-        <ProfilePicSmall className="border" avatarURL={user?.avatarURL} />
+      <div
+        className={`bg-grey-light rounded-xl px-5 py-3 ring-2 transition-all delay-200 duration-200 ease-out ${showDialog ? "translate-y-5 scale-100 opacity-100" : "-translate-y-[10em] scale-90 opacity-20"} ${isMobile ? "flex justify-between" : ""}`}
+      >
+        <div className="flex items-center gap-3 text-white">
+          <ProfilePicSmall className="border" avatarURL={user?.avatarURL} />
 
-        <div>
-          <p>Incoming Call</p>
-          {user ? (
-            <p>{`${user?.firstName ?? ""} ${user?.lastName ?? ""}`}</p>
-          ) : (
-            <Skeleton className="w-full text-transparent">h</Skeleton>
-          )}
+          <div>
+            <p>Incoming Call</p>
+            {user ? (
+              <p>{`${user?.firstName ?? ""} ${user?.lastName ?? ""}`}</p>
+            ) : (
+              <Skeleton className="w-full text-transparent">h</Skeleton>
+            )}
+          </div>
         </div>
-      </div>
 
-      <div className={`flex gap-2 ${isMobole ? "" : "mt-3"}`}>
-        <ButtonPop onClick={handleAccept}>Accept</ButtonPop>
+        <div className={`flex gap-2 ${isMobile ? "" : "mt-3"}`}>
+          <ButtonPop onClick={handleAccept}>Accept</ButtonPop>
 
-        <button
-          onClick={handleDeclineCall}
-          className={`cursor-pointer rounded-full bg-red-400/80 px-5 py-1 font-semibold text-black hover:bg-red-400`}
-        >
-          Decline
-        </button>
+          <button
+            onClick={handleDeclineCall}
+            className={`cursor-pointer rounded-full bg-red-400/80 px-5 py-1 font-semibold text-black hover:bg-red-400`}
+          >
+            Decline
+          </button>
+        </div>
       </div>
     </div>
   );

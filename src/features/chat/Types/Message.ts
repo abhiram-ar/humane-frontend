@@ -1,3 +1,8 @@
+export const messageType = {
+  CALL: "call",
+  REGULAR: "regular",
+} as const;
+
 export type Message = {
   id: string;
 
@@ -10,6 +15,9 @@ export type Message = {
 
   attachment: { attachmentType: string; attachmentURL: string | undefined } | undefined;
   replyToMessageId: string | undefined;
+
+  type: (typeof messageType)[keyof typeof messageType];
+  callConnected?: boolean;
 
   // only on client
   sendStatus?: "error" | "pending";

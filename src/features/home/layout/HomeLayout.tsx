@@ -10,9 +10,7 @@ const HomeLayout = () => {
   const isMobile = useIsMobile();
   return (
     <div className="bg-grey-dark-bg">
-      <div className={`fixed top-0 z-50 ${isMobile ? "w-full px-3" : "right-5"}`}>
-        <InCommingCallDialog />
-      </div>
+      <InCommingCallDialog />
       {!isMobile && <Sidebar />}
       <div
         ref={ref}

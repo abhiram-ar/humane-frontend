@@ -99,6 +99,7 @@ const OneToOneChatPage = () => {
         sendStatus: "pending",
         status: undefined,
         tempAttachment: messageData.attachment,
+        type: "regular"
       };
 
       dispath(addMessageToChat({ otherUserId: messageData.to, message: tempMessage }));

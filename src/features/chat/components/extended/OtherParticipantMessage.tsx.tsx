@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import ViewPicture from "@/features/profile/components/base/ViewPicture";
 import VideoPlayer from "@/components/videoPlayer/VideoPlayer";
 import ChatImageAttachment from "./ChatImageAttachment";
+import { PhoneMissed, PhoneOutgoing } from "lucide-react";
 
 type Props = {
   message: Message;
@@ -11,6 +12,36 @@ type Props = {
 
 const OtherParticipantMessage: React.FC<Props> = ({ message }) => {
   const timeString = format(message.sendAt, "hh:mm a - dd MMM");
+
+  if (message.type === "call")
+    return (
+      <div className="mb-1 flex w-full">
+        {/* message itself */}
+        <div className="relative ms-2 max-w-3/5 min-w-40 rounded-t-lg rounded-br-lg bg-zinc-700/80 px-2 py-3 pb-5 group-hover:bg-zinc-700">
+          {message.callConnected ? (
+            <div className="flex items-center gap-2">
+              <PhoneOutgoing size={18} className="text-zinc-400" />
+              <p className="text-zinc-400">Connected</p>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <PhoneMissed size={18} className="text-red-500" />
+              <p className="text-red-500">Not Connected</p>
+            </div>
+          )}
+
+          {/* medtadata */}
+          <div className="absolute right-2 bottom-1 flex w-fit items-center gap-1 text-xs text-zinc-500">
+            <p>{timeString}</p>
+          </div>
+        </div>
+
+        {/* options */}
+        {/* options */}
+        <div className="flex w-full items-center justify-end  text-white"></div>
+      </div>
+    );
+
   return (
     <div className="mb-1 flex w-full">
       {/* message itself */}

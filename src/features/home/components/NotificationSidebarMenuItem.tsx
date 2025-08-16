@@ -21,6 +21,8 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { setLastRewaredAt } from "@/features/profile/redux/profilleSlice";
 import useUserId from "@/hooks/useUserId";
 import { GetPublicUserHumaneScore } from "@/hooks/usePublicUserHumaneScoreQuery";
+import toast from "react-hot-toast";
+import { toastMessages } from "@/constants/ToastMessages";
 
 // TODO: refacor
 type GetRecentNotificationResponse = {
@@ -93,6 +95,13 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
           } as GetPublicUserHumaneScore["data"];
         },
       ); // delay since Read model will have stale data
+    });
+
+    socket.on("post-moderation-completed", (postId, status) => {
+      if (status === "ok") toast.success(toastMessages.POST_CHECK_COMLETED_SUCCESSFULY);
+      else if (status === "failed") toast.error(toastMessages.POST_CHECK_FAILED);
+      else if (status === "notAppropriate")
+        toast(toastMessages.POST_CHECK_NON_APPROPRIATRE_CONTENT_FOUND);
     });
 
     return () => {

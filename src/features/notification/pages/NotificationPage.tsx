@@ -5,6 +5,8 @@ import { markAllAsRead } from "../redux/notificationSlice";
 import FriendReqAcceptedNoti from "../Components/FriendReqAcceptedNoti";
 import PostGotNoti from "../Components/PostGotCommentNoti";
 import CommnetLikesNotification from "../Components/CommnetLikesNotification";
+import PostModerationFlaggedNoti from "../Components/PostModerationFlaggedNoti";
+import PostModerationFailedNoti from "../Components/PostModerationFailedNoti";
 
 const NotificationPage = () => {
   const recentNoti = useAppSelector((state) => state.notifications.recentNoti);
@@ -29,6 +31,10 @@ const NotificationPage = () => {
             return <PostGotNoti key={noti.id} noti={noti} />;
           else if (noti.type === "comment-likes")
             return <CommnetLikesNotification key={noti.id} noti={noti} />;
+          else if (noti.type === "post-moderation-flagged")
+            return <PostModerationFlaggedNoti key={noti.id} noti={noti} />;
+          else if (noti.type === "post-moderation-failed")
+            return <PostModerationFailedNoti key={noti.id} noti={noti} />;
         })}
       </div>
     </div>

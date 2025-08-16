@@ -15,8 +15,8 @@ export const createPostSchema = z.object({
       "File must be an image or a video",
     )
     .refine(
-      (file) => !file || file.length === 0 || file[0]?.size <= 20 * 1024 * 1024,
-      "Max file size is 20MB",
+      (file) => !file || file.length === 0 || file[0]?.size <= 50 * 1024 * 1024,
+      "Max file size is 50MB",
     ),
 });
 export type CreatePostFields = z.infer<typeof createPostSchema>;

@@ -23,6 +23,8 @@ import useUserId from "@/hooks/useUserId";
 import { GetPublicUserHumaneScore } from "@/hooks/usePublicUserHumaneScoreQuery";
 import toast from "react-hot-toast";
 import { toastMessages } from "@/constants/ToastMessages";
+import { InfiniteTimelineData } from "@/features/profile/Types/InfiniteTimelinedata.type";
+import { produce } from "immer";
 
 // TODO: refacor
 type GetRecentNotificationResponse = {
@@ -98,10 +100,37 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
     });
 
     socket.on("post-moderation-completed", (postId, status) => {
-      if (status === "ok") toast.success(toastMessages.POST_CHECK_COMLETED_SUCCESSFULY);
-      else if (status === "failed") toast.error(toastMessages.POST_CHECK_FAILED);
+      if (status === "ok")
+        toast.success(toastMessages.POST_CHECK_COMLETED_SUCCESSFULY, { position: "top-right" });
+      else if (status === "failed")
+        toast.error(toastMessages.POST_CHECK_FAILED, { position: "top-right" });
       else if (status === "notAppropriate")
-        toast(toastMessages.POST_CHECK_NON_APPROPRIATRE_CONTENT_FOUND);
+        toast(toastMessages.POST_CHECK_NON_APPROPRIATRE_CONTENT_FOUND, { position: "top-right" });
+
+      if (!userId) {
+        console.warn("no userId to optimistcally update post moderationstatus");
+        return;
+      }
+      console.log(postId, status);
+
+      // Update the cached query data without triggering a refetch
+      queryClient.setQueryData(["timeline", userId], (oldData: InfiniteTimelineData) => {
+        if (!oldData) return oldData;
+
+        console.log("old data", oldData);
+
+        // Create a new state object with the updated moderation status
+        const newState = produce(oldData, (draft) => {
+          draft.pages.forEach((page) =>
+            page.posts.forEach((post) => {
+              if (post.id === postId) post.moderationStatus = status;
+            }),
+          );
+        });
+
+        console.log("new data", newState);
+        return newState;
+      });
     });
 
     return () => {

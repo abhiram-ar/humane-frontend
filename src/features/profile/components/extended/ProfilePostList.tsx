@@ -40,8 +40,13 @@ const ProfilePostList: React.FC<Props> = ({ userId, className }) => {
             post ? (
               <div
                 key={post.id}
-                className={`relative w-full border-b border-zinc-400/50 lg:px-5 ${className}`}
+                className={`relative w-full border-b border-zinc-400/50 lg:px-5 ${post.moderationStatus === "pending" ? "bg-amber-600/20" : ""} ${className}`}
               >
+                {post.moderationStatus === "pending" && (
+                  <p className="pt-3 text-center text-amber-300 !opacity-100">
+                    Checking in progress...
+                  </p>
+                )}
                 <div className="absolute top-2 right-2">
                   {authenticatedUserId === userId && <UserPostActions postId={post.id} />}
                 </div>
@@ -51,7 +56,9 @@ const ProfilePostList: React.FC<Props> = ({ userId, className }) => {
                     author: { ...data.pages[0].targetUserDetails },
                   }}
                 />
+
                 <FeedAddComment
+                  disabled={post.moderationStatus === "pending"}
                   post={{
                     ...post,
                     author: { ...data.pages[0].targetUserDetails },

@@ -17,6 +17,8 @@ import { CreatePostFields } from "../types/CreatePostFields";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { Plus } from "lucide-react";
 import { FullPost } from "@/features/profile/Types/GetUserTimelineResponse";
+import { InfiniteTimelineData } from "@/features/profile/Types/InfiniteTimelinedata.type";
+import { produce } from "immer";
 
 export type CreatePostReponse = {
   data: { post: FullPost };
@@ -44,7 +46,7 @@ const CreatePostButton = () => {
       await axios.put(result.preSignedURL, file);
     }
 
-    await api.post<CreatePostReponse>("/api/v1/post/", {
+    const res = await api.post<CreatePostReponse>("/api/v1/post/", {
       ...postData,
       attachmentKey,
       attachmentType,
@@ -55,29 +57,19 @@ const CreatePostButton = () => {
     //dont catch the error it will be handled my calling component
 
     // read service wont give  hydrated  post data
-    setTimeout(() => queryClinet.refetchQueries({ queryKey: ["timeline", userId] }), 2000);
+    // setTimeout(() => queryClinet.refetchQueries({ queryKey: ["timeline", userId] }), 2000);
 
-    // queryClinet.setQueryData(["timeline", userId], (oldData: InfiniteTimelineData) => {
-    //   if (!oldData) return oldData;
-    //   //   return page.
+    queryClinet.setQueryData(["timeline", userId], (oldData: InfiniteTimelineData) => {
+      if (!oldData) return oldData;
 
-    //   const newPagesArray = oldData.pages
-    //     ? oldData.pages.map((page, idx) => ({
-    //         ...page,
-    //         posts:
-    //           idx === 0
-    //             ? [res.data.data.post, ...page.posts.map((post) => post)]
-    //             : (page.posts.map((post) => post) as GetUserPostTimelineResponse["data"]["posts"]),
-    //       }))
-    //     : oldData.pages;
+      const newState = produce(oldData, (draft) => {
+        const firstPagePosts = draft.pages[0].posts ?? [];
+        firstPagePosts.unshift(res.data.data.post);
+        draft.pages[0].posts = firstPagePosts;
+      });
 
-    //   const update: InfiniteTimelineData = {
-    //     pageParams: oldData.pageParams,
-    //     pages: newPagesArray,
-    //   };
-
-    //   return update;
-    // });
+      return newState;
+    });
   };
 
   return (

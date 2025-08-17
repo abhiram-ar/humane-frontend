@@ -111,15 +111,10 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
         console.warn("no userId to optimistcally update post moderationstatus");
         return;
       }
-      console.log(postId, status);
 
-      // Update the cached query data without triggering a refetch
       queryClient.setQueryData(["timeline", userId], (oldData: InfiniteTimelineData) => {
         if (!oldData) return oldData;
 
-        console.log("old data", oldData);
-
-        // Create a new state object with the updated moderation status
         const newState = produce(oldData, (draft) => {
           draft.pages.forEach((page) =>
             page.posts.forEach((post) => {
@@ -127,8 +122,6 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
             }),
           );
         });
-
-        console.log("new data", newState);
         return newState;
       });
     });

@@ -14,7 +14,7 @@ const useIncrementTimelinePostCommentCount = (targetUserId: string) => {
             draft.forEach((page) =>
               page.posts.forEach((post) => {
                 if (post && post.id === targetPostId) {
-                  if (post.commentCount === null) post.commentCount = 1;
+                  if (!post.commentCount) post.commentCount = 1;
                   else post.commentCount += 1;
                 }
               }),

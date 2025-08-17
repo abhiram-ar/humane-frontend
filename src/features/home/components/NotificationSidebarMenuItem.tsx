@@ -92,7 +92,9 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
       else if (status === "failed")
         toast.error(toastMessages.POST_CHECK_FAILED, { position: "top-right" });
       else if (status === "notAppropriate")
-        toast(toastMessages.POST_CHECK_NON_APPROPRIATRE_CONTENT_FOUND, { position: "top-right" });
+        toast.error(toastMessages.POST_CHECK_NON_APPROPRIATRE_CONTENT_FOUND, {
+          position: "top-right",
+        });
 
       if (!userId) {
         console.warn("no userId to optimistcally update post moderationstatus");

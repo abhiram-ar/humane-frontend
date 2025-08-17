@@ -15,7 +15,7 @@ export type HydratedPost = {
   attachmentStatus?: (typeof PostAttachmentStatus)[keyof typeof PostAttachmentStatus];
   attachmentURL?: string | null;
 
-  moderationStatus: (typeof ModerationStatus)[keyof typeof ModerationStatus] | undefined; //TOTO: remove undfiend when mooderation service is implmented
+  moderationStatus: (typeof ModerationStatus)[keyof typeof ModerationStatus];
   moderationMetadata?: unknown;
 
   createdAt: Date;

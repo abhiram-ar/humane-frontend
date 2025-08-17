@@ -8,6 +8,7 @@ import Spinner from "@/components/Spinner";
 import PostCommentsList from "../components/PostCommentsList";
 import useRestoreScrollPosition from "@/hooks/useRestoreScrollPosition";
 import { useScrollContext } from "@/app/providers/ScrollRestoreationProvider";
+import ModerationMessages from "../components/ModerationMessages";
 
 const PostPage = () => {
   useRestoreScrollPosition();
@@ -43,17 +44,27 @@ const PostPage = () => {
 
         {data ? (
           <>
-            <div className="border-b border-b-zinc-400/50 pb-4">
+            <div
+              className={`border-b border-b-zinc-400/50 pb-4 ${data.post.moderationStatus === "pending" || data.post.moderationStatus === "failed" ? "bg-amber-600/20" : ""} ${data.post.moderationStatus === "notAppropriate" ? "bg-red-700/50" : ""}`}
+            >
+              {data.post.moderationStatus !== "ok" && (
+                <ModerationMessages moderationStatus={data.post.moderationStatus} />
+              )}
+
               <Post postDetails={data.post} />
             </div>
 
-            <div className="border-b border-zinc-400/50">
-              {/* dont use postId from browser params as it can be invalid */}
-              <PostAddComment postId={data?.post.id} />
-            </div>
-            <div>
-              <PostCommentsList postId={data?.post.id} postAuthorId={data.post.authorId} />
-            </div>
+            {data.post.moderationStatus === "ok" && (
+              <>
+                <div className="border-b border-zinc-400/50">
+                  {/* dont use postId from browser params as it can be invalid */}
+                  <PostAddComment postId={data?.post.id} />
+                </div>
+                <div>
+                  <PostCommentsList postId={data?.post.id} postAuthorId={data.post.authorId} />
+                </div>
+              </>
+            )}
           </>
         ) : (
           <div className="mt-5">

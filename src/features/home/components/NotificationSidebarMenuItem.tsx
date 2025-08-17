@@ -6,8 +6,7 @@ import {
   ServerToClientEvents,
 } from "@/features/notification/Types/SocketIOConfig.types";
 import { io, Socket } from "socket.io-client";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { CombinedNotificationWithActionableUser } from "@/features/notification/Types/CombinedNotiWithActionableUser";
+import { useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import {
   addNotification,
@@ -21,19 +20,11 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { setLastRewaredAt } from "@/features/profile/redux/profilleSlice";
 import useUserId from "@/hooks/useUserId";
 import { GetPublicUserHumaneScore } from "@/hooks/usePublicUserHumaneScoreQuery";
-
-// TODO: refacor
-type GetRecentNotificationResponse = {
-  success: boolean;
-  message: string;
-  data: {
-    noti: CombinedNotificationWithActionableUser[];
-    pagination: {
-      from?: string | null;
-      hasMore: boolean;
-    };
-  };
-};
+import toast from "react-hot-toast";
+import { toastMessages } from "@/constants/ToastMessages";
+import { InfiniteTimelineData } from "@/features/profile/Types/InfiniteTimelinedata.type";
+import { produce } from "immer";
+import useRecentNotificaionInifiniteQuey from "@/features/notification/hooks/useRecentNotificaionInifiniteQuey";
 
 const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuItem>> = ({
   Icon,
@@ -95,28 +86,46 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
       ); // delay since Read model will have stale data
     });
 
+    socket.on("post-moderation-completed", (postId, status) => {
+      if (status === "ok")
+        toast.success(toastMessages.POST_CHECK_COMLETED_SUCCESSFULY, { position: "top-right" });
+      else if (status === "failed")
+        toast.error(toastMessages.POST_CHECK_FAILED, { position: "top-right" });
+      else if (status === "notAppropriate")
+        toast.error(toastMessages.POST_CHECK_NON_APPROPRIATRE_CONTENT_FOUND, {
+          position: "top-right",
+        });
+
+      if (!userId) {
+        console.warn("no userId to optimistcally update post moderationstatus");
+        return;
+      }
+
+      queryClient.setQueryData(["timeline", userId], (oldData: InfiniteTimelineData) => {
+        if (!oldData) return oldData;
+
+        const newState = produce(oldData, (draft) => {
+          draft.pages.forEach((page) =>
+            page.posts.forEach((post) => {
+              if (post.id === postId) post.moderationStatus = status;
+            }),
+          );
+        });
+        return newState;
+      });
+    });
+
     return () => {
       socket.disconnect();
     };
   }, [dispatch, token]);
 
-  const { data } = useQuery({
-    queryKey: ["notifications"],
-    queryFn: async () => {
-      const res = await api.get<GetRecentNotificationResponse>(
-        `${API_ROUTES.NOTIFICATION_SERVICE}/`,
-        {
-          params: { limit: 10 }, // TODO: add from and convert to infinite query
-        },
-      );
-      return res.data.data;
-    },
-  });
+  const { data } = useRecentNotificaionInifiniteQuey();
 
   useEffect(() => {
     console.log("Running set notification state from http");
     if (data) {
-      dispatch(setNotificationList(data.noti));
+      dispatch(setNotificationList(data.pages.flatMap((page) => page.noti)));
     }
   }, [data, dispatch]);
 

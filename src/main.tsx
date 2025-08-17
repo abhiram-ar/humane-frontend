@@ -16,7 +16,12 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <Toaster toastOptions={{ style: { backgroundColor: "#464646", color: "white" } }} />
+        <Toaster
+          toastOptions={{
+            style: { backgroundColor: "#464646", color: "white" },
+            duration: 3 * 1000,
+          }}
+        />
         <ReactQueryDevtools initialIsOpen={false} />
         <ScrollRestorationProvider>
           <ChatSocketProvider>

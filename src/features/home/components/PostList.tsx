@@ -46,7 +46,7 @@ const PostList = () => {
             post ? (
               <div key={post.id} className="w-full border-b border-zinc-400/50">
                 <Post postDetails={post} enablePosterLink={true} />
-                <FeedAddComment post={post} />
+                <FeedAddComment disabled={post.moderationStatus !== "ok"} post={post} />
               </div>
             ) : null,
           )}

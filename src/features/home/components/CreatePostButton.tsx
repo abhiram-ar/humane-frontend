@@ -16,6 +16,13 @@ import { getPostMediaPresignedURL } from "../services/GetPostMediaPresingedURL";
 import { CreatePostFields } from "../types/CreatePostFields";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { Plus } from "lucide-react";
+import { FullPost } from "@/features/profile/Types/GetUserTimelineResponse";
+import { InfiniteTimelineData } from "@/features/profile/Types/InfiniteTimelinedata.type";
+import { produce } from "immer";
+
+export type CreatePostReponse = {
+  data: { post: FullPost };
+};
 
 const CreatePostButton = () => {
   const closeDialogRef = useRef<HTMLButtonElement | null>(null);
@@ -39,12 +46,30 @@ const CreatePostButton = () => {
       await axios.put(result.preSignedURL, file);
     }
 
-    await api.post("/api/v1/post/", { ...postData, attachmentKey, attachmentType });
+    const res = await api.post<CreatePostReponse>("/api/v1/post/", {
+      ...postData,
+      attachmentKey,
+      attachmentType,
+    });
     if (closeDialogRef.current) {
       closeDialogRef.current.click();
     }
-    setTimeout(() => queryClinet.refetchQueries({ queryKey: ["timeline", userId] }), 2000);
     //dont catch the error it will be handled my calling component
+
+    // read service wont give  hydrated  post data
+    // setTimeout(() => queryClinet.refetchQueries({ queryKey: ["timeline", userId] }), 2000);
+
+    queryClinet.setQueryData(["timeline", userId], (oldData: InfiniteTimelineData) => {
+      if (!oldData) return oldData;
+
+      const newState = produce(oldData, (draft) => {
+        const firstPagePosts = draft.pages[0].posts ?? [];
+        firstPagePosts.unshift(res.data.data.post);
+        draft.pages[0].posts = firstPagePosts;
+      });
+
+      return newState;
+    });
   };
 
   return (

@@ -20,7 +20,7 @@ const ModerationMessages: React.FC<Props> = ({ moderationStatus }) => {
 
       {moderationStatus === "failed" && (
         <p className="pt-3 text-center text-amber-300 !opacity-100">
-          We couldn't complete the moderation check for this content.
+          Post failed to complete moderation review.
         </p>
       )}
     </>

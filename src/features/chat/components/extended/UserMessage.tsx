@@ -22,23 +22,27 @@ const UserMessage: React.FC<Props> = ({ message, onDeleteClick, onRetryClick }) 
         <div className="flex w-full items-center justify-end text-white"></div>
 
         {/* message itself */}
-        <div className="relative me-2 max-w-3/5 min-w-40 rounded-t-lg rounded-bl-lg bg-zinc-700/80 px-2 py-3 pb-5 group-hover:bg-zinc-700">
-          {message.callConnected ? (
-            <div className="flex items-center gap-2">
+        {message.callConnected ? (
+          <div className="relative me-2 max-w-3/5 min-w-35 rounded-t-lg rounded-bl-lg bg-zinc-700/80 px-2 py-3 pb-5 group-hover:bg-zinc-700">
+            <div className="flex items-center justify-center gap-2">
               <PhoneOutgoing size={18} className="text-zinc-400" />
               <p className="text-zinc-400">Connected</p>
             </div>
-          ) : (
-            <div className="flex items-center gap-2">
+            <div className="absolute right-1 bottom-1 flex w-fit items-center gap-1 text-xs text-zinc-400">
+              <p>{timeString}</p>
+            </div>
+          </div>
+        ) : (
+          <div className="relative me-2 max-w-3/5 min-w-40 rounded-t-lg rounded-bl-lg bg-zinc-700/80 px-2 py-3 pb-5 group-hover:bg-zinc-700">
+            <div className="flex items-center justify-center gap-2">
               <PhoneMissed size={18} className="text-red-400" />
               <p className="text-red-400">Not Connected</p>
             </div>
-          )}
-          {/* medtadata */}
-          <div className="absolute right-1 bottom-1 flex w-fit items-center gap-1 text-xs text-zinc-400">
-            <p>{timeString}</p>
+            <div className="absolute right-1 bottom-1 flex w-fit items-center gap-1 text-xs text-zinc-400">
+              <p>{timeString}</p>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     );
 
@@ -60,7 +64,7 @@ const UserMessage: React.FC<Props> = ({ message, onDeleteClick, onRetryClick }) 
       </div>
 
       {/* message itself */}
-      <div className="bg-green-subtle/95 group-hover:bg-green-subtle relative me-2 max-w-3/5 min-w-30 rounded-t-lg rounded-bl-lg p-2 pb-5">
+      <div className="bg-green-subtle/95 group-hover:bg-green-subtle relative me-2 max-w-3/5 min-w-35 rounded-t-lg rounded-bl-lg p-2 pb-5">
         {message.attachment &&
           !message.status?.deleted &&
           message.attachment.attachmentType?.startsWith("image/") &&

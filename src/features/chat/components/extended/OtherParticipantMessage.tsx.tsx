@@ -17,28 +17,33 @@ const OtherParticipantMessage: React.FC<Props> = ({ message }) => {
     return (
       <div className="mb-1 flex w-full">
         {/* message itself */}
-        <div className="relative ms-2 max-w-3/5 min-w-40 rounded-t-lg rounded-br-lg bg-zinc-700/80 px-2 py-3 pb-5 group-hover:bg-zinc-700">
-          {message.callConnected ? (
-            <div className="flex items-center gap-2">
+        {message.callConnected ? (
+          <div className="relative ms-2 max-w-3/5 min-w-35 rounded-t-lg rounded-br-lg bg-zinc-700/80 px-2 py-3 pb-5 group-hover:bg-zinc-700">
+            <div className="flex items-center justify-center gap-2">
               <PhoneOutgoing size={18} className="text-zinc-400" />
               <p className="text-zinc-400">Connected</p>
             </div>
-          ) : (
-            <div className="flex items-center gap-2">
+            {/* medtadata */}
+            <div className="absolute right-2 bottom-1 flex w-fit items-center gap-1 text-xs text-zinc-500">
+              <p>{timeString}</p>
+            </div>
+          </div>
+        ) : (
+          <div className="relative ms-2 max-w-3/5 min-w-40 rounded-t-lg rounded-br-lg bg-zinc-700/80 px-2 py-3 pb-5 group-hover:bg-zinc-700">
+            <div className="flex items-center justify-center gap-2">
               <PhoneMissed size={18} className="text-red-400" />
               <p className="text-red-400">Not Connected</p>
             </div>
-          )}
-
-          {/* medtadata */}
-          <div className="absolute right-2 bottom-1 flex w-fit items-center gap-1 text-xs text-zinc-500">
-            <p>{timeString}</p>
+            {/* medtadata */}
+            <div className="absolute right-2 bottom-1 flex w-fit items-center gap-1 text-xs text-zinc-500">
+              <p>{timeString}</p>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* options */}
         {/* options */}
-        <div className="flex w-full items-center justify-end  text-white"></div>
+        <div className="flex w-full items-center justify-end text-white"></div>
       </div>
     );
 

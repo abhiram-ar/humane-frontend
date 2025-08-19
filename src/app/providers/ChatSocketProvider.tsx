@@ -38,7 +38,10 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
     const socket: TypedChatSocket = io(import.meta.env.VITE_BACKEND_BASE_URL, {
       path: "/api/v1/chat/socket.io",
       // auth: { token }, // prod
-      query: { token }, // dev
+      query: { token }, // dev - needed for kong
+      extraHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     setChatSocket(socket);
 

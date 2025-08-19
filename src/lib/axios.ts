@@ -5,7 +5,7 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } f
 import { jwtDecode } from "jwt-decode";
 
 export const api: AxiosInstance = axios.create({
-  baseURL: "http://localhost",
+  baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
   withCredentials: true,
   timeout: 10000, //10s
 });
@@ -69,7 +69,7 @@ api.interceptors.response.use(
       try {
         console.log("query failed, refreshing accessToken");
         const { data } = await axios.get<{ data: { token: string } }>(
-          "http://localhost/api/v1/global/auth/refresh",
+          `${import.meta.env.VITE_BACKEND_BASE_URL}/api/v1/global/auth/refresh`,
           { withCredentials: true },
         );
 

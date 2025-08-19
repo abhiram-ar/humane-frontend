@@ -39,10 +39,17 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
 
   useEffect(() => {
     if (!token) return;
-    const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io("http://localhost", {
-      path: "/api/v1/notification/socket.io",
-      auth: { token },
-    });
+    const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
+      import.meta.env.VITE_BACKEND_BASE_URL,
+      {
+        path: "/api/v1/notification/socket.io",
+        // auth: { token },
+        query: { token }, // dev - kong ingress need token
+        extraHeaders: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
 
     socket.on("connect", () => {
       console.log(socket.id);
@@ -118,7 +125,7 @@ const NotificationSidebarMenuItem: React.FC<ComponentProps<typeof SidebarMenuIte
     return () => {
       socket.disconnect();
     };
-  }, [dispatch, token]);
+  }, [token]);
 
   const { data } = useRecentNotificaionInifiniteQuey();
 

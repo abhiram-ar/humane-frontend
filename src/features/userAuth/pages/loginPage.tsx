@@ -5,6 +5,9 @@ import { AxiosError } from "axios";
 import { useAppDispatch } from "../hooks/store.hooks";
 import { setCredentials } from "../redux/userAuthSlice";
 import { API_ROUTES } from "@/lib/API_ROUTES";
+import { JWTAuthPayload } from "@/types/JWTAuthPayload";
+import { jwtDecode } from "jwt-decode";
+import { UserLoginResponse } from "../types/UserLoginResonse";
 
 const LoginPage = () => {
   const dispath = useAppDispatch();
@@ -12,11 +15,14 @@ const LoginPage = () => {
 
   const handleLogin = async (data: LoginUserFields) => {
     try {
-      const res = await api.post(`${API_ROUTES.USER_SERVICE}/auth/login/email`, data);
+      const res = await api.post<UserLoginResponse>(
+        `${API_ROUTES.USER_SERVICE}/auth/login/email`,
+        data,
+      );
 
       const token = res.data.data.accessToken;
-      console.log(token);
-      dispath(setCredentials({ token }));
+      const decoded: JWTAuthPayload = jwtDecode(res.data.data.accessToken);
+      dispath(setCredentials({ token, type: decoded.type }));
 
       // dont want authicated uses to come back to login page
       navigate("/", { replace: true });

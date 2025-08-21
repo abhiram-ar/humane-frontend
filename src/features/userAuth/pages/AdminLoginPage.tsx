@@ -7,12 +7,7 @@ import { API_ROUTES } from "@/lib/API_ROUTES";
 import { setCredentials } from "../redux/userAuthSlice";
 import { jwtDecode } from "jwt-decode";
 import { JWTAuthPayload } from "@/types/JWTAuthPayload";
-
-type AdminLoginResponse = {
-  data: {
-    accessToken: string;
-  };
-};
+import { AdminLoginResponse } from "../../../types/AdminLoginResponse";
 
 const AdminLoginPage = () => {
   const dispath = useAppDispatch();

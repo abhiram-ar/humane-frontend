@@ -3,8 +3,16 @@ import Login from "../components/Login";
 import { api } from "@/lib/axios";
 import { AxiosError } from "axios";
 import { useAppDispatch } from "../hooks/store.hooks";
-import { setAdminCredentials } from "../../admin/redux/adminAuthSlice";
 import { API_ROUTES } from "@/lib/API_ROUTES";
+import { setCredentials } from "../redux/userAuthSlice";
+import { jwtDecode } from "jwt-decode";
+import { JWTAuthPayload } from "@/types/JWTAuthPayload";
+
+type AdminLoginResponse = {
+  data: {
+    accessToken: string;
+  };
+};
 
 const AdminLoginPage = () => {
   const dispath = useAppDispatch();
@@ -12,11 +20,11 @@ const AdminLoginPage = () => {
 
   const handleLogin = async (data: { email: string; password: string }) => {
     try {
-      const res = await api.post(`${API_ROUTES.ADMIN_ROUTE}/auth/login`, data);
+      const res = await api.post<AdminLoginResponse>(`${API_ROUTES.ADMIN_ROUTE}/auth/login`, data);
 
       const token = res.data.data.accessToken;
-      console.log(token);
-      dispath(setAdminCredentials({ token }));
+      const decoded: JWTAuthPayload = jwtDecode(res.data.data.accessToken);
+      dispath(setCredentials({ token, type: decoded.type }));
 
       // dont want authicated uses to come back to login page
       navigate("/admin/dashboard", { replace: true });

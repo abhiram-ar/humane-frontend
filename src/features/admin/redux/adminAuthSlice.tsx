@@ -1,26 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface IAdminAuthState {
-  token: string | null;
+  empty: null;
 }
 
 const initialState: IAdminAuthState = {
-  token: null,
+  empty: null,
 };
 
 export const adminAuthSlice = createSlice({
   name: "adminAuth",
   initialState,
   reducers: {
-    setAdminCredentials: (state, action: PayloadAction<{ token: string }>) => {
-      state.token = action.payload.token;
-    },
-    logoutAdmin: (state) => {
-      state.token = null;
-    },
+    empty: () => {},
   },
 });
 
-export const { setAdminCredentials, logoutAdmin } = adminAuthSlice.actions;
+export const { empty: logoutAdmin } = adminAuthSlice.actions;
 export default adminAuthSlice.reducer;

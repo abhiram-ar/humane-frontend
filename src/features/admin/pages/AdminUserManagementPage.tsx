@@ -35,8 +35,9 @@ const AdminUserManagementPage = () => {
               <TableHead className="w-64">Name</TableHead>
               <TableHead className="w-80">Email</TableHead>
               <TableHead>CreatedAt</TableHead>
-              <TableHead>isHotUser</TableHead>
-              <TableHead>Humane Score</TableHead>
+              {/* TODO: hot user not in prod yet: add these back when it is */}
+              {/* <TableHead>isHotUser</TableHead> */}
+              {/* <TableHead>Humane Score</TableHead> */}
               <TableHead>isBlocked</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>

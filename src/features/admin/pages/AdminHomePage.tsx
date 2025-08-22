@@ -1,5 +1,6 @@
 import OverviewCard from "../components/base/OverviewCard";
 import UserOverviewContainer from "../components/UserOverviewContainer";
+import UsersOnlineOverviewCard from "../components/UsersOnlineOverviewCard";
 
 const AdminHomePage = () => {
   return (
@@ -10,6 +11,7 @@ const AdminHomePage = () => {
         {/* users */}
         <UserOverviewContainer />
 
+        <UsersOnlineOverviewCard />
         {/* post related */}
         <OverviewCard title="Total posts">
           <p className="h-20">Hi</p>

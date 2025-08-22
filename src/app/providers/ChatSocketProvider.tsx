@@ -27,13 +27,13 @@ export const ChatSocketContext = createContext<ChatSocketContextType>({
 });
 
 const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
-  const token = useAppSelector((state) => state.userAuth.token);
+  const { token, type } = useAppSelector((state) => state.userAuth);
   const [chatSocket, setChatSocket] = useState<TypedChatSocket | null>(null);
   const dispath = useAppDispatch();
   const find = useFindOtherUserOfOnetoOneConvo();
 
   useEffect(() => {
-    if (!token) return;
+    if (!token || type !== "user") return;
 
     const socket: TypedChatSocket = io(import.meta.env.VITE_BACKEND_BASE_URL, {
       path: "/api/v1/chat/socket.io",
@@ -43,6 +43,7 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
         Authorization: `Bearer ${token}`,
       },
     });
+
     setChatSocket(socket);
 
     socket.on("test", (msg: unknown) => {
@@ -110,7 +111,7 @@ const ChatSocketProvider = ({ children }: { children: ReactNode }) => {
       socket.disconnect();
       setChatSocket(null);
     };
-  }, [token]);
+  }, [token, type]);
 
   return (
     <ChatSocketContext.Provider value={{ socket: chatSocket }}>

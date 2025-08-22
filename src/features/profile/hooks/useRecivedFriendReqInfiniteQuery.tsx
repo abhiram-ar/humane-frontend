@@ -45,7 +45,7 @@ const useRecivedFriendReqInfiniteQuery = () => {
       return res.data.data;
     },
     initialPageParam: { lastId: "ini", createdAt: "ini" },
-    getNextPageParam: (lastPage) => (lastPage.from?.hasMore ? lastPage.from : null),
+    getNextPageParam: (lastPage) => (lastPage.from ? lastPage.from : null),
   });
 };
 

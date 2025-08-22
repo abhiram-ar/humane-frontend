@@ -29,6 +29,7 @@ const PendingSendRequest: React.FC<Props> = () => {
         queryClient.setQueryData(["friend-req-send", "list"], (oldData: typeof infiniteData) => {
           const newPagesArray =
             oldData?.pages.map((page) => ({
+              ...page,
               friendReqs: page.friendReqs.filter((user) => user.id !== res.receiverId),
             })) ?? [];
 

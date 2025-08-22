@@ -10,7 +10,7 @@ type SidebarCongfig = {
 };
 
 const config: SidebarCongfig[] = [
-  { name: "Home", icon: Home, path: "home" },
+  { name: "Overview", icon: Home, path: "home" },
   { name: "User", icon: User, path: "user" },
   { name: "Reports", icon: BadgeInfo, path: "reports" },
 ];

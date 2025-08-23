@@ -18,7 +18,7 @@ const RewardOverviewContainer = () => {
   });
   return (
     <>
-      <OverviewCard title="Post rewards in last 24hrs">
+      <OverviewCard title="Post rewarded Amount in last 24hrs">
         <div className="mx-auto flex flex-col justify-center">
           <NumberFlow className="text-2xl font-bold" value={data?.postRewards.inLast24hrs || 0} />
           <p className="text-zinc-400">
@@ -30,7 +30,7 @@ const RewardOverviewContainer = () => {
           </p>
         </div>
       </OverviewCard>
-      <OverviewCard title="Total Rewards">
+      <OverviewCard title="Total Rewarded Amount">
         <NumberFlow className="text-2xl font-bold" value={data?.totalRewards.total || 0} />
         <p className="text-zinc-400">
           {findChange(
@@ -40,7 +40,7 @@ const RewardOverviewContainer = () => {
           from yesterday
         </p>
       </OverviewCard>
-      <OverviewCard title="Chat Rewards in last 24hrs">
+      <OverviewCard title="Chat Rewarded Amount in last 24hrs">
         <div className="mx-auto flex flex-col justify-center">
           <NumberFlow className="text-2xl font-bold" value={data?.chatRewards.inLast24hrs || 0} />
           <p className="text-zinc-400">

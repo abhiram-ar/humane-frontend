@@ -6,9 +6,8 @@ import UsersOnlineOverviewCard from "../components/UsersOnlineOverviewCard";
 const AdminHomePage = () => {
   return (
     <div>
-      <h2 className="text-xl font-semibold text-zinc-400">Overview</h2>
-
-      <div className="mt-5 grid grid-cols-3 gap-3">
+      <h2 className="text-almost-white mb-5 font-sans text-2xl font-semibold">Overview</h2>
+      <div className="grid grid-cols-3 gap-3">
         {/* users */}
         <UserOverviewContainer />
 

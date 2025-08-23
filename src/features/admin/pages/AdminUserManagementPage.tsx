@@ -23,7 +23,7 @@ const AdminUserManagementPage = () => {
 
   return (
     <div>
-      <h2 className="text-almost-white mb-10 font-sans text-2xl font-semibold">User management</h2>
+      <h2 className="text-almost-white mb-5 font-sans text-2xl font-semibold">User management</h2>
       <div>
         <div className="mb-2 flex justify-between">
           <TableSearch search={filter.search} setFilter={setFilter} />

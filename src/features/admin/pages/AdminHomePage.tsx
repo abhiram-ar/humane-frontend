@@ -1,5 +1,5 @@
-import OverviewCard from "../components/base/OverviewCard";
 import PostOverviewContainer from "../components/PostOverviewContainer";
+import RewardOverviewContainer from "../components/RewardOverviewContainer";
 import UserOverviewContainer from "../components/UserOverviewContainer";
 import UsersOnlineOverviewCard from "../components/UsersOnlineOverviewCard";
 
@@ -19,15 +19,7 @@ const AdminHomePage = () => {
         <PostOverviewContainer />
 
         {/* reward */}
-        <OverviewCard title="Total post rewards">
-          <p className="h-20">Hi</p>
-        </OverviewCard>
-        <OverviewCard title="Total chat rewards">
-          <p className="h-20">Hi</p>
-        </OverviewCard>
-        <OverviewCard title="Total Rewards">
-          <p className="h-20">Hi</p>
-        </OverviewCard>
+        <RewardOverviewContainer />
       </div>
     </div>
   );

@@ -4,23 +4,8 @@ import { NewSignupsChart } from "./NewSignupsChat";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/axios";
 import { API_ROUTES } from "@/lib/API_ROUTES";
-
-type GetUserStatsResponse = {
-  data: {
-    logins: {
-      usersLoggedInLast24hrs: number;
-      usersLoggedInLast48hrs: number;
-    };
-    totalUsers: {
-      totalUsersLastMonth: number;
-      currentTotalUsers: number;
-    };
-    userSingupsInLast6Months: Array<{
-      month: string;
-      count: number;
-    }>;
-  };
-};
+import { GetUserStatsResponse } from "../types/GetUsersStatReponse";
+import { findChange } from "@/lib/findChange";
 
 const UserOverviewContainer = () => {
   const { data } = useQuery({
@@ -32,12 +17,6 @@ const UserOverviewContainer = () => {
       return res.data.data;
     },
   });
-
-  const findChange = (currentVale: number, oldValue: number): string => {
-    const change = (currentVale - (oldValue || 0)) / (oldValue || 1);
-    if (change < 0) return `${change}% decreased`;
-    return `${change}% increased`;
-  };
 
   return (
     <>
@@ -57,7 +36,7 @@ const UserOverviewContainer = () => {
               (data?.logins.usersLoggedInLast48hrs || 0) -
                 (data?.logins.usersLoggedInLast24hrs || 0),
             )}{" "}
-            from last month
+            from yesterday
           </p>
         </div>
       </OverviewCard>

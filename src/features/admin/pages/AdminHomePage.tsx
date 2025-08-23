@@ -1,4 +1,5 @@
 import OverviewCard from "../components/base/OverviewCard";
+import PostOverviewContainer from "../components/PostOverviewContainer";
 import UserOverviewContainer from "../components/UserOverviewContainer";
 import UsersOnlineOverviewCard from "../components/UsersOnlineOverviewCard";
 
@@ -11,21 +12,16 @@ const AdminHomePage = () => {
         {/* users */}
         <UserOverviewContainer />
 
+        {/* realtime-user-stats */}
         <UsersOnlineOverviewCard />
+
         {/* post related */}
-        <OverviewCard title="Total posts">
-          <p className="h-20">Hi</p>
-        </OverviewCard>
-        <OverviewCard title="Avg. Comments/post/month">
-          <p className="h-20">Hi</p>
-        </OverviewCard>
-        <OverviewCard title="User Reports">
-          <p className="h-20">Hi</p>
-        </OverviewCard>
+        <PostOverviewContainer />
+
+        {/* reward */}
         <OverviewCard title="Total post rewards">
           <p className="h-20">Hi</p>
         </OverviewCard>
-        {/* chat */}
         <OverviewCard title="Total chat rewards">
           <p className="h-20">Hi</p>
         </OverviewCard>
@@ -33,22 +29,6 @@ const AdminHomePage = () => {
           <p className="h-20">Hi</p>
         </OverviewCard>
       </div>
-
-      {/* // total users
-
-      // login in last 24 
-
-      // singups ins last 24hrs
-
-      // users online */}
-
-      {/* // total post
-
-      // reports count */}
-
-      {/* // total post rewards
-
-      // total chat rewards */}
     </div>
   );
 };

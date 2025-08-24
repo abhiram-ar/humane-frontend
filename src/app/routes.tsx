@@ -29,6 +29,9 @@ import OneToOneChatPage from "@/features/chat/page/OneToOneChatPage";
 import NoConversationSelectedPage from "@/features/chat/page/NoConversationSelectedPage";
 import P2PVideoPage from "@/features/call/pages/P2PCallPage";
 import AdminRewardsPage from "@/features/admin/pages/AdminRewardsPage";
+import ProfileSettingsPage from "@/features/settings/pages/ProfileSettingsPage";
+import SettingsLayout from "@/features/settings/layout/SettingsLayout";
+import ChangePasswordSettingsPage from "@/features/settings/pages/ChangePasswordSettingsPage";
 
 export const router = createBrowserRouter([
   {
@@ -76,7 +79,12 @@ export const router = createBrowserRouter([
           },
           {
             path: "settings",
-            Component: PageNotFoundPage,
+            Component: SettingsLayout,
+            children: [
+              { index: true, Component: ProfileSettingsPage },
+              { path: "profile", Component: ProfileSettingsPage },
+              { path: "password", Component: ChangePasswordSettingsPage },
+            ],
           },
           {
             path: "user",

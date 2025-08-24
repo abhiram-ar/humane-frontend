@@ -32,6 +32,7 @@ import AdminRewardsPage from "@/features/admin/pages/AdminRewardsPage";
 import ProfileSettingsPage from "@/features/settings/pages/ProfileSettingsPage";
 import SettingsLayout from "@/features/settings/layout/SettingsLayout";
 import ChangePasswordSettingsPage from "@/features/settings/pages/ChangePasswordSettingsPage";
+import ResetPasswordPage from "@/features/settings/pages/ResetPasswordPage";
 
 export const router = createBrowserRouter([
   {
@@ -84,6 +85,10 @@ export const router = createBrowserRouter([
               { index: true, Component: ProfileSettingsPage },
               { path: "profile", Component: ProfileSettingsPage },
               { path: "password", Component: ChangePasswordSettingsPage },
+              {
+                path: "password/forgot-password",
+                Component: ResetPasswordPage,
+              },
             ],
           },
           {
@@ -140,13 +145,13 @@ export const router = createBrowserRouter([
             path: "forgot-password",
             Component: ForgotPasswordPage,
           },
-          {
-            path: "recover-password",
-            Component: RecoverPasswordPage,
-          },
         ],
       },
     ],
+  },
+  {
+    path: "auth/recover-password",
+    Component: RecoverPasswordPage,
   },
   {
     path: "/admin",

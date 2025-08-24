@@ -1,5 +1,5 @@
 import { useAppDispatch } from "@/features/userAuth/hooks/store.hooks";
-import { logoutAdmin } from "@/features/admin/redux/adminAuthSlice";
+import { logout } from "@/features/userAuth/redux/userAuthSlice";
 import { api } from "@/lib/axios";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router";
@@ -10,7 +10,7 @@ const LogoutAdmin = () => {
   const handleLogout = async () => {
     try {
       await api.post("/api/v1/admin/auth/logout");
-      dispatch(logoutAdmin());
+      dispatch(logout());
       navigate("/admin/login");
     } catch (error) {
       console.log("erorr while loggint out admin", error);

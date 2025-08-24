@@ -23,7 +23,7 @@ const AdminUserManagementPage = () => {
 
   return (
     <div>
-      <h2 className="text-almost-white mb-10 font-sans text-2xl font-semibold">User management</h2>
+      <h2 className="text-almost-white mb-5 font-sans text-2xl font-semibold">User management</h2>
       <div>
         <div className="mb-2 flex justify-between">
           <TableSearch search={filter.search} setFilter={setFilter} />
@@ -35,8 +35,9 @@ const AdminUserManagementPage = () => {
               <TableHead className="w-64">Name</TableHead>
               <TableHead className="w-80">Email</TableHead>
               <TableHead>CreatedAt</TableHead>
-              <TableHead>isHotUser</TableHead>
-              <TableHead>Humane Score</TableHead>
+              {/* TODO: hot user not in prod yet: add these back when it is */}
+              {/* <TableHead>isHotUser</TableHead> */}
+              {/* <TableHead>Humane Score</TableHead> */}
               <TableHead>isBlocked</TableHead>
               <TableHead>Action</TableHead>
             </TableRow>
@@ -44,17 +45,26 @@ const AdminUserManagementPage = () => {
           <TableBody>
             {isLoading && <TableRowShimmer rows={filter.limit} colSpan={7} />}
 
-            {data && data.data.users?.length > 0 ? (
+            {data &&
+              data.data.users?.length > 0 &&
               data.data.users.map((user) => (
                 <UserManagementRow
                   key={user.id}
                   user={user}
                   handleToogleBlock={handleToogleBlock}
                 />
-              ))
-            ) : (
-              <TableNoItemRow colSpan={7} message="No user found" />
-            )}
+              ))}
+
+            {filter.limit - (data?.data.users.length ?? 0) > 0 &&
+              Array(filter.limit - (data?.data.users.length || 0))
+                .fill(undefined)
+                .map((_, i) =>
+                  data?.data.users.length === 0 && i === 0 ? (
+                    <TableNoItemRow colSpan={7} message="No user found" />
+                  ) : (
+                    <TableNoItemRow key={i} className="text-transparent" colSpan={7} message="." />
+                  ),
+                )}
 
             {isError && <TableNoItemRow colSpan={7} message="Something went wrong" />}
           </TableBody>

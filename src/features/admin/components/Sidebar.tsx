@@ -1,4 +1,4 @@
-import { BadgeInfo, Home, LucideIcon, User } from "lucide-react"; // optional icons
+import { BadgeInfo, HandCoins, Home, LucideIcon, User } from "lucide-react"; // optional icons
 import { NavLink } from "react-router";
 import humanelogo from "@/assets/humaneSegoeScriptBold.svg";
 import LogoutAdmin from "./LogoutAdmin";
@@ -10,14 +10,15 @@ type SidebarCongfig = {
 };
 
 const config: SidebarCongfig[] = [
-  { name: "Home", icon: Home, path: "home" },
+  { name: "Overview", icon: Home, path: "home" },
   { name: "User", icon: User, path: "user" },
   { name: "Reports", icon: BadgeInfo, path: "reports" },
+  { name: "Rewards", icon: HandCoins, path: "rewards" },
 ];
 
 const Sidebar = () => {
   return (
-    <div className="bg-grey fixed h-screen w-72 text-white">
+    <div className="bg-grey fixed h-screen w-72 text-white border-e border-zinc-500/50">
       <div className="text-pop-green mb-3 px-10 py-2 pb-5 text-2xl font-bold">
         <img src={humanelogo} alt="" />
       </div>

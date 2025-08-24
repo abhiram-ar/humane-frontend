@@ -21,8 +21,8 @@ const UserManagementRow: React.FC<props> = ({ user, handleToogleBlock }) => {
       <TableCell>{user.firstName + " " + user.lastName}</TableCell>
       <TableCell>{user.email}</TableCell>
       <TableCell>{new Date(user.createdAt).toUTCString()}</TableCell>
-      <TableCell>{user.isHotUser ? "🔥" : "-"}</TableCell>
-      <TableCell>{user.humaneScore}</TableCell>
+      {/* <TableCell>{user.isHotUser ? "🔥" : "-"}</TableCell> */}
+      {/* <TableCell>{user.humaneScore}</TableCell> */}
       <TableCell>{user.isBlocked ? "🔴" : "🟢"}</TableCell>
       <TableCell>
         <DropdownMenu>

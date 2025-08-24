@@ -8,5 +8,6 @@ export const useUserListQuery = (filter: IQueryFilter) => {
     queryFn: () => fetchUsers(filter.search, filter.page, filter.limit),
     placeholderData: keepPreviousData,
     staleTime: 60 * 1000,
+    refetchOnMount: false,
   });
 };

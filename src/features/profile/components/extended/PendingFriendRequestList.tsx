@@ -47,6 +47,7 @@ const PendingRecivedFriendRequest: React.FC<Props> = () => {
         queryClient.setQueryData(["friend-req-recived", "list"], (oldData: typeof infiniteData) => {
           const newPagesArray =
             oldData?.pages.map((page) => ({
+              ...page,
               friendReqs: page.friendReqs.filter((user) => user.id !== res.requesterId),
             })) ?? [];
 
@@ -65,6 +66,7 @@ const PendingRecivedFriendRequest: React.FC<Props> = () => {
         queryClient.setQueryData(["friend-req-recived", "list"], (oldData: typeof infiniteData) => {
           const newPagesArray =
             oldData?.pages.map((page) => ({
+              ...page,
               friendReqs: page.friendReqs.filter((user) => user.id !== res.targetUserId),
             })) ?? [];
 
@@ -104,14 +106,13 @@ const PendingRecivedFriendRequest: React.FC<Props> = () => {
             </div>
           )),
         )}
+      <div className="border" ref={observerRef}></div>
 
       {isLoading || isFetching ? (
         <Spinner />
       ) : (
         <p className="text-center text-sm text-zinc-400">No more request</p>
       )}
-
-      <div ref={observerRef}></div>
     </div>
   );
 };

@@ -3,11 +3,11 @@ import axios from "axios";
 import { store } from "@/app/store/store";
 import { setAppLoadingState } from "@/app/store/appSlice";
 import { jwtDecode } from "jwt-decode";
-import { setAdminCredentials } from "@/features/admin/redux/adminAuthSlice";
 import { JWTAuthPayload } from "@/types/JWTAuthPayload";
+import { setCredentials } from "@/features/userAuth/redux/userAuthSlice";
 
 export const isAdminAuthenticatedLoader = async () => {
-  const token = store.getState().adminAuth.token;
+  const token = store.getState().userAuth.token;
   if (!token) {
     try {
       const res = await axios.get(
@@ -21,7 +21,7 @@ export const isAdminAuthenticatedLoader = async () => {
         const decoded: JWTAuthPayload = jwtDecode(res.data.data.token);
         console.log(decoded);
         if (decoded.type === "admin") {
-          store.dispatch(setAdminCredentials({ token: res.data.data.token }));
+          store.dispatch(setCredentials({ token: res.data.data.token, type: decoded.type }));
           return null;
         } else {
           throw new Error("Admin trying to login with user credentials");

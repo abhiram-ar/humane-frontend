@@ -76,11 +76,14 @@ api.interceptors.response.use(
         const newToken = data.data.token;
         const decoded = jwtDecode<JWTAuthPayload>(newToken);
 
-        if (decoded.type !== "user") {
+        if (decoded.type === "user") {
+          store.dispatch(setCredentials({ token: newToken, type: decoded.type }));
+        } else if (decoded.type === "admin") {
+          store.dispatch(setCredentials({ token: newToken, type: decoded.type }));
+        } else {
           throw new Error("API refresh error, get a non user accessToken after refresh");
         }
 
-        store.dispatch(setCredentials({ token: newToken }));
         processQueue(null, newToken);
 
         // retry the original request

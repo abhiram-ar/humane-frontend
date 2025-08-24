@@ -52,11 +52,20 @@ const AdminRewardsPage = () => {
         <TableBody>
           {isLoading && <TableRowShimmer rows={filter.limit} colSpan={7} />}
 
-          {data && data.rewards.length > 0 ? (
-            data.rewards.map((reward) => <UserReardTableRow key={reward.userId} reward={reward} />)
-          ) : (
-            <TableNoItemRow colSpan={7} message="No user found" />
-          )}
+          {data &&
+            data.rewards.length > 0 &&
+            data.rewards.map((reward) => <UserReardTableRow key={reward.userId} reward={reward} />)}
+
+          {filter.limit - (data?.rewards.length ?? 0) > 0 &&
+            Array(filter.limit - (data?.rewards.length || 0))
+              .fill(undefined)
+              .map((_, i) =>
+                data?.rewards.length === 0 && i === 0 ? (
+                  <TableNoItemRow colSpan={7} message="No user found" />
+                ) : (
+                  <TableNoItemRow key={i} className="text-transparent" colSpan={7} message="." />
+                ),
+              )}
 
           {isError && <TableNoItemRow colSpan={7} message="Something went wrong" />}
         </TableBody>

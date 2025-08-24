@@ -45,17 +45,26 @@ const AdminUserManagementPage = () => {
           <TableBody>
             {isLoading && <TableRowShimmer rows={filter.limit} colSpan={7} />}
 
-            {data && data.data.users?.length > 0 ? (
+            {data &&
+              data.data.users?.length > 0 &&
               data.data.users.map((user) => (
                 <UserManagementRow
                   key={user.id}
                   user={user}
                   handleToogleBlock={handleToogleBlock}
                 />
-              ))
-            ) : (
-              <TableNoItemRow colSpan={7} message="No user found" />
-            )}
+              ))}
+
+            {filter.limit - (data?.data.users.length ?? 0) > 0 &&
+              Array(filter.limit - (data?.data.users.length || 0))
+                .fill(undefined)
+                .map((_, i) =>
+                  data?.data.users.length === 0 && i === 0 ? (
+                    <TableNoItemRow colSpan={7} message="No user found" />
+                  ) : (
+                    <TableNoItemRow key={i} className="text-transparent" colSpan={7} message="." />
+                  ),
+                )}
 
             {isError && <TableNoItemRow colSpan={7} message="Something went wrong" />}
           </TableBody>

@@ -38,6 +38,10 @@ const EditProfileButton: React.FC<Props> = (props) => {
     });
   };
 
+  const CloseButtonComponent = ({ children }: { children: React.ReactNode }) => (
+    <DialogClose>{children}</DialogClose>
+  );
+
   return (
     <>
       <Dialog>
@@ -50,7 +54,11 @@ const EditProfileButton: React.FC<Props> = (props) => {
           <DialogHeader>
             <DialogTitle className="text-almost-white">Edit profile</DialogTitle>
           </DialogHeader>
-          <EditProfileForm {...props} handleEditProfile={handleEditProfile} />
+          <EditProfileForm
+            CloseElem={CloseButtonComponent}
+            {...props}
+            handleEditProfile={handleEditProfile}
+          />
           <DialogClose ref={closeDialogRef} />
         </DialogContent>
       </Dialog>

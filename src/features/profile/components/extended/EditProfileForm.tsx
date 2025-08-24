@@ -1,9 +1,9 @@
-import { DialogClose } from "@/components/ui/dialog";
 import { ServerErrors } from "@/types/serverErrors";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError } from "axios";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { z } from "zod";
 
 const editProfileSchema = z.object({
@@ -20,9 +20,10 @@ type Props = {
     bio?: string;
   };
   handleEditProfile(data: EditFormFields): Promise<void>;
+  CloseElem?: React.ComponentType<{ children: React.ReactNode }>;
 };
 
-const EditProfileForm: React.FC<Props> = ({ nameAndBio, handleEditProfile }) => {
+const EditProfileForm: React.FC<Props> = ({ nameAndBio, handleEditProfile, CloseElem }) => {
   const {
     register,
     handleSubmit,
@@ -48,7 +49,10 @@ const EditProfileForm: React.FC<Props> = ({ nameAndBio, handleEditProfile }) => 
           .map((err) =>
             setError(err.field as keyof typeof data, { message: err.message, type: "server" }),
           );
-      } else console.log(error);
+      } else {
+        console.log(error);
+        toast.error("Error updating progile", { position: "top-right" });
+      }
     }
   };
 
@@ -117,16 +121,22 @@ const EditProfileForm: React.FC<Props> = ({ nameAndBio, handleEditProfile }) => 
         />
       </div>
 
-      <div className="flex gap-5">
-        <DialogClose
-          className={`rounded-base mt-5 w-full rounded-3xl border border-black px-3 py-2 font-medium ${
-            !isSubmitting
-              ? "active:bg-grey-light bg-white/90 hover:bg-white"
-              : "bg-zinc-500 hover:bg-zinc-500 hover:text-black"
-          }`}
-        >
-          cancel
-        </DialogClose>
+      <div
+        className={`${CloseElem ? "grid grid-cols-2 gap-5" : "justify-centers flex items-center"}`}
+      >
+        {CloseElem && (
+          <CloseElem>
+            <div
+              className={`rounded-base mt-5 w-full rounded-3xl border border-black px-3 py-2 font-medium ${
+                !isSubmitting
+                  ? "active:bg-grey-light bg-white/90 hover:bg-white"
+                  : "bg-zinc-500 hover:bg-zinc-500 hover:text-black"
+              }`}
+            >
+              cancel
+            </div>
+          </CloseElem>
+        )}
 
         <button
           type="submit"

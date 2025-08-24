@@ -1,11 +1,16 @@
 import { Link } from "react-router";
-import ForgotPassword, { forgotPasswordFields } from "../components/ForgotPassword";
 import { api } from "@/lib/axios";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import { API_ROUTES } from "@/lib/API_ROUTES";
+import { ArrowLeft } from "lucide-react";
+import ForgotPassword, {
+  forgotPasswordFields,
+} from "@/features/userAuth/components/ForgotPassword";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
-const ForgotPasswordPage = () => {
+const ResetPasswordPage = () => {
+  const isMobile = useIsMobile();
   const handleForgotPassword = async (data: forgotPasswordFields) => {
     try {
       const res = await api.post(`${API_ROUTES.USER_SERVICE}/auth/forgot-password`, data);
@@ -21,15 +26,21 @@ const ForgotPasswordPage = () => {
   };
 
   return (
-    <div>
-      <ForgotPassword handleForgotPassword={handleForgotPassword} />
-      <p className="pt-2 text-center">
-        <Link to="/auth/login" className="text-offwhite/50 hover:text-offwhite underline">
-          Go back to login page.
+    <>
+      {isMobile && (
+        <Link to="/settings" className="flex gap-1 ps-5 pt-5 text-white">
+          <ArrowLeft />
+          <p>Reset Password</p>
         </Link>
-      </p>
-    </div>
+      )}
+
+      <div className="flex h-screen flex-col items-center justify-center">
+        <div className="mt-10 w-2/3 max-w-[40rem]">
+          <ForgotPassword handleForgotPassword={handleForgotPassword} />
+        </div>
+      </div>
+    </>
   );
 };
 
-export default ForgotPasswordPage;
+export default ResetPasswordPage;

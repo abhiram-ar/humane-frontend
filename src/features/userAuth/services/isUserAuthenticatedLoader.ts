@@ -19,7 +19,7 @@ export const isAuthenticatedLoader = async () => {
       if (res.data.data?.token) {
         const decoded: JWTAuthPayload = jwtDecode(res.data.data.token);
         if (decoded.type === "user") {
-          store.dispatch(setCredentials({ token: res.data.data.token }));
+          store.dispatch(setCredentials({ token: res.data.data.token, type: decoded.type }));
           return redirect("/");
         } else {
           throw new Error("User trying to login with admin credentials");

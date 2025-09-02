@@ -7,6 +7,8 @@ import { useNavigate } from "react-router";
 import { setCredentials } from "../redux/userAuthSlice";
 import { AxiosError } from "axios";
 import { ServerErrors } from "@/types/serverErrors";
+import { jwtDecode } from "jwt-decode";
+import { JWTAuthPayload } from "@/types/JWTAuthPayload";
 
 const SignInWithGoogle: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -20,8 +22,13 @@ const SignInWithGoogle: React.FC = () => {
       });
 
       if (res.data.data?.accessToken) {
-        dispatch(setCredentials({ token: res.data.data.token }));
-        return navigate("/", { replace: true });
+        const decoded: JWTAuthPayload = jwtDecode(res.data.data.token);
+        if (decoded.type === "user") {
+          dispatch(setCredentials({ token: res.data.data.token, type: decoded.type }));
+          return navigate("/", { replace: true });
+        } else {
+          throw new Error("User trying to login with admin credentials");
+        }
       }
 
       throw new Error("no accessToken in server response");

@@ -27,7 +27,6 @@ Humane is a real-time, privacy-focused, microservices-based social platform desi
 - Comment & like system
 - **Humane Points** for creator-approved comments
 - **Moderation-aware publishing:**
-
   - New posts = `processing` state until CNN moderation is complete
   - UI badge: _“Under Review”_
   - Once approved → visible in friends feed
